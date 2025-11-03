@@ -3,11 +3,12 @@ import { BannerService } from '../../../services/banner.service';
 import { CommonModule } from '@angular/common';
 import { AnnouncementListComponent } from '../announcement-list/announcement-list.component';
 import { CalendarComponent } from '../../calendar/calendar.component';
+import { FooterComponent } from "../../footer/footer.component";
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, AnnouncementListComponent, CalendarComponent],
+  imports: [CommonModule, AnnouncementListComponent, CalendarComponent, FooterComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })

@@ -1,69 +1,75 @@
-<div class="admin-container">
-  <div class="card" style="width: 50%">
-    <div class="card-body">
-      <h1>Welcome Admin</h1>
+<!-- Add Google Font -->
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+  rel="stylesheet"
+/>
 
-      <form [formGroup]="loginForm" (submit)="submit()" class="form-container">
-        <div class="form-floating">
-          <input
-            type="email"
-            class="form-control mb-3"
-            id="email"
-            formControlName="email"
-            placeholder="name@example.com"
-          />
-          <label for="email">Email address</label>
-          <div
-            *ngIf="
-              loginForm.get('email')?.touched && loginForm.get('email')?.invalid
-            "
-            class="text-danger small"
-          >
-            <div *ngIf="loginForm.get('email')?.errors?.['required']">
-              Email is required.
-            </div>
-            <div *ngIf="loginForm.get('email')?.errors?.['email']">
-              Invalid email format.
-            </div>
-          </div>
-        </div>
-
-        <!-- Password -->
-        <div class="form-floating mb-3">
-          <input
-            type="password"
-            class="form-control"
-            id="password"
-            formControlName="password"
-            placeholder="Password"
-          />
-          <label for="password">Password</label>
-          <div
-            *ngIf="
-              loginForm.get('password')?.touched &&
-              loginForm.get('password')?.invalid
-            "
-            class="text-danger small"
-          >
-            <div *ngIf="loginForm.get('password')?.errors?.['required']">
-              Password is required.
-            </div>
-          </div>
-        </div>
-        <button class="btn mb-3" type="button" align="end">
-          Forgot Password
-        </button>
-        <button
-          class="btn btn-primary btn-lg col-12"
-          type="submit"
-          [disabled]="loading$ || loginForm.invalid"
-        >
-          <div class="spinner-border" role="status" *ngIf="loading$">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-          <span *ngIf="!loading$">Login</span>
-        </button>
-      </form>
+<div class="admin-login-container d-flex justify-content-center align-items-center vh-100">
+  <div class="login-card shadow-lg rounded-4 p-5 bg-white">
+    <!-- TESDA Logo -->
+    <div class="text-center mb-4">
+      <img src="../../../assets/images/logo.png" alt="TESDA Logo" class="tesda-logo mb-3" />
+      <h3 class="fw-semibold text-primary">Welcome Admin</h3>
+      <p class="text-secondary small mb-4">Sign in to access your dashboard</p>
     </div>
+
+    <!-- Login Form -->
+    <form [formGroup]="loginForm" (submit)="submit()" class="form-container">
+      <!-- Email -->
+      <div class="form-floating mb-3">
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          formControlName="email"
+          placeholder="name@example.com"
+        />
+        <label for="email">Email address</label>
+        <div
+          *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid"
+          class="text-danger small mt-1"
+        >
+          <div *ngIf="loginForm.get('email')?.errors?.['required']">Email is required.</div>
+          <div *ngIf="loginForm.get('email')?.errors?.['email']">Invalid email format.</div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-floating mb-2">
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          formControlName="password"
+          placeholder="Password"
+        />
+        <label for="password">Password</label>
+        <div
+          *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+          class="text-danger small mt-1"
+        >
+          <div *ngIf="loginForm.get('password')?.errors?.['required']">Password is required.</div>
+        </div>
+      </div>
+
+      <!-- Forgot Password -->
+      <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-link p-0 small text-primary" type="button">
+          Forgot Password?
+        </button>
+      </div>
+
+      <!-- Submit -->
+      <button
+        class="btn btn-primary btn-lg col-12 rounded-3"
+        type="submit"
+        [disabled]="loading$ || loginForm.invalid"
+      >
+        <div class="spinner-border spinner-border-sm me-2" role="status" *ngIf="loading$">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <span *ngIf="!loading$">Login</span>
+      </button>
+    </form>
   </div>
 </div>
