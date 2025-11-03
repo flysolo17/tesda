@@ -1,9 +1,9 @@
-<!-- Root container -->
-<div class="d-flex" style="min-height: 100vh; overflow: hidden">
+
+<div class="d-flex flex-column flex-md-row" style="min-height: 100vh; overflow: hidden; font-family: 'Poppins', sans-serif;">
   <!-- Sidebar -->
   <aside
-    class="bg-dark text-white p-3 d-flex flex-column"
-    style="width: 280px; overflow-y: auto"
+    class="sidebar bg-white border-end p-3 d-flex flex-column shadow-sm"
+    id="sidebarMenu"
   >
     <!-- Branding -->
     <img src="../../../assets/images/logo.png" width="100px" height="100px" />
@@ -12,26 +12,26 @@
 
     <!-- Navigation -->
     <nav class="flex-grow-1">
-      <ul class="nav nav-pills flex-column mb-auto">
-        <li *ngFor="let item of navItems" class="nav-item">
+      <ul class="nav flex-column">
+        <li *ngFor="let item of navItems" class="nav-item mb-1">
           <!-- Simple link -->
           <a
             *ngIf="!item.more"
-            class="nav-link text-white d-flex align-items-center gap-2"
+            class="nav-link text-dark d-flex align-items-center px-3 py-2 rounded hover-link"
             [routerLink]="['/administration/main', item.route]"
-            routerLinkActive="active"
+            routerLinkActive="active-link"
           >
-            <i [class]="item.icon"></i>
+            <i [class]="item.icon + ' me-2 fs-5'"></i>
             {{ item.label }}
           </a>
 
           <!-- Collapsible group -->
           <div *ngIf="item.more" class="nav-item">
             <button
-              class="btn btn-toggle w-100 text-start text-white d-flex align-items-center gap-2"
+              class="btn w-100 text-start text-dark d-flex align-items-center px-3 py-2 rounded hover-link"
               (click)="toggle(item)"
             >
-              <i [class]="item.icon"></i>
+              <i [class]="item.icon + ' me-2 fs-5'"></i>
               {{ item.label }}
               <i
                 class="ms-auto bi"
@@ -40,13 +40,12 @@
               ></i>
             </button>
             <div [ngbCollapse]="!item.open" class="ps-4">
-              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+              <ul class="list-unstyled fw-normal small">
                 <li *ngFor="let sub of item.more">
                   <a
                     [routerLink]="sub.route"
-                    [queryParams]="sub.queryParams || null"
-                    routerLinkActive="active"
-                    class="nav-link text-white-50 d-block py-1"
+                    routerLinkActive="active-link-sub"
+                    class="nav-link text-muted d-block py-1 ps-2 hover-link-sub"
                   >
                     {{ sub.label }}
                   </a>
@@ -58,35 +57,36 @@
       </ul>
     </nav>
 
+    <!-- Divider -->
     <hr />
 
     <!-- User dropdown -->
-    <div class="dropdown">
+    <div class="dropdown mt-auto">
       <a
         href="#"
-        class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+        class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle"
         data-bs-toggle="dropdown"
       >
         <img
           src="https://github.com/mdo.png"
           alt="user"
-          width="32"
-          height="32"
+          width="36"
+          height="36"
           class="rounded-circle me-2"
         />
-        <strong>mdo</strong>
+        <strong>Admin</strong>
       </a>
-      <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm">
         <li><a class="dropdown-item" href="#">Settings</a></li>
         <li><a class="dropdown-item" href="#">Profile</a></li>
         <li><hr class="dropdown-divider" /></li>
-        <li><a class="dropdown-item" href="#">Sign out</a></li>
+        <li><a class="dropdown-item text-danger" href="#">Sign out</a></li>
       </ul>
     </div>
   </aside>
 
   <!-- Main content -->
-  <main class="flex-grow-1 bg-light" style="overflow-y: auto; height: 100vh">
+  <main class="flex-grow-1 bg-light p-3" style="overflow-y: auto;">
     <router-outlet></router-outlet>
   </main>
 </div>

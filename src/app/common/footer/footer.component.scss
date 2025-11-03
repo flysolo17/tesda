@@ -1,0 +1,85 @@
+.footer-dark {
+  background: linear-gradient(180deg, #0a0a0a 0%, #141414 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.3px;
+  transition: background 0.3s ease;
+}
+
+.footer-dark:hover {
+  background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 100%);
+}
+
+.footer-dark p {
+  margin: 0;
+  color: #cccccc;
+}
+
+.footer-dark p:first-child {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+/* 🔘 Social Media Icons */
+.social-icon {
+  color: #9ca3af;
+  transition: all 0.3s ease;
+  font-size: 1.4rem;
+}
+
+.social-icon:hover {
+  color: #0d6efd; /* TESDA blue accent */
+  transform: translateY(-3px) scale(1.1);
+}
+
+/* Specific hover colors (optional) */
+.social-icon[aria-label="YouTube"]:hover {
+  color: #ff3d3d;
+}
+
+.social-icon[aria-label="Facebook"]:hover {
+  color: #1877f2;
+}
+
+.social-icon[aria-label="TESDA Website"]:hover {
+  color: #00b4d8;
+}
+.footer-dark {
+  background-color: #0f172a; /* very dark blue-gray */
+  position: relative;
+}
+
+.social-icon {
+  color: #d1d5db;
+  transition: color 0.3s ease;
+}
+
+.social-icon:hover {
+  color: #3b82f6;
+}
+
+/* Feedback Button default state */
+.feedback-btn {
+  display: inline-block;
+  margin-top: 1rem;
+  box-shadow: 0 0 0 rgba(59, 130, 246, 0);
+}
+
+/* Glowing (pulse) effect */
+.feedback-btn.glow {
+  animation: glowPulse 2s infinite;
+}
+
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.4),
+      0 0 10px rgba(59, 130, 246, 0.3), 0 0 15px rgba(59, 130, 246, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.7),
+      0 0 25px rgba(59, 130, 246, 0.5), 0 0 40px rgba(59, 130, 246, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.4),
+      0 0 10px rgba(59, 130, 246, 0.3), 0 0 15px rgba(59, 130, 246, 0.2);
+  }
+}
