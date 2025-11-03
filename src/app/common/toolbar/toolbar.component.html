@@ -1,11 +1,14 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark text-light">
   <div class="container-fluid">
-    <img src="../../../assets/images/logo.png" height="40" alt="Logo" />
-    <div>
-      <h4>TESDA</h4>
-      <span>Occidental Mindoro</span>
+    <div class="d-flex align-items-center">
+      <img src="../../../assets/images/logo.png" height="40" alt="Logo" class="me-2" />
+      <div class="text-light text-center">
+        <h4 class="mb-0 fw-bold">TESDA</h4>
+        <span class="small text-white-50">Occidental Mindoro</span>
+      </div>
     </div>
 
+    <!-- Toggle Button -->
     <button
       class="navbar-toggler"
       type="button"
@@ -18,217 +21,128 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- Collapsible nav links -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <!-- Centered Nav Links -->
+    <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+      <ul class="navbar-nav mb-2 mb-lg-0 gap-3 text-center">
+
         <li class="nav-item">
-          <a
-            class="nav-link active"
-            aria-current="page"
-            [routerLink]="['/landing-page', 'home']"
-            >Home</a
-          >
-        </li>
-        <!-- about -->
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            About us
+          <a class="nav-link active" [routerLink]="['/landing-page', 'home']">
+            <i class="fa-solid fa-house me-1"></i> Home
           </a>
-          <ul class="dropdown-menu">
-            <li>
-              <a
-                [routerLink]="['/landing-page', 'history']"
-                class="dropdown-item"
-                >History</a
-              >
-            </li>
-            <li>
-              <a routerLink="/landing-page/structure" class="dropdown-item">
-                Organizational Structure (Provincial Office Staffs)
-              </a>
-            </li>
-            <li>
-              <a routerLink="/landing-page/mission" class="dropdown-item">
-                Mission, Vision, Value & Quality Statement
-              </a>
-            </li>
-            <li>
-              <a routerLink="/landing-page/careers" class="dropdown-item"
-                >Careers</a
-              >
-            </li>
-          </ul>
         </li>
-        <!-- Programs and Services -->
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            Programs and Services
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">TVET Programs</a></li>
-            <li>
-              <a class="dropdown-item" href="#"
-                >Competency Standards Development</a
-              >
-            </li>
 
-            <li>
-              <a class="dropdown-item" href="#"
-                >Competency Assessment and Certification</a
-              >
-            </li>
-            <li>
-              <a class="dropdown-item">
-                Program Registration and Accreditation</a
-              >
-            </li>
-            <li>
-              <a class="dropdown-item">
-                Directory of Schools with Registered Programs</a
-              >
-            </li>
-            <li>
-              <a class="dropdown-item">
-                Directory of Accredited TVET Trainers</a
-              >
-            </li>
-            <li>
-              <a class="dropdown-item"> Training Regulations</a>
-            </li>
-            <li>
-              <a class="dropdown-item"> Competency Standards</a>
-            </li>
-          </ul>
-        </li>
-        <!-- Transparency -->
         <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-            >Transparency</a
-          >
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider" /></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
-        </li>
-        <!-- Contacts -->
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-            >Contacts</a
-          >
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider" /></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
+          <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+            <i class="fa-solid fa-users me-1"></i> About Us
+          </a>
+          <ul class="dropdown-menu shadow-sm border-0 rounded-3">
+            <li><a [routerLink]="['/landing-page', 'history']" class="dropdown-item">History</a></li>
+            <li><a routerLink="/landing-page/structure" class="dropdown-item">Organizational Structure</a></li>
+            <li><a routerLink="/landing-page/mission" class="dropdown-item">Mission, Vision & Values</a></li>
+            <li><a routerLink="/landing-page/careers" class="dropdown-item">Careers</a></li>
           </ul>
         </li>
 
-        <!-- Verification -->
         <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-            >Verification</a
-          >
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider" /></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
+          <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+            <i class="fa-solid fa-graduation-cap me-1"></i> Programs & Services
+          </a>
+          <ul class="dropdown-menu shadow-sm border-0 rounded-3">
+            <li><a class="dropdown-item">TVET Programs</a></li>
+            <li><a class="dropdown-item">Competency Standards Development</a></li>
+            <li><a class="dropdown-item">Assessment & Certification</a></li>
+            <li><a class="dropdown-item">Program Registration & Accreditation</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+            <i class="fa-solid fa-eye me-1"></i> Transparency
+          </a>
+          <ul class="dropdown-menu shadow-sm border-0 rounded-3">
+            <li><a class="dropdown-item">Transparency Seal</a></li>
+            <li><a class="dropdown-item">Citizen’s Charter</a></li>
+            <li><a class="dropdown-item">Freedom of Information</a></li>
+            <li><a class="dropdown-item">Bagong Pilipinas</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+            <i class="fa-solid fa-phone me-1"></i> Contacts
+          </a>
+          <ul class="dropdown-menu shadow-sm border-0 rounded-3">
+            <li><a class="dropdown-item">Central Office</a></li>
+            <li><a class="dropdown-item">Regional Office</a></li>
+            <li><a class="dropdown-item">Occidental Mindoro TESDA Training Institute</a></li>
+            <li><a class="dropdown-item">TVIs</a></li>
+            <li><a class="dropdown-item">Board Members</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
+            <i class="fa-solid fa-id-card me-1"></i> Verification
+          </a>
+          <ul class="dropdown-menu shadow-sm border-0 rounded-3">
+            <li><a class="dropdown-item">Certificate Verification</a></li>
+            <li><a class="dropdown-item">Trainee Record Search</a></li>
           </ul>
         </li>
       </ul>
 
-      @if (user == null) {
-      <div class="d-flex mt-2 mt-lg-0 gap-2" role="login">
-        <button
-          class="btn btn-outline-primary btn-lg"
-          (click)="registerClicked()"
-        >
-          Register
+      <!-- Auth Buttons -->
+      <div *ngIf="!user" class="d-flex mt-2 mt-lg-0 gap-2" role="login">
+        <button class="btn btn-outline-light btn-sm px-3" (click)="registerClicked()">
+          <i class="fa-solid fa-user-plus me-1"></i> Register
         </button>
-        <button class="btn btn-primary btn-lg" (click)="loginClicked()">
-          Login
+        <button class="btn btn-primary btn-sm px-3" (click)="loginClicked()">
+          <i class="fa-solid fa-right-to-bracket me-1"></i> Login
         </button>
       </div>
-      } @else {
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
+      <!-- User Dropdown -->
+      <ul *ngIf="user" class="navbar-nav ms-auto mb-2 mb-lg-0">
         <li class="nav-item dropdown">
           <a
             class="nav-link dropdown-toggle d-flex align-items-center"
-            href="#"
             id="userDropdown"
             role="button"
             data-bs-toggle="dropdown"
-            aria-expanded="false"
           >
             <img
               [src]="user.profile || '../../../assets/images/profile.png'"
               class="rounded-circle me-2"
               alt="User Avatar"
-              width="50"
-              height="50"
+              width="40"
+              height="40"
             />
             <span>{{ user.name || "Account" }}</span>
           </a>
-
-          <ul
-            class="dropdown-menu dropdown-menu-end"
-            aria-labelledby="userDropdown"
-          >
+          <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
             <li>
               <a class="dropdown-item" (click)="navigate(user.type)">
-                Go to Dashboard
+                <i class="fa-solid fa-gauge-high me-2 text-primary"></i> Dashboard
               </a>
             </li>
             <li>
-              <a
-                class="dropdown-item d-flex align-items-center justify-content-between"
-              >
-                <span>Messages</span>
-                <span
-                  *ngIf="unseenMessagesCount > 0"
-                  class="badge bg-danger rounded-pill ms-2"
-                >
+              <a class="dropdown-item d-flex align-items-center justify-content-between">
+                <span><i class="fa-solid fa-envelope me-2 text-secondary"></i> Messages</span>
+                <span *ngIf="unseenMessagesCount > 0" class="badge bg-danger rounded-pill">
                   {{ unseenMessagesCount }}
                 </span>
               </a>
             </li>
-
             <li><hr class="dropdown-divider" /></li>
             <li>
-              <button class="dropdown-item" (click)="logout()">Logout</button>
+              <button class="dropdown-item text-danger" (click)="logout()">
+                <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+              </button>
             </li>
           </ul>
         </li>
       </ul>
-      }
     </div>
   </div>
 </nav>
+

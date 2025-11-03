@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.history-section {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f4f9ff;   /* light blue tone */
+}
+
+.history-section h1 {
+  color: #003f7f;
+}
+
+.history-section p {
+  font-weight: 400;
+  font-size: 1.05rem;
+}
+
+.hero-image img {
+  max-height: 400px;
+  width: 100%;
+  object-fit: cover;
+}

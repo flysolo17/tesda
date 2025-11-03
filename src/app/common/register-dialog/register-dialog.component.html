@@ -17,8 +17,18 @@
 >
   <div class="progress-bar progress-bar-animated" style="width: 100%"></div>
 </div>
+<div class="modal-body tesda-modal-body">
+  <div class="text-center mb-3">
+    <img
+      src="../../../assets/images/logo.png"
+      alt="TESDA Logo"
+      class="tesda-logo mb-2"
+      height="80"
+    />
+ <h5 class="fw-bold text-blue">TESDA Occidental Mindoro</h5>
+    <p class="text-muted mb-0">Create your account</p>
+  </div>
 
-<div class="modal-body">
   <form class="row g-3" [formGroup]="userForm" (submit)="submit()">
     <!-- Name -->
     <div class="form-floating col-12">
@@ -153,7 +163,7 @@
     </div>
 
     <!-- Actions -->
-    <div class="modal-footer">
+    <div class="modal-footer flex-column gap-2">
       <button
         class="btn btn-primary btn-lg col-12"
         type="submit"
@@ -172,3 +182,4 @@
     </div>
   </form>
 </div>
+

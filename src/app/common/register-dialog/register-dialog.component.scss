@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.tesda-modal-body {
+  font-family: 'Poppins', sans-serif;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+}
+
+.tesda-logo {
+  display: block;
+  margin: 0 auto;
+  border-radius: 50%;
+}
+
+.tesda-modal-body h5 {
+  font-family: 'Poppins', sans-serif;
+  color: #004aad;
+  letter-spacing: 0.5px;
+}
+
+.modal-footer {
+  border-top: none;
+  background: transparent;
+}
+
+@media (max-width: 576px) {
+  .tesda-modal-body {
+    padding: 1rem;
+  }
+  .tesda-logo {
+    height: 60px;
+  }
+  .tesda-modal-body h5 {
+    font-size: 1rem;
+  }
+}

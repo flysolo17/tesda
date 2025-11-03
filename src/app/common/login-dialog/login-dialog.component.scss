@@ -1,5 +1,66 @@
-.form-container {
-  display: flex;
-  gap: 1rem;
-  flex-direction: column;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+.tesda-login-modal {
+  font-family: 'Poppins', sans-serif;
+  padding: 2rem;
+  border-radius: 12px;
+  background-color: #fff;
+}
+
+.tesda-login-modal h5 {
+  color: #004aad;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.tesda-login-modal .form-control {
+  border-radius: 10px;
+  font-size: 0.95rem;
+  padding: 0.8rem 1rem;
+}
+
+.tesda-login-modal .form-control:focus {
+  border-color: #004aad;
+  box-shadow: 0 0 0 0.15rem rgba(0, 74, 173, 0.2);
+}
+
+.tesda-logo {
+  display: block;
+  margin: 0 auto;
+}
+
+.btn-primary {
+  background-color: #004aad;
+  border-color: #004aad;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: #003c8a;
+  transform: translateY(-1px);
+}
+
+.btn-outline-secondary {
+  border-radius: 10px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #f8f9fa;
+}
+
+.text-primary {
+  color: #004aad !important;
+}
+
+@media (max-width: 576px) {
+  .tesda-login-modal {
+    padding: 1.5rem;
+  }
+  .tesda-logo {
+    height: 60px;
+  }
+  .tesda-login-modal h5 {
+    font-size: 1rem;
+  }
 }

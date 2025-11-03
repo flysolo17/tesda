@@ -7,10 +7,22 @@
     (click)="activeModal.dismiss('Cross click')"
   ></button>
 </div>
+<div class="modal-body tesda-login-modal">
+  <!-- TESDA Header -->
+  <div class="text-center mb-4">
+    <img
+      src="../../../assets/images/logo.png"
+      alt="TESDA Logo"
+      class="tesda-logo mb-2"
+      height="80"
+    />
+    <h5 class="fw-bold text-primary">TESDA Occidental Mindoro</h5>
+    <p class="text-muted mb-0">Login to your account</p>
+  </div>
 
-<div class="modal-body">
   <form [formGroup]="loginForm" (submit)="submit()" class="form-container">
-    <div class="form-floating">
+    <!-- Email -->
+    <div class="form-floating mb-3">
       <input
         type="email"
         class="form-control"
@@ -20,10 +32,8 @@
       />
       <label for="email">Email address</label>
       <div
-        *ngIf="
-          loginForm.get('email')?.touched && loginForm.get('email')?.invalid
-        "
-        class="text-danger small"
+        *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid"
+        class="text-danger small mt-1"
       >
         <div *ngIf="loginForm.get('email')?.errors?.['required']">
           Email is required.
@@ -35,7 +45,7 @@
     </div>
 
     <!-- Password -->
-    <div class="form-floating">
+    <div class="form-floating mb-4">
       <input
         type="password"
         class="form-control"
@@ -45,34 +55,41 @@
       />
       <label for="password">Password</label>
       <div
-        *ngIf="
-          loginForm.get('password')?.touched &&
-          loginForm.get('password')?.invalid
-        "
-        class="text-danger small"
+        *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+        class="text-danger small mt-1"
       >
         <div *ngIf="loginForm.get('password')?.errors?.['required']">
           Password is required.
         </div>
       </div>
     </div>
+
+    <!-- Login Button -->
     <button
-      class="btn btn-primary btn-lg col-12"
+      class="btn btn-primary btn-lg col-12 mb-2 d-flex align-items-center justify-content-center gap-2"
       type="submit"
       [disabled]="loading$ || loginForm.invalid"
     >
-      <div class="spinner-border" role="status" *ngIf="loading$">
-        <span class="visually-hidden">Loading...</span>
-      </div>
+      <div class="spinner-border spinner-border-sm" *ngIf="loading$"></div>
       <span *ngIf="!loading$">Login</span>
     </button>
+
+    <!-- Google Login Button -->
     <button
-      [disabled]="loading$ || loginForm.invalid"
-      class="btn btn-outline-secondary btn-lg col-12"
+      [disabled]="loading$"
+      class="btn btn-outline-secondary btn-lg col-12 mb-3 d-flex align-items-center justify-content-center gap-2"
       type="button"
       (click)="loginWithGoogle()"
     >
+    
       Login with Google
     </button>
+
+    <!-- Forgot Password -->
+    <div class="text-center">
+      <a href="#" class="text-decoration-none small text-primary fw-medium">
+        Forgot your password?
+      </a>
+    </div>
   </form>
 </div>
