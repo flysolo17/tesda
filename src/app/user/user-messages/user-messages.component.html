@@ -1,0 +1,52 @@
+<ng-container *ngIf="convo$ | async as convo">
+  <!-- Header -->
+  <div class="bg-primary text-white d-flex align-items-center px-3 py-2">
+    <img
+      [src]="convo.user?.profile || 'https://github.com/mdo.png'"
+      alt="User"
+      width="40"
+      height="40"
+      class="rounded-circle me-2"
+    />
+    <h6 class="mb-0">{{ convo.user?.name || "Admin" }}</h6>
+  </div>
+
+  <!-- Chat Messages -->
+  <div
+    class="chat-messages flex-grow-1 p-3 overflow-auto d-flex flex-column-reverse"
+    style="height: calc(100vh - 140px)"
+  >
+    <div
+      *ngFor="let msg of convo.messages"
+      class="d-flex mb-2"
+      [ngClass]="{
+        'justify-content-end': msg.senderId === convo.me?.id,
+        'justify-content-start': msg.senderId !== convo.me?.id
+      }"
+    >
+      <div
+        [ngClass]="{
+          'bg-primary text-white': msg.senderId === convo.me?.id,
+          'bg-white text-dark': msg.senderId !== convo.me?.id
+        }"
+        class="px-3 py-2 rounded"
+        style="max-width: 70%"
+      >
+        {{ msg.message }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="border-top d-flex align-items-center px-3 py-2 bg-white">
+    <input
+      [formControl]="messageText"
+      type="text"
+      class="form-control me-2"
+      placeholder="Type a message..."
+    />
+    <button class="btn btn-primary" (click)="sendMessage()">
+      <i class="bi bi-send"></i>
+    </button>
+  </div>
+</ng-container>

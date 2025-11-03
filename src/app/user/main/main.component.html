@@ -1,1 +1,77 @@
-<p>main works!</p>
+<!-- Root container -->
+<div class="d-flex" style="min-height: 100vh; overflow: hidden">
+  <!-- Sidebar -->
+  <aside
+    class="bg-dark text-white p-3 d-flex flex-column"
+    style="width: 280px; overflow-y: auto"
+  >
+    <!-- Branding -->
+    <img
+      src="../../../assets/images/logo.png"
+      width="100px"
+      height="100px"
+      alt="Logo"
+    />
+    <hr />
+
+    <!-- Navigation -->
+    <nav class="flex-grow-1">
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li *ngFor="let item of items$" class="nav-item">
+          <a
+            class="nav-link text-white d-flex align-items-center justify-content-between"
+            [routerLink]="['/main', item.route]"
+            routerLinkActive="active"
+          >
+            <div class="d-flex align-items-center gap-2">
+              <i [class]="item.icon"></i>
+              {{ item.label }}
+            </div>
+
+            <!-- Badge for unseen messages -->
+            <ng-container *ngIf="item.label === 'Messages'">
+              <ng-container *ngIf="unseen | async as count">
+                <span
+                  *ngIf="count > 0"
+                  class="badge bg-danger rounded-pill"
+                  style="font-size: 0.75rem"
+                >
+                  {{ count }}
+                </span>
+              </ng-container>
+            </ng-container>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <hr />
+    <!-- User dropdown -->
+    <div class="dropdown">
+      <a
+        href="#"
+        class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+        data-bs-toggle="dropdown"
+      >
+        <img
+          src="https://github.com/mdo.png"
+          alt="user"
+          width="32"
+          height="32"
+          class="rounded-circle me-2"
+        />
+        <strong>mdo</strong>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+        <li><a class="dropdown-item" href="#">Settings</a></li>
+        <li><a class="dropdown-item" href="#">Profile</a></li>
+        <li><hr class="dropdown-divider" /></li>
+        <li><a class="dropdown-item" href="#">Sign out</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="flex-grow-1 bg-light" style="overflow-y: auto; height: 100vh">
+    <router-outlet></router-outlet>
+  </main>
+</div>

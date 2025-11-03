@@ -4,19 +4,22 @@ import {
   collection,
   collectionData,
   doc,
+  docData,
   FieldValue,
   Firestore,
   getDoc,
   getDocs,
+  limit,
   or,
   orderBy,
   query,
   setDoc,
   where,
+  writeBatch,
 } from '@angular/fire/firestore';
-import { Auth } from '@angular/fire/auth';
+import { Auth, user } from '@angular/fire/auth';
 import { combineLatest, from, map, Observable, of, switchMap } from 'rxjs';
-import { UserConverter } from '../models/Users';
+import { User, UserConverter, UserType } from '../models/Users';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +27,25 @@ import { UserConverter } from '../models/Users';
 export class MessagingService {
   private readonly MESSAGES_COLLECTION = 'messages';
   constructor(private firestore: Firestore, private auth: Auth) {}
+  updateUnseenMessages(ids: string[]): void {
+    if (ids.length === 0) return;
 
+    const batch = writeBatch(this.firestore);
+
+    ids.forEach((id) => {
+      const ref = doc(this.firestore, this.MESSAGES_COLLECTION, id);
+      batch.update(ref, { seen: true });
+    });
+
+    batch
+      .commit()
+      .then(() => {
+        console.log('Unseen messages updated.');
+      })
+      .catch((err) => {
+        console.error('Failed to update unseen messages:', err);
+      });
+  }
   sendMessage(message: Message) {
     const messageRef = doc(
       collection(this.firestore, this.MESSAGES_COLLECTION).withConverter(
@@ -83,6 +104,35 @@ export class MessagingService {
           messages: groups[senderId],
           count: groups[senderId].length,
         }));
+      })
+    );
+  }
+  getMyConvoWithAdmin(me: User): Observable<Conversation> {
+    const adminQuery = query(
+      collection(this.firestore, 'users').withConverter(UserConverter),
+      where('type', '==', UserType.ADMIN),
+      limit(1)
+    );
+
+    return collectionData(adminQuery, { idField: 'id' }).pipe(
+      switchMap((admins: User[]) => {
+        const admin = admins[0] || null;
+
+        const messagesQuery = query(
+          collection(this.firestore, this.MESSAGES_COLLECTION).withConverter(
+            MessageConverter
+          ),
+          or(where('senderId', '==', me.id), where('receiverId', '==', me.id)),
+          orderBy('createdAt', 'desc')
+        );
+
+        return collectionData(messagesQuery, { idField: 'id' }).pipe(
+          map((messages) => ({
+            user: admin,
+            me: me,
+            messages: messages,
+          }))
+        );
       })
     );
   }

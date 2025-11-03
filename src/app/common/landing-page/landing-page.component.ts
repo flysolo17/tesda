@@ -29,7 +29,7 @@ import { Message } from '../../models/Message';
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.scss',
 })
-export class LandingPageComponent implements OnInit, OnDestroy {
+export class LandingPageComponent {
   title = 'tesda';
   private modalService = inject(NgbModal);
 
@@ -38,8 +38,6 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   private messageService = inject(MessagingService);
 
   loading$ = false;
-
-  userSub = new Subscription();
 
   readonly user$ = this.authService.getCurrentUser();
 
@@ -51,11 +49,6 @@ export class LandingPageComponent implements OnInit, OnDestroy {
         : of([] as UnSeenMessages[])
     )
   );
-
-  ngOnInit(): void {}
-  ngOnDestroy(): void {
-    this.userSub.unsubscribe();
-  }
 
   register() {
     const modalRef = this.modalService.open(RegisterDialogComponent);
@@ -73,6 +66,8 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   navigateToDashboard(type: UserType | null) {
     if (type === UserType.ADMIN) {
       this.router.navigate(['/administration/main']);
+    } else {
+      this.router.navigate(['/main']);
     }
   }
 }

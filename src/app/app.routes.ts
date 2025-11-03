@@ -23,6 +23,8 @@ import { CreateAnnouncementComponent } from './admin/create-announcement/create-
 import { AnnouncementComponent } from './admin/announcement/announcement.component';
 import { NewsComponent } from './admin/news/news.component';
 import { AdminActivitiesComponent } from './admin/admin-activities/admin-activities.component';
+import { UserDashboardComponent } from './user/user-dashboard/user-dashboard.component';
+import { UserMessagesComponent } from './user/user-messages/user-messages.component';
 
 export const routes: Routes = [
   {
@@ -61,9 +63,23 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'main/:id',
+    path: 'main',
     component: MainComponent,
     canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        component: UserDashboardComponent,
+      },
+      {
+        path: 'dashboard',
+        component: UserDashboardComponent,
+      },
+      {
+        path: 'messages',
+        component: UserMessagesComponent,
+      },
+    ],
   },
   {
     path: 'administration',
