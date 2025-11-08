@@ -8,7 +8,6 @@
       </div>
     </div>
 
-    <!-- Toggle Button -->
     <button
       class="navbar-toggler"
       type="button"
@@ -21,7 +20,6 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- Centered Nav Links -->
     <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
       <ul class="navbar-nav mb-2 mb-lg-0 gap-3 text-center">
 
@@ -31,96 +29,47 @@
           </a>
         </li>
 
-        <li class="nav-item dropdown">
+        <!-- Dynamic Dropdowns -->
+        <li class="nav-item dropdown" *ngFor="let group of dropdowns$ | keyvalue">
           <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
-            <i class="fa-solid fa-users me-1"></i> About Us
+            {{ group.key }}
           </a>
           <ul class="dropdown-menu shadow-sm border-0 rounded-3">
-            <li><a [routerLink]="['/landing-page', 'history']" class="dropdown-item">History</a></li>
-            <li><a routerLink="/landing-page/structure" class="dropdown-item">Organizational Structure</a></li>
-            <li><a routerLink="/landing-page/mission" class="dropdown-item">Mission, Vision & Values</a></li>
-            <li><a routerLink="/landing-page/careers" class="dropdown-item">Careers</a></li>
+            <li *ngFor="let item of group.value">
+              <a
+                *ngIf="item.url.startsWith('http')"
+                class="dropdown-item"
+                [href]="item.url"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {{ item.label }}
+              </a>
+              <a
+                *ngIf="!item.url.startsWith('http')"
+                class="dropdown-item"
+                [routerLink]="[item.url]"
+              >
+                {{ item.label }}
+              </a>
+            </li>
           </ul>
         </li>
 
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
-            <i class="fa-solid fa-graduation-cap me-1"></i> Programs & Services
-          </a>
-          <ul class="dropdown-menu shadow-sm border-0 rounded-3">
-            <li><a class="dropdown-item">TVET Programs</a></li>
-            <li><a class="dropdown-item">Competency Standards Development</a></li>
-            <li><a class="dropdown-item">Assessment & Certification</a></li>
-            <li><a class="dropdown-item">Program Registration & Accreditation</a></li>
-          </ul>
-        </li>
-
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
-            <i class="fa-solid fa-eye me-1"></i> Transparency
-          </a>
-          <ul class="dropdown-menu shadow-sm border-0 rounded-3">
-            <li><a class="dropdown-item">Transparency Seal</a></li>
-            <li><a class="dropdown-item">Citizen’s Charter</a></li>
-            <li><a class="dropdown-item">Freedom of Information</a></li>
-            <li><a class="dropdown-item">Bagong Pilipinas</a></li>
-          </ul>
-        </li>
-<li class="nav-item dropdown">
-  <a
-    class="nav-link dropdown-toggle"
-    role="button"
-    data-bs-toggle="dropdown"
-    aria-expanded="false"
-  >
-    <i class="fa-solid fa-book me-1"></i> Resources
-  </a>
-  <ul class="dropdown-menu dropdown-menu-end">
-    <li>
-      <a
-        class="dropdown-item"
-        href="https://www.tesda.gov.ph/About/TESDA/21992"
-        target="_blank"
-      >
-        <i class="fa-solid fa-info-circle me-2"></i> TESDA Circulars (Memo, Resolutions, Advisories, Orders)
-      </a>
-    </li>
-    <li>
-      <a
-        class="dropdown-item"
-        href="https://www.tesda.gov.ph/About/TESDA/29/"
-        target="_blank"
-      >
-        <i class="fa-solid fa-laptop-code me-2"></i> Downloadable Files (Forms and other files available for downloading)
-    </a>
-    </li>
-  </ul>
-</li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
-            <i class="fa-solid fa-phone me-1"></i> Contacts
-          </a>
-          <ul class="dropdown-menu shadow-sm border-0 rounded-3">
-            <li><a class="dropdown-item">Central Office</a></li>
-            <li><a class="dropdown-item">Regional Office</a></li>
-            <li><a class="dropdown-item">Occidental Mindoro TESDA Training Institute</a></li>
-            <li><a class="dropdown-item">TVIs</a></li>
-            <li><a class="dropdown-item">Board Members</a></li>
-          </ul>
-        </li>
-
+        <!-- Verification Dropdown -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
             <i class="fa-solid fa-id-card me-1"></i> Verification
           </a>
           <ul class="dropdown-menu shadow-sm border-0 rounded-3">
-            <li><a class="dropdown-item">Certificate Verification</a></li>
-            <li><a class="dropdown-item">Trainee Record Search</a></li>
+            <li *ngFor="let link of verificationLinks$">
+              <a class="dropdown-item" [href]="link.url" target="_blank">{{ link.label }}</a>
+            </li>
           </ul>
         </li>
       </ul>
 
-      <!-- Auth Buttons -->
+      <!-- Auth Section -->
       <div *ngIf="!user" class="d-flex mt-2 mt-lg-0 gap-2" role="login">
         <button class="btn btn-outline-light btn-sm px-3" (click)="registerClicked()">
           <i class="fa-solid fa-user-plus me-1"></i> Register
@@ -130,23 +79,11 @@
         </button>
       </div>
 
-      <!-- User Dropdown -->
       <ul *ngIf="user" class="navbar-nav ms-auto mb-2 mb-lg-0">
         <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle d-flex align-items-center"
-            id="userDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-          >
-            <img
-              [src]="user.profile || '../../../assets/images/profile.png'"
-              class="rounded-circle me-2"
-              alt="User Avatar"
-              width="40"
-              height="40"
-            />
-            <span>{{ user.name || "Account" }}</span>
+          <a class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+            <img [src]="user.profile || '../../../assets/images/profile.png'" class="rounded-circle me-2" width="40" height="40" />
+            <span>{{ user.name || 'Account' }}</span>
           </a>
           <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
             <li>
@@ -155,7 +92,7 @@
               </a>
             </li>
             <li>
-              <a class="dropdown-item d-flex align-items-center justify-content-between">
+              <a class="dropdown-item d-flex justify-content-between align-items-center">
                 <span><i class="fa-solid fa-envelope me-2 text-secondary"></i> Messages</span>
                 <span *ngIf="unseenMessagesCount > 0" class="badge bg-danger rounded-pill">
                   {{ unseenMessagesCount }}
@@ -174,4 +111,3 @@
     </div>
   </div>
 </nav>
-

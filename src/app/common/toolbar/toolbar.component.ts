@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { User, UserType } from '../../models/Users';
 import { RouterLink, RouterModule } from '@angular/router';
 import { UnSeenMessages } from '../../services/messaging.service';
+import { dropdowns, verificationLinks } from './links';
 
 export interface ToolbarNavItem {
   label: string;
@@ -16,6 +17,9 @@ export interface ToolbarNavItem {
   styleUrl: './toolbar.component.scss',
 })
 export class ToolbarComponent {
+
+  dropdowns$ = dropdowns
+  verificationLinks$ = verificationLinks;
   /** Authenticated user (if any) */
   @Input({ required: true }) user: User | null = null;
 

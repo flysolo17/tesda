@@ -11,7 +11,7 @@ import {
 } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
-import { ToastrService } from '../../services/toastr.service';
+import Swal from 'sweetalert2'; 
 
 @Component({
   selector: 'app-register-dialog',
@@ -24,11 +24,8 @@ export class RegisterDialogComponent {
   activeModal = inject(NgbActiveModal);
   loading$ = false;
   userForm: FormGroup;
-  constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private toastr: ToastrService
-  ) {
+
+  constructor(private fb: FormBuilder, private authService: AuthService) {
     this.userForm = fb.nonNullable.group(
       {
         name: [
@@ -49,44 +46,77 @@ export class RegisterDialogComponent {
     );
   }
 
+  
   submit() {
     if (this.userForm.invalid) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Invalid Input',
+        text: 'Please make sure all fields are filled correctly.',
+        confirmButtonColor: '#3085d6',
+      });
       return;
     }
+
     const { name, email, age, gender, password } = this.userForm.value;
     this.loading$ = true;
+
     this.authService
       .registerWithEmailAndPassword(name, age, gender, email, password)
       .then(() => {
-        this.toastr.showSuccess('Succesfully Registered');
-
         this.loading$ = false;
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Registration Successful!',
+          text: 'You can now log in using your credentials.',
+          showConfirmButton: false,
+          timer: 2000,
+        });
+
         this.userForm.reset();
         this.activeModal.close();
       })
       .catch((e) => {
-        this.toastr.showError(e['message'] ?? 'Unknown Error');
-      })
-      .finally(() => {
         this.loading$ = false;
+        Swal.fire({
+          icon: 'error',
+          title: 'Registration Failed',
+          text: e['message'] ?? 'An unknown error occurred. Please try again.',
+          confirmButtonColor: '#d33',
+        });
       });
   }
+
+  // REGISTER WITH GOOGLE
   registerWithGoogle() {
     this.loading$ = true;
     this.authService
       .registerWithGoogle()
-      .then((data) => {
-        this.toastr.showSuccess('Successfully Registed');
+      .then(() => {
         this.loading$ = false;
+        Swal.fire({
+          icon: 'success',
+          title: 'Registered Successfully!',
+          text: 'Your account has been created via Google.',
+          showConfirmButton: false,
+          timer: 2000,
+        });
         this.activeModal.close();
       })
-      .catch((e) => this.toastr.showError(e['message'] ?? 'Unknown Error'))
-      .finally(() => {
+      .catch((e) => {
         this.loading$ = false;
+        Swal.fire({
+          icon: 'error',
+          title: 'Registration Failed',
+          text: e['message'] ?? 'Something went wrong. Please try again.',
+          confirmButtonColor: '#d33',
+        });
       });
   }
 }
 
+// PASSWORD MATCH VALIDATOR
 function passwordMatchValidator(
   control: AbstractControl
 ): ValidationErrors | null {

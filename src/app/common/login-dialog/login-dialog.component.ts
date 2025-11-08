@@ -10,7 +10,7 @@ import {
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
 import { UserType } from '../../models/Users';
-import { ToastrService } from '../../services/toastr.service';
+import Swal from 'sweetalert2'; 
 
 @Component({
   selector: 'app-login-dialog',
@@ -26,8 +26,7 @@ export class LoginDialogComponent {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
-    private toastr: ToastrService
+    private authService: AuthService
   ) {
     this.loginForm = fb.nonNullable.group({
       email: ['', [Validators.required, Validators.email]],
@@ -35,12 +34,21 @@ export class LoginDialogComponent {
     });
   }
 
+
   submit() {
     if (this.loginForm.invalid) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Invalid Input',
+        text: 'Please fill out all required fields correctly.',
+        confirmButtonColor: '#3085d6',
+      });
       return;
     }
+
     const { email, password } = this.loginForm.value;
     this.loading$ = true;
+
     this.authService
       .loginWithEmailAndPassword(email, password)
       .then((data) => {
@@ -48,37 +56,70 @@ export class LoginDialogComponent {
 
         if (data.type === UserType.ADMIN) {
           this.authService.logout();
-          this.toastr.showError('Admin Cannot Logged in here');
+          Swal.fire({
+            icon: 'error',
+            title: 'Access Denied',
+            text: 'Admin cannot log in here.',
+            confirmButtonColor: '#d33',
+          });
         } else {
-          this.toastr.showSuccess('Successfully Logged in!');
+          Swal.fire({
+            icon: 'success',
+            title: 'Login Successful!',
+            text: 'Welcome back to TESDA Occidental Mindoro.',
+            showConfirmButton: false,
+            timer: 2000,
+          });
 
           this.activeModal.close(false);
         }
       })
       .catch((e) => {
-        this.toastr.showError(e['message'] ?? 'Unknown Error');
-        this.activeModal.close(false);
         this.loading$ = false;
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Failed',
+          text: e['message'] ?? 'Incorrect email or password. Please try again.',
+          confirmButtonColor: '#d33',
+        });
+        this.activeModal.close(false);
       });
   }
+
+ 
   loginWithGoogle() {
     this.loading$ = true;
+
     this.authService
       .loginWithGoogle()
       .then((data) => {
-        this.toastr.showSuccess('Successfully Logged In');
         this.loading$ = false;
+
         if (data.type === UserType.ADMIN) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Access Denied',
+            text: 'Admin cannot log in through Google here.',
+          });
           this.activeModal.close(true);
         } else {
-          false;
+          Swal.fire({
+            icon: 'success',
+            title: 'Successfully Logged In!',
+            showConfirmButton: false,
+            timer: 2000,
+          });
+          this.activeModal.close(false);
         }
-        this.activeModal.close(false);
       })
       .catch((e) => {
-        this.toastr.showError(e['message'] ?? 'Unknown Error');
-        this.activeModal.close(false);
         this.loading$ = false;
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Failed',
+          text: e['message'] ?? 'An unknown error occurred. Please try again.',
+        });
+        this.activeModal.close(false);
       });
   }
 }
