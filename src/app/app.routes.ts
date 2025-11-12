@@ -41,6 +41,7 @@ import { ProviderListComponent } from './user/provider-list/provider-list.compon
 import { AdminTransparencySealComponent } from './admin/admin-transparency-seal/admin-transparency-seal.component';
 import { CreateSealComponent } from './admin/admin-transparency-seal/create-seal/create-seal.component';
 import { TransparencySealListComponent } from './user/transparency-seal-list/transparency-seal-list.component';
+import { NewsAndEventsListComponent } from './user/news-and-events/news-and-events-list/news-and-events-list.component';
 
 export const routes: Routes = [
   {
@@ -102,6 +103,10 @@ export const routes: Routes = [
       {
         path: 'transparency-seal',
         component: TransparencySealListComponent,
+      },
+      {
+        path: 'news-and-events',
+        component: NewsAndEventsListComponent,
       },
     ],
   },

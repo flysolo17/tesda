@@ -6,6 +6,7 @@ import { CalendarComponent } from '../../calendar/calendar.component';
 import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import { FooterComponent } from '../../footer/footer.component';
+import { NewsAndEventsComponent } from '../../../user/news-and-events/news-and-events.component';
 
 @Component({
   selector: 'app-home',
@@ -16,6 +17,7 @@ import { FooterComponent } from '../../footer/footer.component';
     CalendarComponent,
     RouterLink,
     FooterComponent,
+    NewsAndEventsComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',

@@ -7,11 +7,16 @@
   <!-- 🔹 Main Content -->
   <div
     *ngIf="!isLoading && announcement"
-    class="row g-4"
-    style="align-items: flex-start"
+    class="d-flex flex-wrap gap-4 align-items-start"
   >
-    <!-- 📄 Announcement Section -->
-    <div class="col-12 col-lg-8">
+    <!-- 📄 Announcement -->
+    <div
+      [ngClass]="{
+        'flex-grow-1': true,
+        'w-100': isAnnouncement(announcement.type),
+        'w-100 w-lg-66': !isAnnouncement(announcement.type)
+      }"
+    >
       <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
         <img
           *ngIf="announcement.image"
@@ -55,7 +60,10 @@
     </div>
 
     <!-- 💬 Comments Sidebar -->
-    <div class="col-12 col-lg-4">
+    <div
+      *ngIf="announcement.type !== 'announcement'"
+      class="flex-grow-1 w-100 w-lg-33"
+    >
       <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body p-4">
           <h5 class="fw-bold mb-3">Comments</h5>

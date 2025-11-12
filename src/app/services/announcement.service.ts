@@ -89,11 +89,33 @@ export class AnnouncementService {
     );
     return collectionData(q);
   }
+
+  getAllPartialNewsAndEvents() {
+    const q = query(
+      collection(this.firestore, this.ANNOUNCEMENT_COLLECTION).withConverter(
+        AnnouncementConverter
+      ),
+      where('type', '!=', 'announcement'),
+      orderBy('updatedAt', 'desc'),
+      limit(3)
+    );
+    return collectionData(q);
+  }
   getById(id: string) {
     return getDoc(
       doc(this.firestore, this.ANNOUNCEMENT_COLLECTION, id).withConverter(
         AnnouncementConverter
       )
     );
+  }
+  getAllNewsAndEvents() {
+    const q = query(
+      collection(this.firestore, this.ANNOUNCEMENT_COLLECTION).withConverter(
+        AnnouncementConverter
+      ),
+      where('type', '!=', 'announcement'),
+      orderBy('updatedAt', 'desc')
+    );
+    return collectionData(q);
   }
 }
