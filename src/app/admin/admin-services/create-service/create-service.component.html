@@ -51,56 +51,47 @@
           <label for="description">Description</label>
         </div>
       </div>
-      <!-- Icon Upload -->
-      <div class="col-md-12">
-        <div class="form-floating">
-          <input
-            type="file"
-            class="form-control"
-            id="icon"
-            (change)="onIconSelected($event)"
-            accept=".pdf,.doc,.docx"
-          />
-          <label for="icon" class="form-label">Upload File</label>
-        </div>
-      </div>
 
-      <!-- ✅ Requirements Section -->
+      <!-- Provider Selection -->
       <div class="col-12">
-        <label class="form-label fw-semibold mb-2">Requirements</label>
+        <label class="form-label fw-semibold mb-2">Select Providers</label>
 
-        <div formArrayName="requirements">
-          <div
-            *ngFor="let req of requirements.controls; let i = index"
-            class="input-group mb-2"
+        <!-- Selected Providers -->
+        <div class="mb-2">
+          <span
+            *ngFor="let id of serviceForm.get('provider')?.value"
+            class="badge bg-primary me-2"
           >
-            <input
-              type="text"
-              class="form-control"
-              [formControlName]="i"
-              placeholder="Enter requirement"
-            />
+            {{ getProviderName(id) }}
             <button
               type="button"
-              class="btn btn-outline-danger"
-              (click)="removeRequirement(i)"
-              [disabled]="requirements.length === 1"
-            >
-              <i class="bi bi-x"></i>
-            </button>
-          </div>
+              class="btn-close btn-close-white btn-sm ms-1"
+              aria-label="Remove"
+              (click)="removeProvider(id)"
+            ></button>
+          </span>
         </div>
 
-        <button
-          type="button"
-          class="btn btn-outline-primary btn-sm mt-2"
-          (click)="addRequirement()"
-        >
-          <i class="bi bi-plus"></i> Add Requirement
-        </button>
+        <!-- Dropdown -->
+        <div class="input-group">
+          <select class="form-select" formControlName="selectedProvider">
+            <option [ngValue]="null">Choose provider...</option>
+            <option *ngFor="let provider of providers" [ngValue]="provider.id">
+              {{ provider.name }}
+            </option>
+          </select>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="addProvider()"
+            [disabled]="!serviceForm.get('selectedProvider')?.value"
+          >
+            Add
+          </button>
+        </div>
       </div>
 
-      <!-- Submit Button -->
+      <!-- Submit -->
       <div class="col-12">
         <button
           class="btn btn-primary w-100"

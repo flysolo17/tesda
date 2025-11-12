@@ -1,0 +1,89 @@
+<form [formGroup]="orgForm" (ngSubmit)="submit()">
+  <div class="modal-header">
+    <h4 class="modal-title">
+      {{
+        org === null
+          ? "Create Organization Structure"
+          : "Update Organization Structure"
+      }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="close()"
+    ></button>
+  </div>
+
+  <div class="modal-body">
+    <div class="form-floating mb-3">
+      <input
+        type="text"
+        id="title"
+        class="form-control"
+        formControlName="title"
+        placeholder="Title"
+        [class.is-invalid]="
+          orgForm.get('title')?.invalid && orgForm.get('title')?.touched
+        "
+      />
+      <label for="title">Title *</label>
+      <div class="invalid-feedback">Title is required.</div>
+    </div>
+
+    <div class="form-floating mb-3">
+      <textarea
+        id="description"
+        class="form-control"
+        formControlName="description"
+        placeholder="Description"
+        style="height: 100px"
+      ></textarea>
+      <label for="description">Description</label>
+    </div>
+
+    <div class="form-floating mb-3">
+      <textarea
+        id="embeddedHtml"
+        class="form-control"
+        formControlName="embeddedHtml"
+        placeholder="Embedded HTML"
+        style="height: 150px"
+        [class.is-invalid]="
+          orgForm.get('embeddedHtml')?.invalid &&
+          orgForm.get('embeddedHtml')?.touched
+        "
+      ></textarea>
+      <label for="embeddedHtml">Embedded HTML *</label>
+      <div class="invalid-feedback">Embedded HTML is required.</div>
+    </div>
+
+    <div class="mb-3 text-end">
+      <a
+        href="https://app.diagrams.net/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn btn-outline-info"
+      >
+        <i class="bi bi-diagram-3"></i> Launch Diagram Editor
+      </a>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">
+      Close
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="isLoading || orgForm.invalid"
+    >
+      <span
+        *ngIf="isLoading"
+        class="spinner-border spinner-border-sm me-2"
+      ></span>
+      Save
+    </button>
+  </div>
+</form>

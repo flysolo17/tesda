@@ -24,7 +24,7 @@ import {
   Storage,
   deleteObject,
 } from '@angular/fire/storage';
-import { async, Observable } from 'rxjs';
+import { async, catchError, map, Observable, of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -106,29 +106,19 @@ export class ProgramsService {
     return { items, lastIndex: newLastIndex, total };
   }
 
-  async create(service: Services, file: File | null): Promise<void> {
+  create(service: Services): Promise<void> {
     const collectionRef = collection(this.firestore, this.SERVICES_COLLECTION);
     const docRef = doc(collectionRef);
     const id = docRef.id;
 
-    let fileUrl: string | null = null;
-
-    if (file) {
-      const ext = file.name.split('.').pop(); // Get file extension
-      const fileRef = ref(this.storage, `services/files/${id}.${ext}`);
-      await uploadBytes(fileRef, file);
-      fileUrl = await getDownloadURL(fileRef);
-    }
-
     const newService: Services = {
       ...service,
       id,
-      file: fileUrl,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
-    await setDoc(docRef, newService);
+    return setDoc(docRef, newService);
   }
 
   async delete(id: string, iconUrl: string | null): Promise<void> {
@@ -175,6 +165,23 @@ export class ProgramsService {
     );
     return collectionData(q);
   }
+
+  getByProvider(providers: string[]): Observable<Services[]> {
+    if (!providers?.length) return of([]);
+
+    const servicesRef = collection(
+      this.firestore,
+      this.SERVICES_COLLECTION
+    ).withConverter(ServicesConverter);
+
+    const q = query(
+      servicesRef,
+      where('provider', 'in', providers.slice(0, 10)) // Firestore limit: max 10
+    );
+
+    return collectionData(q);
+  }
+
   getAll(): Observable<Services[]> {
     const q = query(
       collection(this.firestore, this.SERVICES_COLLECTION).withConverter(
@@ -185,7 +192,7 @@ export class ProgramsService {
     );
     return collectionData(q);
   }
-  async update(service: Services, file: File | null): Promise<void> {
+  update(service: Services): Promise<void> {
     const docRef = doc(this.firestore, this.SERVICES_COLLECTION, service.id);
 
     const updatePayload: Partial<Services> = {
@@ -193,38 +200,6 @@ export class ProgramsService {
       updatedAt: new Date(),
     };
 
-    const updateFile = async (): Promise<string | null> => {
-      if (!file) return service.file || null;
-
-      // Delete old file if exists
-      if (service.file) {
-        try {
-          const oldRef = ref(this.storage, service.file);
-          await deleteObject(oldRef);
-        } catch (err) {
-          console.warn('⚠️ Failed to delete old file:', err);
-        }
-      }
-
-      // Upload new file with extension and unique timestamp
-      const ext = file.name.split('.').pop();
-      const timestamp = Date.now();
-      const newRef = ref(
-        this.storage,
-        `services/files/${service.id}_${timestamp}.${ext}`
-      );
-
-      await uploadBytes(newRef, file);
-      return await getDownloadURL(newRef);
-    };
-
-    try {
-      const fileUrl = await updateFile();
-      updatePayload.file = fileUrl;
-      await updateDoc(docRef, updatePayload);
-    } catch (error) {
-      console.error('Failed to update service:', error);
-      throw error;
-    }
+    return updateDoc(docRef, updatePayload);
   }
 }

@@ -1,0 +1,52 @@
+<nav class="navbar navbar-dark bg-primary mb-4 shadow-sm">
+  <div class="container-fluid">
+    <span class="navbar-brand fs-4">Organizational Structures</span>
+    <button
+      class="btn btn-success d-flex gap-2 align-items-center"
+      (click)="createChart()"
+    >
+      <i class="bi bi-plus-lg"></i> Create Chart
+    </button>
+  </div>
+</nav>
+<div class="container">
+  <ng-container *ngIf="structures$ | async as structures">
+    <div *ngIf="structures.length === 0" class="text-center text-muted">
+      <p>No organizational charts found.</p>
+    </div>
+
+    <div class="d-flex flex-column gap-4">
+      <div *ngFor="let structure of structures">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <div>
+                <h5 class="card-title mb-1">{{ structure.title }}</h5>
+                <p class="text-muted small mb-0">{{ structure.description }}</p>
+              </div>
+              <div class="btn-group">
+                <button
+                  class="btn btn-sm btn-outline-primary"
+                  (click)="createChart(structure)"
+                >
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="deleteChart(structure.id)"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="border rounded p-2 bg-light"
+              [innerHTML]="getSafeHtml(structure.embeddedHtml)"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

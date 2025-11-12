@@ -1,3 +1,5 @@
+import { ProviderType } from '../../models/Provider';
+
 // Define the structure for a single menu item
 export interface MenuItem {
   url: string;
@@ -33,81 +35,21 @@ export const dropdowns: Dropdowns = {
   ],
   'Programs & Services': [
     {
-      url: '/landing-page/services',
-      label: 'TVET PROGRAMS',
-      queryParams: { type: 'TVET_PROGRAMS', page: 1, size: 10, search: '' },
-    },
-    {
-      url: '/landing-page/services',
-      label: 'COMPETENCY STANDARDS DEVELOPMENT',
+      url: '/landing-page/provider',
+      label: ProviderType.TVET,
       queryParams: {
-        type: 'COMPETENCY_STANDARDS_DEVELOPMENT',
-        page: 1,
-        size: 10,
-        search: '',
+        type: ProviderType.TVET,
       },
     },
     {
-      url: '/landing-page/services',
-      label: 'COMPETENCY ASSESSMENT AND CERTIFICATION',
+      url: '/landing-page/provider',
+      label: ProviderType.PROVINCIAL,
       queryParams: {
-        type: 'COMPETENCY_ASSESSMENT_AND_CERTIFICATION',
-        page: 1,
-        size: 10,
-        search: '',
-      },
-    },
-    {
-      url: '/landing-page/services',
-      label: 'PROGRAM REGISTRATION AND ACCREDITATION',
-      queryParams: {
-        type: 'PROGRAM_REGISTRATION_AND_ACCREDITATION',
-        page: 1,
-        size: 10,
-        search: '',
-      },
-    },
-    {
-      url: '/landing-page/services',
-      label: 'DIRECTORY OF SCHOOLS WITH REGISTERED PROGRAMS',
-      queryParams: {
-        type: 'DIRECTORY_OF_SCHOOLS_WITH_REGISTERED_PROGRAMS',
-        page: 1,
-        size: 10,
-        search: '',
-      },
-    },
-    {
-      url: '/landing-page/services',
-      label: 'DIRECTORY OF ACCREDITED TVET TRAINERS',
-      queryParams: {
-        type: 'DIRECTORY_OF_ACCREDITED_TVET_TRAINERS',
-        page: 1,
-        size: 10,
-        search: '',
-      },
-    },
-    {
-      url: '/landing-page/services',
-      label: 'TRAINING REGULATIONS',
-      queryParams: {
-        type: 'TRAINING_REGULATIONS',
-        page: 1,
-        size: 10,
-        search: '',
-      },
-    },
-    {
-      url: '/landing-page/services',
-      label: 'COMPETENCY STANDARDS',
-      queryParams: {
-        type: 'COMPETENCY_STANDARDS',
-        page: 1,
-        size: 10,
-        search: '',
+        type: ProviderType.PROVINCIAL,
       },
     },
   ],
+
   Transparency: [
     { url: '/landing-page/transparency-seal', label: 'TRANSPARENCY SEAL' },
     { url: '/landing-page/citizens-charter', label: 'CITIZEN’S CHARTER' },

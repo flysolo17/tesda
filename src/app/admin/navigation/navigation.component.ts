@@ -62,12 +62,25 @@ export class NavigationComponent {
           label: 'Activities',
           route: 'activities',
         },
+        {
+          label: 'Organizational Structure',
+          route: 'organizational-structure',
+        },
       ],
     },
     {
-      label: 'Services',
-      route: 'services',
+      label: 'Programs & Services',
       icon: 'bi bi-grid',
+      more: [
+        {
+          label: 'Services',
+          route: 'services',
+        },
+        {
+          label: 'TVET Providers and Assessment Centers',
+          route: 'providers',
+        },
+      ],
     },
     {
       label: 'Announcements',
@@ -96,9 +109,18 @@ export class NavigationComponent {
       route: 'feedback',
     },
     {
-      label: 'PhilGEPS Posting',
+      label: 'Transparency',
       icon: '',
-      route: 'philgeps-posting',
+      more: [
+        {
+          label: 'Transparency Seal',
+          route: 'transparency-seal',
+        },
+        {
+          label: 'PHILGEPS Posting',
+          route: 'philgeps-posting',
+        },
+      ],
     },
   ];
 

@@ -1,13 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Career, CAREERS } from '../../models/Careeer';
-import { CareerService } from '../../services/career.service';
-import { ToastrService } from '../../services/toastr.service';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { AddCareersComponent } from '../dialogs/add-careers/add-careers.component';
+
 import Swal from 'sweetalert2';
+import { Career } from '../../../models/Careeer';
+import { CareerService } from '../../../services/career.service';
+import { ToastrService } from '../../../services/toastr.service';
+import { AddCareersComponent } from '../../dialogs/add-careers/add-careers.component';
 @Component({
   selector: 'app-admin-careers',
   standalone: true,

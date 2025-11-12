@@ -1,0 +1,232 @@
+<form [formGroup]="providerForm" (ngSubmit)="submit()">
+  <div class="modal-header">
+    <h4 class="modal-title">
+      {{ provider ? "Update Provider" : "Create Provider" }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="close()"
+    ></button>
+  </div>
+
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- Name -->
+        <div class="form-floating mb-3">
+          <input
+            type="text"
+            id="name"
+            class="form-control"
+            formControlName="name"
+            placeholder="Name"
+            [class.is-invalid]="
+              providerForm.get('name')?.invalid &&
+              providerForm.get('name')?.touched
+            "
+          />
+          <label for="name">Name *</label>
+          <div class="invalid-feedback">Name is required.</div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <!-- Region -->
+        <div class="form-floating mb-3">
+          <input
+            type="text"
+            id="region"
+            class="form-control"
+            formControlName="region"
+            placeholder="Region"
+          />
+          <label for="region">Region</label>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <!-- Province -->
+        <div class="form-floating mb-3">
+          <input
+            type="text"
+            id="province"
+            class="form-control"
+            formControlName="province"
+            placeholder="Province"
+          />
+          <label for="province">Province</label>
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <!-- Type -->
+        <div class="form-floating mb-3">
+          <select
+            id="type"
+            class="form-select"
+            formControlName="type"
+            [class.is-invalid]="
+              providerForm.get('type')?.invalid &&
+              providerForm.get('type')?.touched
+            "
+          >
+            <option [ngValue]="null" disabled>Select provider type</option>
+            <option *ngFor="let type of providerTypes" [ngValue]="type">
+              {{ type }}
+            </option>
+          </select>
+          <label for="type">Provider Type *</label>
+          <div class="invalid-feedback">Provider type is required.</div>
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <!-- Address -->
+        <div class="form-floating mb-3">
+          <input
+            type="text"
+            id="address"
+            class="form-control"
+            formControlName="address"
+            placeholder="Address"
+            [class.is-invalid]="
+              providerForm.get('address')?.invalid &&
+              providerForm.get('address')?.touched
+            "
+          />
+          <label for="address">Address *</label>
+          <div class="invalid-feedback">Address is required.</div>
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <!-- Contact Number -->
+        <div class="form-floating mb-3">
+          <input
+            type="text"
+            id="contactNumber"
+            class="form-control"
+            formControlName="contactNumber"
+            placeholder="Contact Number"
+          />
+          <label for="contactNumber">Contact Number</label>
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <!-- Email -->
+        <div class="form-floating mb-3">
+          <input
+            type="email"
+            id="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="Email"
+            [class.is-invalid]="
+              providerForm.get('email')?.invalid &&
+              providerForm.get('email')?.touched
+            "
+          />
+          <label for="email">Email</label>
+          <div class="invalid-feedback">Please enter a valid email.</div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <!-- Latitude -->
+        <div class="form-floating mb-3">
+          <input
+            type="number"
+            id="latitude"
+            class="form-control"
+            formControlName="latitude"
+            placeholder="Latitude"
+          />
+          <label for="latitude">Latitude</label>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <!-- Longitude -->
+        <div class="form-floating mb-3">
+          <input
+            type="number"
+            id="longitude"
+            class="form-control"
+            formControlName="longitude"
+            placeholder="Longitude"
+          />
+          <label for="longitude">Longitude</label>
+        </div>
+      </div>
+      <div class="col-md-12 mt-3">
+        <label for="iconUpload" class="form-label fw-semibold"
+          >Upload File</label
+        >
+        <input
+          type="file"
+          id="iconUpload"
+          class="form-control"
+          (change)="onIconSelected($event)"
+          accept=".jpg,.jpeg,.png,.pdf"
+        />
+        <div class="form-text">Supported formats: JPG, PNG, PDF</div>
+
+        <div *ngIf="selectedFile" class="mt-2 text-success">
+          Selected: {{ selectedFile.name }}
+        </div>
+      </div>
+      <div class="col-md-12">
+        <label class="form-label fw-semibold">Requirements *</label>
+        <div formArrayName="requirements">
+          <div
+            *ngFor="let req of requirements.controls; let i = index"
+            class="input-group mb-2"
+          >
+            <input
+              type="text"
+              class="form-control"
+              [formControlName]="i"
+              placeholder="Enter requirement"
+              [class.is-invalid]="req.invalid && req.touched"
+            />
+            <button
+              type="button"
+              class="btn btn-outline-danger"
+              (click)="removeRequirement(i)"
+              *ngIf="requirements.length > 1"
+            >
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-sm mt-2"
+          (click)="addRequirement()"
+        >
+          <i class="bi bi-plus"></i> Add Requirement
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">
+      Close
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="isLoading || providerForm.invalid"
+    >
+      <span
+        *ngIf="isLoading"
+        class="spinner-border spinner-border-sm me-2"
+      ></span>
+      Save
+    </button>
+  </div>
+</form>

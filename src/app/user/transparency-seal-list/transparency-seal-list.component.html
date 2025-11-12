@@ -1,0 +1,82 @@
+<!-- Seal Image -->
+<img
+  src="../../../assets/images/seal.png"
+  class="img-fluid mb-4"
+  alt="Transparency Seal"
+/>
+<div class="container my-4">
+  <!-- Description Card -->
+  <div class="card p-3">
+    <div class="card-body text-primary">
+      <h1 class="mb-3">TESDA MIMAROPA TRANSPARENCY SEAL</h1>
+      <p class="text-muted mb-4">
+        A Transparency Seal, prominently displayed on the main page of the
+        website of a particular government agency, is a certificate that it has
+        complied with the requirements of Section 93. This Seal links to a page
+        within the agency’s website which contains an index of downloadable
+        items of each of the above-mentioned documents.
+        <br /><br />
+        <strong>Symbolism:</strong> A pearl buried inside a tightly-shut shell
+        is practically worthless. Government information is a pearl, meant to be
+        shared with the public in order to maximize its inherent value. The
+        Transparency Seal, depicted by a pearl shining out of an open shell, is
+        a symbol of a policy shift towards openness in access to government
+        information. On the one hand, it hopes to inspire Filipinos in the civil
+        service to be more open to citizen engagement; on the other, to invite
+        the Filipino citizenry to exercise their right to participate in
+        governance. This initiative is envisioned as a step in the right
+        direction towards solidifying the position of the Philippines as the
+        Pearl of the Orient – a shining example for democratic virtue in the
+        region. <br /><br />
+        <strong>TUV SUD Certificate – MIMAROPA TESDA:</strong> Compliance with
+        Sec. 93 of the General Appropriations Act of 2013 (R.A. No. 10352). The
+        agency’s mandates and functions, names of its officials with their
+        position and designation, and contact information.
+      </p>
+
+      <!-- Transparency Seals Accordion -->
+      <ng-container
+        *ngFor="let item of transparencySeals$ | async; let i = index"
+      >
+        <div ngbAccordion class="border-0 mb-2" [closeOthers]="true">
+          <div ngbAccordionItem class="border-0">
+            <h2 ngbAccordionHeader>
+              <button
+                ngbAccordionButton
+                class="text-primary fw-semibold border-0 shadow-none text-start"
+                type="button"
+              >
+                {{ item.title | uppercase }}
+              </button>
+            </h2>
+
+            <div ngbAccordionCollapse>
+              <div ngbAccordionBody>
+                <div
+                  class="d-flex flex-column overflow-auto"
+                  style="max-height: 200px"
+                >
+                  <div *ngFor="let link of item.quickLinks || []" class="mb-2">
+                    <ng-container *ngIf="link?.link; else plainLabel">
+                      <a
+                        [href]="link.link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-decoration-none text-primary"
+                      >
+                        <i class="bi bi-link-45deg me-1"></i>{{ link?.label }}
+                      </a>
+                    </ng-container>
+                    <ng-template #plainLabel>
+                      <span class="text-body">{{ link?.label }}</span>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

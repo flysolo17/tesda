@@ -1,21 +1,22 @@
 import { QueryDocumentSnapshot } from '@angular/fire/firestore';
 
-export interface Announcement {
+export interface TransparencySeal {
   id: string;
-  image: string;
-  type: 'announcement' | 'news' | 'events';
   title: string;
-  summary: string;
-  content: string;
-  source: string;
+  quickLinks: QuickLink[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-export const AnnouncementConverter = {
-  toFirestore: (data: Announcement) => data,
+export interface QuickLink {
+  label: string;
+  link: string;
+}
+
+export const TransparencySealConverter = {
+  toFirestore: (data: TransparencySeal) => data,
   fromFirestore: (snap: QueryDocumentSnapshot) => {
-    const data = snap.data() as Announcement;
+    const data = snap.data() as TransparencySeal;
     data.createdAt = (data.createdAt as any).toDate();
     data.updatedAt = (data.updatedAt as any).toDate();
     return data;

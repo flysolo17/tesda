@@ -7,8 +7,8 @@ import { AdminMainComponent } from './admin/admin-main/admin-main.component';
 import { LoginComponent } from './admin/login/login.component';
 import { NavigationComponent } from './admin/navigation/navigation.component';
 import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard.component';
-import { AdminBannersComponent } from './admin/admin-banners/admin-banners.component';
-import { AdminCareersComponent } from './admin/admin-careers/admin-careers.component';
+import { AdminBannersComponent } from './admin/about/admin-banners/admin-banners.component';
+
 import { AdminRequirementsComponent } from './admin/admin-requirements/admin-requirements.component';
 
 import { CreateServiceComponent } from './admin/admin-services/create-service/create-service.component';
@@ -22,7 +22,7 @@ import { adminGuard } from './guards/admin.guard';
 import { CreateAnnouncementComponent } from './admin/create-announcement/create-announcement.component';
 import { AnnouncementComponent } from './admin/announcement/announcement.component';
 import { NewsComponent } from './admin/news/news.component';
-import { AdminActivitiesComponent } from './admin/admin-activities/admin-activities.component';
+
 import { UserDashboardComponent } from './user/user-dashboard/user-dashboard.component';
 import { UserMessagesComponent } from './user/user-messages/user-messages.component';
 import { ServicesListComponent } from './common/services-list/services-list.component';
@@ -33,6 +33,14 @@ import { AdminAppointmentComponent } from './admin/admin-appointment/admin-appoi
 import { AdminPhilgepsPostingComponent } from './admin/admin-philgeps-posting/admin-philgeps-posting.component';
 import { PhilGepsListComponent } from './user/phil-geps-list/phil-geps-list.component';
 import { AdminServicesComponent } from './admin/admin-services/admin-services.component';
+import { AdminActivitiesComponent } from './admin/about/admin-activities/admin-activities.component';
+import { AdminCareersComponent } from './admin/about/admin-careers/admin-careers.component';
+import { OrganizationChartComponent } from './admin/about/organization-chart/organization-chart.component';
+import { AdminProvidersComponent } from './admin/admin-services/admin-providers/admin-providers.component';
+import { ProviderListComponent } from './user/provider-list/provider-list.component';
+import { AdminTransparencySealComponent } from './admin/admin-transparency-seal/admin-transparency-seal.component';
+import { CreateSealComponent } from './admin/admin-transparency-seal/create-seal/create-seal.component';
+import { TransparencySealListComponent } from './user/transparency-seal-list/transparency-seal-list.component';
 
 export const routes: Routes = [
   {
@@ -62,6 +70,10 @@ export const routes: Routes = [
         path: 'announcements/:id',
         component: ViewAnnouncementComponent,
       },
+      {
+        path: 'provider',
+        component: ProviderListComponent,
+      },
 
       {
         path: 'home',
@@ -86,6 +98,10 @@ export const routes: Routes = [
       {
         path: 'philgeps-posting',
         component: PhilGepsListComponent,
+      },
+      {
+        path: 'transparency-seal',
+        component: TransparencySealListComponent,
       },
     ],
   },
@@ -148,6 +164,10 @@ export const routes: Routes = [
             component: AdminBannersComponent,
           },
           {
+            path: 'organizational-structure',
+            component: OrganizationChartComponent,
+          },
+          {
             path: 'careers',
             component: AdminCareersComponent,
           },
@@ -158,6 +178,10 @@ export const routes: Routes = [
           {
             path: 'services',
             component: AdminServicesComponent,
+          },
+          {
+            path: 'providers',
+            component: AdminProvidersComponent,
           },
           {
             path: 'requirements',
@@ -186,6 +210,14 @@ export const routes: Routes = [
           {
             path: 'philgeps-posting',
             component: AdminPhilgepsPostingComponent,
+          },
+          {
+            path: 'transparency-seal',
+            component: AdminTransparencySealComponent,
+          },
+          {
+            path: 'create-seal',
+            component: CreateSealComponent,
           },
         ],
       },

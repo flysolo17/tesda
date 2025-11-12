@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { BannerService } from '../../services/banner.service';
-import { ToastrService } from '../../services/toastr.service';
+import { BannerService } from '../../../services/banner.service';
+import { ToastrService } from '../../../services/toastr.service';
 import { finalize } from 'rxjs';
-import { Banner } from '../../models/Banner';
+import { Banner } from '../../../models/Banner';
 import { CommonModule } from '@angular/common';
 
 @Component({

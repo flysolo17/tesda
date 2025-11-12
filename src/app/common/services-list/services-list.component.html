@@ -114,14 +114,6 @@
         <!-- Description -->
         <p class="text-muted mb-3">{{ selectedService?.description }}</p>
 
-        <!-- Requirements -->
-        <div *ngIf="selectedService?.requirements?.length">
-          <h6 class="fw-semibold">Requirements:</h6>
-          <ul class="mb-3">
-            <li *ngFor="let req of selectedService?.requirements">{{ req }}</li>
-          </ul>
-        </div>
-
         <!-- Dates -->
         <div class="mb-4">
           <p class="mb-1">
@@ -136,14 +128,6 @@
 
         <!-- Action Buttons -->
         <div class="d-flex gap-2 flex-wrap">
-          <button
-            class="btn btn-success flex-grow-1"
-            [disabled]="!selectedService?.file"
-            (click)="downloadFile(selectedService?.file ?? null)"
-          >
-            <i class="bi bi-download me-1"></i> Download Files
-          </button>
-
           <button class="btn btn-primary flex-grow-1">
             <i class="bi bi-calendar-check me-1"></i> Book Appointment
           </button>

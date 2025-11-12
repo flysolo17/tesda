@@ -1,9 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { NgbModal, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
-import { CreateActivityComponent } from '../dialogs/create-activity/create-activity.component';
-import { ActivityService } from '../../services/activity.service';
-import { Activity } from '../../models/Activity';
+
 import { CommonModule } from '@angular/common';
+import { Activity } from '../../../models/Activity';
+import { ActivityService } from '../../../services/activity.service';
+import { CreateActivityComponent } from '../../dialogs/create-activity/create-activity.component';
 
 @Component({
   selector: 'app-admin-activities',
