@@ -1,0 +1,65 @@
+<section class="py-5 bg-light">
+  <div class="container text-center">
+    <h2
+      class="fw-bold mb-5"
+      style="font-size: 2.5rem; letter-spacing: -0.5px; line-height: 1.2"
+    >
+      <span
+        style="
+          background: linear-gradient(to right, #0d6efd, #198754, #ffc107);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          display: inline-block;
+        "
+      >
+        News and Events
+      </span>
+    </h2>
+
+    <!-- ✅ Responsive Grid Layout -->
+    <div class="row g-4 justify-content-center">
+      <div
+        class="col-sm-10 col-md-6 col-lg-4"
+        *ngFor="let item of items$ | async; let i = index"
+        [ngClass]="{
+          'animate-delay-0': i === 0,
+          'animate-delay-1': i === 1,
+          'animate-delay-2': i === 2
+        }"
+      >
+        <div
+          class="card rounded-3 shadow-sm border-0 h-100 animate__animated animate__fadeInUp"
+        >
+          <img
+            *ngIf="item.image"
+            [src]="item.image"
+            class="card-img-top"
+            alt="Announcement image"
+            style="object-fit: cover; height: 180px"
+          />
+          <div class="card-body text-start d-flex flex-column">
+            <h5 class="card-title">{{ item.title }}</h5>
+            <p class="card-text text-truncate" style="max-height: 3.6em">
+              {{ item.summary }}
+            </p>
+            <a
+              class="btn btn-link ms-auto mt-auto"
+              [routerLink]="['/landing-page/announcements', item.id]"
+            >
+              Read More
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <button
+        class="btn btn-outline-primary px-4 py-2"
+        [routerLink]="['/landing-page/news-and-events']"
+      >
+        See more
+      </button>
+    </div>
+  </div>
+</section>

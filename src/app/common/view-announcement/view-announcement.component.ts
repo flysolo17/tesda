@@ -82,4 +82,8 @@ export class ViewAnnouncementComponent implements OnInit {
       this.toastr.showError('Failed to post comment. Please try again.');
     }
   }
+
+  isAnnouncement(type: string): boolean {
+    return type === 'announcement';
+  }
 }
