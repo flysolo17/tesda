@@ -72,3 +72,22 @@
 .animate-delay-2 {
   animation-delay: 0.3s;
 }
+.btn-gradient {
+    background: linear-gradient(90deg, #0d6efd, #198754, #ffc107);
+    border: none;
+    color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .btn-gradient:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  @media (max-width: 767px) {
+    .d-flex.align-items-center.ms-3 {
+      width: 100%;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+  }
+  

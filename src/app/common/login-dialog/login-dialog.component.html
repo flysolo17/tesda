@@ -74,27 +74,22 @@
       <span *ngIf="!loading$">Login</span>
     </button>
 
-    <!-- Google Login Button -->
-    <button
-      [disabled]="loading$"
-      class="btn btn-outline-secondary btn-lg col-12 mb-3 d-flex align-items-center justify-content-center gap-2"
-      type="button"
-      (click)="loginWithGoogle()"
-    >
-      <img
-        src="../../../assets/images/google-icon.png"
-        alt="Google"
-        width="20"
-        height="20"
-      />
-      Login with Google
-    </button>
-
-    <!-- Forgot Password -->
-    <div class="text-center">
-      <a href="#" class="text-decoration-none small text-primary fw-medium">
-        Forgot your password?
-      </a>
-    </div>
-  </form>
+<!-- Forgot Password -->
+<div class="text-center">
+  <a href="#" class="text-decoration-none small text-primary fw-medium">
+    Forgot your password?
+  </a>
 </div>
+
+<!-- Sign Up -->
+<div class="text-center mt-2">
+  <span class="small text-muted">Don't have an account? </span>
+  <a 
+    href="#" 
+    class="text-decoration-none small text-success fw-semibold"
+    (click)="registerClicked()"
+  >
+    Sign Up
+  </a>
+</div>
+

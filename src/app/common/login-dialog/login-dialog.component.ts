@@ -12,6 +12,7 @@ import { AuthService } from '../../services/auth.service';
 import { UserType } from '../../models/Users';
 import Swal from 'sweetalert2';
 import { ToastrService } from '../../services/toastr.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-dialog',
@@ -24,6 +25,7 @@ export class LoginDialogComponent {
   activeModal = inject(NgbActiveModal);
   loginForm: FormGroup;
   loading$ = false;
+  private router = inject(Router);
 
   constructor(
     private fb: FormBuilder,
@@ -61,16 +63,15 @@ export class LoginDialogComponent {
           this.activeModal.close(data);
         } else {
           this.toastr.showSuccess('Successfully Logged in!');
-
           this.activeModal.close(false);
         }
       })
       .catch((e) => {
         this.toastr.showError(e['message'] ?? 'Unknown Error');
-
         this.loading$ = false;
       });
   }
+
   loginWithGoogle() {
     this.loading$ = true;
 
@@ -90,5 +91,11 @@ export class LoginDialogComponent {
         this.activeModal.close(false);
         this.loading$ = false;
       });
+  }
+
+  // ✅ Add this method to handle Sign Up click
+  registerClicked() {
+    this.activeModal.close(); // Close the login modal
+    this.router.navigate(['/register']); // Navigate to the registration page
   }
 }

@@ -3,6 +3,7 @@ import { BannerService } from '../../../services/banner.service';
 import { CommonModule } from '@angular/common';
 import { AnnouncementListComponent } from '../announcement-list/announcement-list.component';
 import { CalendarComponent } from '../../calendar/calendar.component';
+import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import { FooterComponent } from '../../footer/footer.component';
 import { NewsAndEventsComponent } from '../../../user/news-and-events/news-and-events.component';
@@ -31,20 +32,22 @@ export class HomeComponent {
       color: '#0d6efd',
     },
     {
-      title: 'Scholarships',
-      desc: 'Government-funded education support for eligible individuals.',
-      icon: 'bi-mortarboard',
-      bg: '#e9f7ef',
-      color: '#198754',
-    },
-    {
       title: 'Assessment & Certification',
-      desc: 'Evaluate your skills and gain national certification from TESDA.',
+      desc: 'Evaluate your skills and gain national certification from TESDA. ',
       icon: 'bi-patch-check',
       bg: '#fff8e1',
       color: '#ffc107',
     },
   ];
+
   banners$ = this.bannerService.getAll();
-  constructor(private bannerService: BannerService) {}
+  user: any = null; // Add this if you want to track login state
+
+  constructor(private bannerService: BannerService, private router: Router) {}
+
+  // Add this method to handle the register button
+  registerClicked() {
+    // Navigate to the register page
+    this.router.navigate(['/register']);
+  }
 }

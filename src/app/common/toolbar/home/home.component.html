@@ -43,12 +43,15 @@
         Empowering lives through quality technical education and training
         programs.
       </p>
+      <!-- Get Started Button with Modal Trigger -->
       <a
         href="#"
         class="btn btn-success btn-lg px-4 py-2 mt-4 fw-semibold shadow-sm"
         style="transition: transform 0.3s ease"
         onmouseover="this.style.transform='translateY(-4px)'"
         onmouseout="this.style.transform='translateY(0)'"
+        data-bs-toggle="modal"
+        data-bs-target="#registerModal"
       >
         Get Started
       </a>
@@ -64,6 +67,36 @@
     </div>
   </div>
 </section>
+<!-- Registration Modal -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="registerModalLabel">Registration Required</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        You need to register first before accessing this feature.
+      </div>
+      <div class="modal-footer">
+        <!-- Angular Register Button -->
+        <div *ngIf="!user" class="d-flex mt-2 mt-lg-0 gap-2" role="login">
+          <button
+            class="btn btn-outline-light btn-sm px-3"
+            (click)="registerClicked()"
+          >
+            <i class="fa-solid fa-user-plus me-1"></i> Register
+          </button>
+        </div>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS (required for modal) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <section class="carousel" style="height: 400px; margin: 3rem">
   <div
     id="carouselExample"
@@ -125,10 +158,11 @@
     </div>
   </div>
 </section>
+<!-- Programs & Services Section -->
 <section class="py-5 bg-light">
-  <div class="container text-center">
+  <div class="container">
     <h2
-      class="fw-bold mb-5"
+      class="fw-bold mb-5 text-center"
       style="font-size: 2.5rem; letter-spacing: -0.5px; line-height: 1.2"
     >
       <span
@@ -143,45 +177,47 @@
       </span>
     </h2>
 
-    <div class="row g-4 justify-content-center">
-      <div
-        class="col-md-4"
-        *ngFor="let item of programs; let i = index"
-        [ngClass]="{
-          'animate-delay-0': i === 0,
-          'animate-delay-1': i === 1,
-          'animate-delay-2': i === 2
-        }"
-      >
+    <div class="d-flex flex-wrap align-items-center justify-content-center gap-4">
+      <!-- Cards centered -->
+      <div class="d-flex flex-wrap justify-content-center gap-4 flex-grow-1">
         <div
-          class="card border-0 shadow-sm p-4 text-center rounded-4 program-card"
+          class="col-md-4"
+          *ngFor="let item of programs; let i = index"
+          [ngClass]="{
+            'animate-delay-0': i === 0,
+            'animate-delay-1': i === 1,
+            'animate-delay-2': i === 2
+          }"
         >
           <div
-            class="icon-circle mx-auto mb-3 d-flex align-items-center justify-content-center bounce"
-            [ngStyle]="{ 'background-color': item.bg }"
+            class="card border-0 shadow-sm p-4 text-center rounded-4 program-card"
           >
-            <i
-              [class]="'bi ' + item.icon"
-              [ngStyle]="{ color: item.color, fontSize: '2rem' }"
-            ></i>
+            <div
+              class="icon-circle mx-auto mb-3 d-flex align-items-center justify-content-center bounce"
+              [ngStyle]="{ 'background-color': item.bg }"
+            >
+              <i
+                [class]="'bi ' + item.icon"
+                [ngStyle]="{ color: item.color, fontSize: '2rem' }"
+              ></i>
+            </div>
+            <h5 class="fw-semibold mb-2">{{ item.title }}</h5>
+            <p class="text-muted mb-0">{{ item.desc }}</p>
           </div>
-          <h5 class="fw-semibold mb-2">{{ item.title }}</h5>
-          <p class="text-muted mb-0">{{ item.desc }}</p>
         </div>
       </div>
+
+      <!-- See More Button aligned to the right -->
+      <div class="d-flex align-items-center ms-3">
+        <button
+          class="btn btn-gradient btn-lg fw-semibold shadow-sm"
+          [routerLink]="['/landing-page/services']"
+          [queryParams]="{ type: 'All Services', page: 1, size: 10, search: '' }"
+        >
+          See More
+        </button>
+      </div>
     </div>
-    <button
-      class="btn btn-outline-primary mt-4"
-      [routerLink]="['/landing-page/services']"
-      [queryParams]="{
-        type: 'All Services',
-        page: 1,
-        size: 10,
-        search: ''
-      }"
-    >
-      See more
-    </button>
   </div>
 </section>
 

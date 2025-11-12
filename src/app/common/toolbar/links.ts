@@ -54,15 +54,6 @@ export const dropdowns: Dropdowns = {
     { url: '/landing-page/transparency-seal', label: 'TRANSPARENCY SEAL' },
     { url: '/landing-page/citizens-charter', label: 'CITIZEN’S CHARTER' },
     { url: '/landing-page/philgeps-posting', label: 'PHILGEPS POSTINGS' },
-    {
-      url: '/landing-page/freedom-of-information',
-      label: 'FREEDOM OF INFORMATION',
-    },
-    {
-      url: 'https://pqf.gov.ph/',
-      label: 'PHILIPPINE QUALIFICATIONS FRAMEWORK',
-    },
-    { url: '/landing-page/bagong-pilipinas', label: 'BAGONG PILIPINAS' },
   ],
   Resources: [
     {
