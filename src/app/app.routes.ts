@@ -9,8 +9,6 @@ import { NavigationComponent } from './admin/navigation/navigation.component';
 import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard.component';
 import { AdminBannersComponent } from './admin/about/admin-banners/admin-banners.component';
 
-import { AdminRequirementsComponent } from './admin/admin-requirements/admin-requirements.component';
-
 import { CreateServiceComponent } from './admin/admin-services/create-service/create-service.component';
 import { HomeComponent } from './common/toolbar/home/home.component';
 import { HistoryComponent } from './common/toolbar/history/history.component';
@@ -42,6 +40,9 @@ import { AdminTransparencySealComponent } from './admin/admin-transparency-seal/
 import { CreateSealComponent } from './admin/admin-transparency-seal/create-seal/create-seal.component';
 import { TransparencySealListComponent } from './user/transparency-seal-list/transparency-seal-list.component';
 import { NewsAndEventsListComponent } from './user/news-and-events/news-and-events-list/news-and-events-list.component';
+import { AdminEventsComponent } from './admin/admin-events/admin-events.component';
+import { AdminSurveyComponent } from './admin/admin-survey/admin-survey.component';
+import { exitPageGuard } from './admin/admin-services/exit-page.guard';
 
 export const routes: Routes = [
   {
@@ -153,6 +154,10 @@ export const routes: Routes = [
             component: AdminDashboardComponent,
           },
           {
+            path: 'survey',
+            component: AdminSurveyComponent,
+          },
+          {
             path: 'dashboard',
             component: AdminDashboardComponent,
           },
@@ -179,6 +184,7 @@ export const routes: Routes = [
           {
             path: 'create-service',
             component: CreateServiceComponent,
+            canDeactivate: [exitPageGuard],
           },
           {
             path: 'services',
@@ -188,10 +194,7 @@ export const routes: Routes = [
             path: 'providers',
             component: AdminProvidersComponent,
           },
-          {
-            path: 'requirements',
-            component: AdminRequirementsComponent,
-          },
+
           {
             path: 'announcements',
             component: AnnouncementComponent,
@@ -199,6 +202,10 @@ export const routes: Routes = [
           {
             path: 'news',
             component: NewsComponent,
+          },
+          {
+            path: 'events',
+            component: AdminEventsComponent,
           },
           {
             path: 'create-announcement',

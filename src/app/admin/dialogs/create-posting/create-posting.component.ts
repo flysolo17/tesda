@@ -21,36 +21,43 @@ import Swal from 'sweetalert2';
 })
 export class CreatePostingComponent implements OnInit {
   @Input() post: PhilGEPS | null = null;
-  isLoading: boolean = false;
   postingForm: FormGroup;
+  isLoading = false;
+  file: File | null = null;
 
   constructor(
-    private activeModal: NgbActiveModal,
+    private fb: FormBuilder,
     private postingService: PostingService,
-    private fb: FormBuilder
+    private activeModal: NgbActiveModal
   ) {
-    this.postingForm = fb.nonNullable.group({
-      reference: ['', Validators.required],
-      project: ['', Validators.required],
-      budget: [null, Validators.required],
-      contractor: ['', Validators.required],
-      jobOrder: ['', Validators.required],
+    this.postingForm = this.fb.nonNullable.group({
+      title: ['', Validators.required],
+      cost: [null, Validators.required],
+      details: ['', Validators.required],
+      date: ['', Validators.required],
+      attachment: [null],
     });
   }
 
   ngOnInit(): void {
-    if (this.post !== null) {
+    if (this.post) {
       this.postingForm.patchValue({
-        reference: this.post.reference,
-        project: this.post.project,
-        budget: this.post.budget,
-        contractor: this.post.contractor,
-        jobOrder: this.post.jobOrder,
+        title: this.post.title,
+        cost: this.post.cost,
+        details: this.post.details,
+        date: this.post.date,
       });
     }
   }
 
-  submit() {
+  onFileChange(event: any) {
+    const file = event.target.files?.[0];
+    if (file) {
+      this.file = file;
+    }
+  }
+
+  async submit() {
     if (this.postingForm.invalid) {
       Swal.fire({
         icon: 'error',
@@ -60,68 +67,47 @@ export class CreatePostingComponent implements OnInit {
       return;
     }
 
-    const { reference, project, budget, contractor, jobOrder } =
-      this.postingForm.value;
+    const { title, cost, details, date } = this.postingForm.value;
     const postData: PhilGEPS = {
       id: this.post?.id || '',
-      reference,
-      project,
-      budget,
-      contractor,
-      jobOrder,
+      title,
+      cost,
+      details,
+      date,
+      attachment: null, // will be uploaded separately
       createdAt: this.post?.createdAt || new Date(),
       updatedAt: new Date(),
     };
 
-    if (this.post === null) {
-      this.create(postData);
-    } else {
-      this.update(postData);
-    }
-  }
-
-  create(post: PhilGEPS) {
     this.isLoading = true;
-    this.postingService
-      .create(post)
-      .then(() => {
+
+    try {
+      if (!this.post) {
+        await this.postingService.create(postData, this.file);
         Swal.fire({
           icon: 'success',
           title: 'Created Successfully',
           text: 'New posting has been added.',
         });
-        this.activeModal.close(true);
-      })
-      .catch((e) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Failed to Create',
-          text: e.message || 'Something went wrong.',
-        });
-      })
-      .finally(() => (this.isLoading = false));
-  }
-
-  update(post: PhilGEPS) {
-    this.isLoading = true;
-    this.postingService
-      .update(post)
-      .then(() => {
+      } else {
+        await this.postingService.update(postData, this.file);
         Swal.fire({
           icon: 'success',
           title: 'Updated Successfully',
           text: 'Posting details have been updated.',
         });
-        this.activeModal.close(true);
-      })
-      .catch((e) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Failed to Update',
-          text: e.message || 'Something went wrong.',
-        });
-      })
-      .finally(() => (this.isLoading = false));
+      }
+
+      this.activeModal.close(true);
+    } catch (error: any) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed',
+        text: error.message || 'Something went wrong.',
+      });
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   closeModal() {

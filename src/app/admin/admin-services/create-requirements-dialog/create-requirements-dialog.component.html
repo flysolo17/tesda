@@ -1,0 +1,83 @@
+<div class="modal-header">
+  <h4 class="modal-title">Create Requirement</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="activeModal.dismiss('Cross click')"
+  ></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="requirementForm" (ngSubmit)="submit()">
+    <!-- Requirement -->
+    <div class="form-floating mb-3">
+      <input
+        type="text"
+        class="form-control"
+        formControlName="requirement"
+        id="requirement"
+        placeholder="Enter requirement"
+      />
+      <label for="requirement">Requirement</label>
+      <div
+        *ngIf="
+          requirementForm.get('requirement')?.invalid &&
+          requirementForm.get('requirement')?.touched
+        "
+        class="text-danger small mt-1"
+      >
+        Requirement is required.
+      </div>
+    </div>
+
+    <!-- Where to Secure -->
+    <div class="form-floating mb-3">
+      <input
+        type="text"
+        class="form-control"
+        formControlName="whereToSecure"
+        id="whereToSecure"
+        placeholder="Where to secure"
+      />
+      <label for="whereToSecure">Where to Secure</label>
+      <div
+        *ngIf="
+          requirementForm.get('whereToSecure')?.invalid &&
+          requirementForm.get('whereToSecure')?.touched
+        "
+        class="text-danger small mt-1"
+      >
+        This field is required.
+      </div>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input
+        type="file"
+        class="form-control"
+        id="file"
+        accept=".pdf,.doc,.docx,.txt"
+        (change)="onFileSelected($event)"
+      />
+      <label for="file" class="form-label">Attach File</label>
+      <div *ngIf="selectedFile" class="mt-1 small text-success">
+        Selected file: {{ selectedFile.name }}
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button
+      class="btn btn-primary w-100"
+      type="submit"
+      [disabled]="isLoading || requirementForm.invalid"
+    >
+      <ng-container *ngIf="isLoading; else saveText">
+        <div class="spinner-border spinner-border-sm" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </ng-container>
+      <ng-template #saveText>Save</ng-template>
+    </button>
+  </form>
+</div>

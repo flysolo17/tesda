@@ -1,0 +1,37 @@
+<!-- Navbar -->
+<nav class="navbar navbar-dark bg-primary mb-3">
+  <div class="container-fluid">
+    <a class="navbar-brand">Survey</a>
+  </div>
+</nav>
+<!-- Feedback Cards Grid -->
+<div class="p-3">
+  <div class="row g-3 feedback-grid">
+    @for (fb of surveys$ | async; track $index) {
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <div class="card feedback-card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body">
+          <div class="card-header bg-white border-0">
+            <div class="d-flex align-items-center">
+              <img
+                [src]="fb.profile || '../../../assets/images/profile.png'"
+                alt="{{ fb.name }}"
+                class="rounded-circle me-3"
+                width="45"
+                height="45"
+              />
+              <div>
+                <h6 class="card-title mb-0">{{ fb.name }}</h6>
+                <small class="card-subtitle text-muted">
+                  {{ fb.submittedAt | date : "mediumDate" }}
+                </small>
+              </div>
+            </div>
+          </div>
+          <p class="mb-0 text-truncate-2 text-muted">{{ fb.comment }}</p>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+</div>

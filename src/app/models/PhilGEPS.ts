@@ -2,11 +2,11 @@ import { QueryDocumentSnapshot } from '@angular/fire/firestore';
 
 export interface PhilGEPS {
   id: string;
-  reference: string;
-  project: string;
-  budget: number;
-  contractor: string;
-  jobOrder: string;
+  title: string;
+  cost: number;
+  details: string;
+  attachment?: string | null;
+  date: string; //MMMM dd, yyyy
   createdAt: Date;
   updatedAt: Date;
 }

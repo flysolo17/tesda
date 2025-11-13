@@ -41,6 +41,7 @@
             <th>#</th>
             <th>Title</th>
             <th>Type</th>
+            <th>Qualification</th>
             <th>Description</th>
             <th>Last Updated</th>
           </tr>
@@ -54,7 +55,8 @@
             <td>{{ i + 1 }}</td>
             <td>{{ service.title }}</td>
             <td>{{ service.type }}</td>
-            <td>{{ service.description }}</td>
+            <td>{{ service.qualification }}</td>
+            <td>{{ service.qualification }}</td>
             <td>{{ service.updatedAt | date : "short" }}</td>
           </tr>
           <tr *ngIf="services.length === 0 && !isLoading">
@@ -111,19 +113,32 @@
         <!-- Type Badge -->
         <span class="badge bg-primary mb-3">{{ selectedService?.type }}</span>
 
-        <!-- Description -->
-        <p class="text-muted mb-3">{{ selectedService?.description }}</p>
-
-        <!-- Dates -->
+        <!-- Qualification -->
+        <p class="fw-bold text-primary">{{ selectedService?.qualification }}</p>
+        <p>{{ selectedService?.description }}</p>
+        <!-- Requirements Section -->
         <div class="mb-4">
-          <p class="mb-1">
-            <strong>Created At:</strong>
-            {{ selectedService?.createdAt | date : "medium" }}
-          </p>
-          <p>
-            <strong>Updated At:</strong>
-            {{ selectedService?.updatedAt | date : "medium" }}
-          </p>
+          <h6 class="fw-semibold text-dark mb-3">Requirements</h6>
+          <ul class="list-group">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-start"
+              *ngFor="let req of requirements$"
+            >
+              <div class="ms-2 me-auto">
+                <div class="fw-bold">{{ req.requirement }}</div>
+                {{ req.whereToSecure }}
+              </div>
+
+              <button
+                *ngIf="req.file"
+                class="btn btn-sm btn-outline-primary rounded-pill"
+                (click)="downloadFile(req.file)"
+                title="Download file"
+              >
+                <i class="bi bi-download"></i>
+              </button>
+            </li>
+          </ul>
         </div>
 
         <!-- Action Buttons -->

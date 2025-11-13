@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PostingService } from '../../services/posting.service';
 import {
   NgbModal,
@@ -8,8 +8,9 @@ import {
 import { PhilGEPS } from '../../models/PhilGEPS';
 import { CreatePostingComponent } from '../dialogs/create-posting/create-posting.component';
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 @Component({
   selector: 'app-admin-philgeps-posting',
   standalone: true,
@@ -18,16 +19,17 @@ import Swal from 'sweetalert2';
     FormsModule,
     NgbTypeaheadModule,
     NgbPaginationModule,
+    ReactiveFormsModule,
     CommonModule,
   ],
   templateUrl: './admin-philgeps-posting.component.html',
   styleUrl: './admin-philgeps-posting.component.scss',
 })
-export class AdminPhilgepsPostingComponent {
+export class AdminPhilgepsPostingComponent implements OnInit {
   postings: PhilGEPS[] = [];
   filteredPostings: PhilGEPS[] = [];
 
-  searchTerm: string = '';
+  searchTerm = new FormControl('');
   page = 1;
   pageSize = 10;
 
@@ -38,24 +40,34 @@ export class AdminPhilgepsPostingComponent {
 
   ngOnInit(): void {
     this.loadPostings();
+
+    // Subscribe to search term changes for live filtering
+    this.searchTerm.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((term) => {
+        this.applySearch(term);
+      });
   }
 
   loadPostings() {
     this.postingService.getAll().subscribe((data) => {
       this.postings = data;
-      this.refresh();
+      this.applySearch(this.searchTerm.value);
     });
   }
 
-  refresh() {
-    const term = this.searchTerm.toLowerCase();
-    this.filteredPostings = this.postings.filter(
-      (post) =>
-        post.reference.toLowerCase().includes(term) ||
-        post.project.toLowerCase().includes(term) ||
-        post.contractor.toLowerCase().includes(term) ||
-        post.jobOrder.toLowerCase().includes(term)
-    );
+  applySearch(term: string | null) {
+    if (!term) {
+      this.filteredPostings = [...this.postings];
+    } else {
+      const lowerTerm = term.toLowerCase();
+      this.filteredPostings = this.postings.filter(
+        (p) =>
+          p.title.toLowerCase().includes(lowerTerm) ||
+          p.details.toLowerCase().includes(lowerTerm) ||
+          p.date.toLowerCase().includes(lowerTerm)
+      );
+    }
   }
 
   create(post: PhilGEPS | null = null) {
@@ -86,7 +98,7 @@ export class AdminPhilgepsPostingComponent {
     }).then((result) => {
       if (result.isConfirmed) {
         this.postingService
-          .delete(post.id)
+          .delete(post)
           .then(() => {
             Swal.fire('Deleted!', 'The posting has been deleted.', 'success');
             this.loadPostings();

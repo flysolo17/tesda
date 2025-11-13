@@ -1,0 +1,109 @@
+<form [formGroup]="surveyForm" (ngSubmit)="submit()">
+  <div class="modal-header">
+    <h4 class="modal-title">Survey</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="close()"
+    ></button>
+  </div>
+
+  <div class="modal-body">
+    <p class="mb-4">
+      Is there a training or assessment program you'd like, but unfortunately,
+      we don't have it yet?
+    </p>
+
+    <div class="row g-3">
+      <!-- Program Type -->
+      <div class="col-md-6">
+        <label for="programType" class="form-label">Program Type</label>
+        <select
+          id="programType"
+          class="form-select"
+          formControlName="programType"
+          [ngClass]="{
+            'is-invalid':
+              surveyForm.get('programType')?.invalid &&
+              surveyForm.get('programType')?.touched
+          }"
+        >
+          <option value="" disabled selected>Select a type</option>
+          <option *ngFor="let type of types$" [value]="type">{{ type }}</option>
+        </select>
+        <div class="invalid-feedback">Program type is required.</div>
+      </div>
+
+      <!-- Program -->
+      <div class="col-md-6">
+        <label for="program" class="form-label">Program</label>
+        <select
+          id="program"
+          class="form-select"
+          formControlName="program"
+          [ngClass]="{
+            'is-invalid':
+              surveyForm.get('program')?.invalid &&
+              surveyForm.get('program')?.touched
+          }"
+        >
+          <option value="" disabled selected>Select a program</option>
+          <option *ngFor="let program of programs$" [value]="program">
+            {{ program }}
+          </option>
+        </select>
+        <div class="invalid-feedback">Program is required.</div>
+      </div>
+
+      <!-- Location -->
+      <div class="col-12">
+        <label for="location" class="form-label">Location</label>
+        <input
+          id="location"
+          type="text"
+          class="form-control"
+          placeholder="Enter your preferred location"
+          formControlName="location"
+          [ngClass]="{
+            'is-invalid':
+              surveyForm.get('location')?.invalid &&
+              surveyForm.get('location')?.touched
+          }"
+        />
+        <div class="invalid-feedback">Location is required.</div>
+      </div>
+
+      <!-- Comment -->
+      <div class="col-12">
+        <label for="comment" class="form-label">Comment</label>
+        <textarea
+          id="comment"
+          rows="3"
+          class="form-control"
+          placeholder="Write your suggestion or feedback here..."
+          formControlName="comment"
+          [ngClass]="{
+            'is-invalid':
+              surveyForm.get('comment')?.invalid &&
+              surveyForm.get('comment')?.touched
+          }"
+        ></textarea>
+        <div class="invalid-feedback">Comment is required.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">
+      Close
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="surveyForm.invalid"
+    >
+      Submit
+    </button>
+  </div>
+</form>

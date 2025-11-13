@@ -32,7 +32,9 @@
       />
       <label for="email">Email address</label>
       <div
-        *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid"
+        *ngIf="
+          loginForm.get('email')?.touched && loginForm.get('email')?.invalid
+        "
         class="text-danger small mt-1"
       >
         <div *ngIf="loginForm.get('email')?.errors?.['required']">
@@ -55,7 +57,10 @@
       />
       <label for="password">Password</label>
       <div
-        *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+        *ngIf="
+          loginForm.get('password')?.touched &&
+          loginForm.get('password')?.invalid
+        "
         class="text-danger small mt-1"
       >
         <div *ngIf="loginForm.get('password')?.errors?.['required']">
@@ -74,22 +79,23 @@
       <span *ngIf="!loading$">Login</span>
     </button>
 
-<!-- Forgot Password -->
-<div class="text-center">
-  <a href="#" class="text-decoration-none small text-primary fw-medium">
-    Forgot your password?
-  </a>
-</div>
+    <!-- Forgot Password -->
+    <div class="text-center">
+      <a href="#" class="text-decoration-none small text-primary fw-medium">
+        Forgot your password?
+      </a>
+    </div>
 
-<!-- Sign Up -->
-<div class="text-center mt-2">
-  <span class="small text-muted">Don't have an account? </span>
-  <a 
-    href="#" 
-    class="text-decoration-none small text-success fw-semibold"
-    (click)="registerClicked()"
-  >
-    Sign Up
-  </a>
+    <!-- Sign Up -->
+    <div class="text-center mt-2">
+      <span class="small text-muted">Don't have an account? </span>
+      <a
+        type="button"
+        class="text-decoration-none small text-success fw-semibold"
+        (click)="registerClicked()"
+      >
+        Sign Up
+      </a>
+    </div>
+  </form>
 </div>
-

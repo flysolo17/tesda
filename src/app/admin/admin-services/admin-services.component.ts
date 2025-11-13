@@ -6,7 +6,15 @@ import {
   RouterLink,
   RouterModule,
 } from '@angular/router';
-import { debounceTime, Observable, of, switchMap } from 'rxjs';
+import {
+  combineLatest,
+  debounceTime,
+  map,
+  Observable,
+  of,
+  startWith,
+  switchMap,
+} from 'rxjs';
 import { Services, ServiceType } from '../../models/Services';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import {
@@ -16,11 +24,17 @@ import {
   Validators,
   ɵInternalFormsSharedModule,
 } from '@angular/forms';
-import { QueryDocumentSnapshot } from '@angular/fire/firestore';
+import {
+  collection,
+  doc,
+  Firestore,
+  QueryDocumentSnapshot,
+} from '@angular/fire/firestore';
 import {
   NgbTypeaheadModule,
   NgbPaginationModule,
 } from '@ng-bootstrap/ng-bootstrap';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-services',
@@ -40,82 +54,74 @@ import {
 export class AdminServicesComponent implements OnInit {
   programService = inject(ProgramsService);
   router = inject(Router);
-  activatedRoute = inject(ActivatedRoute);
+  firestore = inject(Firestore);
 
-  type$ = ['All Services', ...Object.values(ServiceType)];
-
-  typeControl = new FormControl('All Services');
   searchControl = new FormControl('');
-
-  services: Services[] = [];
-  lastIndex: QueryDocumentSnapshot<Services> | null = null;
+  services$: Observable<Services[]> = this.programService.getAll();
   isLoading = false;
-
-  // Pagination
-  page = 1;
-  pageSize = 10;
-  collectionSize = 100; // Total items, update if available from Firestore
-
-  ngOnInit(): void {
-    // Initialize from query params
-    this.activatedRoute.queryParamMap.subscribe((params: any) => {
-      this.typeControl.setValue(params.get('type') || 'All Services', {
-        emitEvent: false,
-      });
-      this.searchControl.setValue(params.get('search') || '', {
-        emitEvent: false,
-      });
-      this.page = Number(params.get('page')) || 1;
-      this.pageSize = Number(params.get('size')) || 10;
-
-      this.refreshServices();
-    });
-
-    this.typeControl.valueChanges.subscribe(() => this.refreshServices());
-    this.searchControl.valueChanges
-      .pipe(debounceTime(1000))
-      .subscribe(() => this.refreshServices());
-  }
-
-  async refreshServices() {
-    this.services = [];
-    this.lastIndex = null;
-    await this.loadServices();
-  }
-
-  async loadServices() {
-    if (this.isLoading) return;
-
-    this.isLoading = true;
-    const type =
-      this.typeControl.value === 'All Services' ? null : this.typeControl.value;
-    const search = this.searchControl.value || null;
-
-    try {
-      const res = await this.programService.getServices(
-        type,
-        this.lastIndex,
-        this.pageSize,
-        search
+  filteredServices$: Observable<Services[]> = combineLatest([
+    this.services$,
+    this.searchControl.valueChanges.pipe(startWith('')),
+  ]).pipe(
+    map(([services, search]) => {
+      const term = search?.toLowerCase() || '';
+      return services.filter(
+        (s) =>
+          s.title.toLowerCase().includes(term) ||
+          s.qualification.toLowerCase().includes(term)
       );
+    })
+  );
 
-      this.services = res.items;
-      this.lastIndex = res.lastIndex;
-      this.collectionSize = res.total ?? 10;
-    } catch (err) {
-      console.error('Failed to load services', err);
-    } finally {
-      this.isLoading = false;
-    }
+  ngOnInit(): void {}
+
+  new() {
+    const id = doc(collection(this.firestore, 'services')).id;
+    this.router.navigate(['/administration/main/create-service'], {
+      queryParams: { id },
+    });
   }
 
-  onPageChange(newPage: number) {
-    this.page = newPage;
-    this.refreshServices();
+  editService(service: Services) {
+    this.router.navigate(['/administration/main/create-service'], {
+      queryParams: { id: service.id },
+    });
   }
+  deleteService(id: string) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Are you sure?',
+      text: 'This service will be permanently deleted.',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.programService
+          .delete(id)
+          .then(() => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Deleted!',
+              text: 'Service has been successfully deleted.',
+              timer: 1500,
+              showConfirmButton: false,
+            });
 
-  onPageSizeChange() {
-    this.page = 1;
-    this.refreshServices();
+            // Optional: remove deleted service from local filtered list
+            this.filteredServices$ = this.filteredServices$.pipe(
+              map((services) => services.filter((s) => s.id !== id))
+            );
+          })
+          .catch((err) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error!',
+              text: err?.message || 'Failed to delete service.',
+            });
+          });
+      }
+    });
   }
 }

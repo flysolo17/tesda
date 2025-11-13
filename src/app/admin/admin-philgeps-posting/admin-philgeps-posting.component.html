@@ -1,17 +1,21 @@
-<nav class="navbar navbar-dark bg-primary">
-  <div class="container-fluid">
-    <a class="navbar-brand text-white">PhilGEPS Postings</a>
+<nav class="navbar navbar-dark bg-primary shadow-sm mb-3">
+  <div
+    class="container-fluid d-flex justify-content-between align-items-center"
+  >
+    <span class="navbar-brand mb-0 h5 text-white fw-semibold"
+      >PhilGEPS Postings</span
+    >
 
-    <form class="d-flex" role="search" (submit)="$event.preventDefault()">
+    <div class="d-flex align-items-center gap-2">
       <input
         class="form-control me-2"
         type="search"
         placeholder="Search"
         aria-label="Search"
-        [(ngModel)]="searchTerm"
         name="search"
-        (ngModelChange)="refresh()"
+        [formControl]="searchTerm"
       />
+
       <button
         class="btn btn-success d-flex align-items-center gap-2"
         type="button"
@@ -20,83 +24,78 @@
         <i class="bi bi-plus-square"></i>
         Create
       </button>
-    </form>
+    </div>
   </div>
 </nav>
 
-<div class="container-fluid mt-3">
-  <div class="table-responsive">
-    <table class="table table-striped align-middle">
-      <thead class="table-primary">
-        <tr>
-          <th scope="col">Reference No.</th>
-          <th scope="col">Project</th>
-          <th scope="col">Date Posted</th>
-          <th scope="col">Budget (ABC)</th>
-          <th scope="col">Contractor / Supplier</th>
-          <th scope="col">Purchase / Job Order / Contract</th>
-          <th scope="col" class="text-center">Actions</th>
-        </tr>
-      </thead>
+<div class="table-responsive shadow-sm rounded-3 overflow-hidden">
+  <table class="table table-striped table-hover align-middle mb-0">
+    <thead class="table-light">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Title</th>
+        <th scope="col">Cost</th>
+        <th scope="col">Details</th>
+        <th scope="col">Attachment</th>
+        <th scope="col">Date</th>
+        <th scope="col">Updated At</th>
+        <th scope="col" class="text-center">Actions</th>
+      </tr>
+    </thead>
 
-      <tbody>
-        <tr
-          *ngFor="
-            let post of filteredPostings
-              | slice : (page - 1) * pageSize : (page - 1) * pageSize + pageSize
-          "
-        >
-          <td>{{ post.reference }}</td>
-          <td>{{ post.project }}</td>
-          <td>{{ post.createdAt | date : "MMM d, y" }}</td>
-          <td>{{ post.budget | currency : "₱" }}</td>
-          <td>{{ post.contractor }}</td>
-          <td>{{ post.jobOrder }}</td>
-          <td class="text-center">
-            <button
-              class="btn btn-sm btn-outline-primary me-1"
-              (click)="edit(post)"
+    <tbody>
+      <tr *ngFor="let post of filteredPostings; let i = index">
+        <td>{{ i + 1 + (page - 1) * pageSize }}</td>
+        <td class="fw-bold">{{ post.title }}</td>
+        <td>{{ post.cost | currency : "PHP" : "symbol" : "1.2-2" }}</td>
+        <td>
+          <span
+            class="text-truncate d-inline-block"
+            style="max-width: 200px"
+            title="{{ post.details }}"
+          >
+            {{ post.details }}
+          </span>
+        </td>
+        <td>
+          <ng-container *ngIf="post.attachment; else noAttachment">
+            <a
+              [href]="post.attachment"
+              target="_blank"
+              class="text-decoration-none text-primary"
             >
-              <i class="bi bi-pencil-square"></i>
-            </button>
-            <button
-              class="btn btn-sm btn-outline-danger"
-              (click)="delete(post)"
-            >
-              <i class="bi bi-trash"></i>
-            </button>
-          </td>
-        </tr>
+              <i class="bi bi-file-earmark-text"></i>
+            </a>
+          </ng-container>
+          <ng-template #noAttachment>
+            <span class="text-muted">None</span>
+          </ng-template>
+        </td>
+        <td>{{ post.date }}</td>
+        <td>{{ post.updatedAt | date : "short" }}</td>
+        <td class="text-center">
+          <button
+            class="btn btn-sm btn-outline-primary me-1"
+            (click)="edit(post)"
+            title="Edit Posting"
+          >
+            <i class="bi bi-pencil"></i>
+          </button>
+          <button
+            class="btn btn-sm btn-outline-danger"
+            (click)="delete(post)"
+            title="Delete Posting"
+          >
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+      </tr>
 
-        <tr *ngIf="filteredPostings.length === 0">
-          <td colspan="7" class="text-center text-muted py-3">
-            No results found.
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="d-flex justify-content-between align-items-center p-2 border-top">
-    <ngb-pagination
-      [collectionSize]="filteredPostings.length"
-      [(page)]="page"
-      [pageSize]="pageSize"
-      [maxSize]="10"
-      [rotate]="true"
-      [boundaryLinks]="true"
-    >
-    </ngb-pagination>
-
-    <select
-      class="form-select"
-      style="width: auto"
-      [(ngModel)]="pageSize"
-      (change)="refresh()"
-    >
-      <option [ngValue]="10">5 items per page</option>
-      <option [ngValue]="20">10 items per page</option>
-      <option [ngValue]="30">20 items per page</option>
-    </select>
-  </div>
+      <tr *ngIf="filteredPostings.length === 0">
+        <td colspan="8" class="text-center text-muted py-4">
+          No postings found.
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>

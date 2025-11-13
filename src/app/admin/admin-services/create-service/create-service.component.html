@@ -4,7 +4,7 @@
       <button class="btn btn-light" (click)="back()">
         <i class="bi bi-arrow-left"></i>
       </button>
-      {{ id === null ? "Create Service" : "Update Service" }}
+      {{ service$ === null ? "Create Service" : "Update Service" }}
     </span>
   </div>
 </nav>
@@ -35,6 +35,17 @@
             </option>
           </select>
           <label for="type">Type</label>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="form-floating">
+          <input
+            class="form-control"
+            id="qualification"
+            formControlName="qualification"
+            placeholder="Enter qualification"
+          />
+          <label for="qualification">Qualification</label>
         </div>
       </div>
 
@@ -91,7 +102,64 @@
         </div>
       </div>
 
-      <!-- Submit -->
+      <div class="col-12">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h3>Requirements</h3>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="createRequirements()"
+          >
+            <i class="bi bi-plus"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <table class="table table-bordered table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Requirement</th>
+              <th>Where to Secure</th>
+              <th>Attached File</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let req of requirements$; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ req.requirement }}</td>
+              <td>{{ req.whereToSecure }}</td>
+              <td>
+                <a
+                  *ngIf="req.file"
+                  [href]="req.file"
+                  target="_blank"
+                  type="button"
+                  class="d-flex align-items-center text-decoration-none"
+                >
+                  <i class="bi bi-file-earmark-text me-1"></i>
+                  View File
+                </a>
+              </td>
+              <td>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  type="button"
+                  (click)="deleteRequirement(req.id, req.file)"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="requirements$.length === 0">
+              <td colspan="5" class="text-center">No requirements found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <div class="col-12">
         <button
           class="btn btn-primary w-100"

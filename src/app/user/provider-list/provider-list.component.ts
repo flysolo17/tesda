@@ -7,9 +7,15 @@ import {
 import { map, Observable, of } from 'rxjs';
 import { Provider, ProviderType } from '../../models/Provider';
 import { CommonModule } from '@angular/common';
-import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
-import { Services } from '../../models/Services';
-import { dA } from '@fullcalendar/core/internal-common';
+import { NgbAccordionModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
+import { AuthService } from '../../services/auth.service';
+import { SurveyComponent } from '../survey/survey.component';
+import { Survey } from '../../models/Survey';
+import { SurveyService } from '../../services/survey.service';
+import { User, UserType } from '../../models/Users';
+import { user } from '@angular/fire/auth';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-provider-list',
@@ -21,13 +27,31 @@ import { dA } from '@fullcalendar/core/internal-common';
 export class ProviderListComponent implements OnInit {
   provider$: Observable<ProviderWithServices[]> = of([]);
   type: ProviderType | null = null;
-
+  users: User | null = null;
   constructor(
     private activatedRoute: ActivatedRoute,
-    private providerService: ProviderService
+    private providerService: ProviderService,
+    private authService: AuthService,
+    private modalService: NgbModal,
+    private surveyService: SurveyService
   ) {}
 
   ngOnInit(): void {
+    this.authService.getCurrentUser().subscribe(async (user) => {
+      if (user) {
+        this.users = user;
+        if (this.users.type == UserType.USER) {
+          const hasSubmitted = await this.surveyService.checkIfSubmitted(
+            user.id
+          );
+          if (hasSubmitted) {
+            console.log('User has already submitted a survey.');
+          } else {
+            this.openSurvey();
+          }
+        }
+      }
+    });
     this.activatedRoute.queryParams.subscribe((param) => {
       this.type = param['type'];
       if (this.type) {
@@ -41,6 +65,42 @@ export class ProviderListComponent implements OnInit {
 
   downloadFile(fileUrl: string | null) {
     if (!fileUrl) return;
-    window.open(fileUrl, '_blank'); // Opens the file in a new tab
+    window.open(fileUrl, '_blank');
+  }
+  openSurvey() {
+    const modalRef = this.modalService.open(SurveyComponent);
+    modalRef.result
+      .then((result: Survey | any) => {
+        if (result) {
+          result.uid = this.users?.id;
+          result.profile = this.users?.profile;
+          result.name = this.users?.name;
+          this.saveSurvey(result);
+        }
+      })
+      .catch((error) => {
+        console.log('Survey modal dismissed:', error);
+      });
+  }
+  saveSurvey(survey: Survey) {
+    this.surveyService
+      .create(survey)
+      .then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Survey Submitted',
+          text: 'Thank you for completing the survey!',
+          confirmButtonColor: '#3085d6',
+        });
+      })
+      .catch((error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Submission Failed',
+          text: 'Something went wrong. Please try again later.',
+          confirmButtonColor: '#d33',
+        });
+        console.error('Survey submission error:', error);
+      });
   }
 }

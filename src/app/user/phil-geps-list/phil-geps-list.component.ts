@@ -12,7 +12,13 @@ import { CommonModule } from '@angular/common';
 export class PhilGepsListComponent {
   postings$ = this.postingService.getAll();
   constructor(private postingService: PostingService) {}
-  get currentYear(): number {
-    return new Date().getFullYear();
+  getFilename(url: string): string | null {
+    try {
+      const pathname = new URL(url, window.location.origin).pathname;
+      const segments = pathname.split('/');
+      return segments.pop() || null;
+    } catch {
+      return null;
+    }
   }
 }

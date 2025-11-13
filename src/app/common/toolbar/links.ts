@@ -42,11 +42,8 @@ export const dropdowns: Dropdowns = {
       },
     },
     {
-      url: '/landing-page/provider',
+      url: '/landing-page/services',
       label: ProviderType.PROVINCIAL,
-      queryParams: {
-        type: ProviderType.PROVINCIAL,
-      },
     },
   ],
 

@@ -98,15 +98,25 @@ export class NavigationComponent {
           queryParams: { type: 'news' },
         },
         {
-          label: 'Create Announcements',
+          label: 'Events',
+          route: 'announcements',
+          queryParams: { type: 'event' },
+        },
+        {
+          label: 'Create Announcement',
           route: 'create-announcement',
         },
       ],
     },
     {
       label: 'Feedback',
-      icon: '',
+      icon: 'bi-chat-dots', // Bootstrap icon for feedback/chat
       route: 'feedback',
+    },
+    {
+      label: 'Survey',
+      icon: 'bi-clipboard-check',
+      route: 'survey',
     },
     {
       label: 'Transparency',

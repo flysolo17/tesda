@@ -25,7 +25,6 @@ export class LoginDialogComponent {
   activeModal = inject(NgbActiveModal);
   loginForm: FormGroup;
   loading$ = false;
-  private router = inject(Router);
 
   constructor(
     private fb: FormBuilder,
@@ -93,9 +92,7 @@ export class LoginDialogComponent {
       });
   }
 
-  // ✅ Add this method to handle Sign Up click
   registerClicked() {
-    this.activeModal.close(); // Close the login modal
-    this.router.navigate(['/register']); // Navigate to the registration page
+    this.activeModal.close('register');
   }
 }

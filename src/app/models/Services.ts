@@ -4,7 +4,7 @@ export interface Services {
   id: string;
   title: string;
   description: string;
-
+  qualification: string;
   type: ServiceType;
 
   provider: string[];

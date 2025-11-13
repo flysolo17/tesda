@@ -1,7 +1,7 @@
 <form [formGroup]="postingForm" (ngSubmit)="submit()">
   <div class="modal-header">
     <h4 class="modal-title">
-      {{ post === null ? "Create Posting" : "Edit Posting" }}
+      {{ post ? "Edit Posting" : "Create Posting" }}
     </h4>
     <button
       type="button"
@@ -13,78 +13,72 @@
 
   <div class="modal-body">
     <div class="mb-3">
-      <label for="reference" class="form-label">Reference</label>
+      <label for="title" class="form-label">Title</label>
       <input
         type="text"
-        id="reference"
+        id="title"
         class="form-control"
-        formControlName="reference"
+        formControlName="title"
         [class.is-invalid]="
-          postingForm.get('reference')?.invalid &&
-          postingForm.get('reference')?.touched
+          postingForm.get('title')?.invalid && postingForm.get('title')?.touched
         "
       />
-      <div class="invalid-feedback">Reference is required.</div>
+      <div class="invalid-feedback">Title is required.</div>
     </div>
 
     <div class="mb-3">
-      <label for="project" class="form-label">Project Name</label>
-      <input
-        type="text"
-        id="project"
-        class="form-control"
-        formControlName="project"
-        [class.is-invalid]="
-          postingForm.get('project')?.invalid &&
-          postingForm.get('project')?.touched
-        "
-      />
-      <div class="invalid-feedback">Project name is required.</div>
-    </div>
-
-    <div class="mb-3">
-      <label for="budget" class="form-label">Budget</label>
+      <label for="cost" class="form-label">Cost</label>
       <input
         type="number"
-        id="budget"
+        id="cost"
         class="form-control"
-        formControlName="budget"
+        formControlName="cost"
         [class.is-invalid]="
-          postingForm.get('budget')?.invalid &&
-          postingForm.get('budget')?.touched
+          postingForm.get('cost')?.invalid && postingForm.get('cost')?.touched
         "
       />
-      <div class="invalid-feedback">Budget is required.</div>
+      <div class="invalid-feedback">Cost is required.</div>
     </div>
 
     <div class="mb-3">
-      <label for="contractor" class="form-label">Contractor</label>
-      <input
-        type="text"
-        id="contractor"
+      <label for="details" class="form-label">Details</label>
+      <textarea
+        id="details"
         class="form-control"
-        formControlName="contractor"
+        formControlName="details"
+        rows="3"
         [class.is-invalid]="
-          postingForm.get('contractor')?.invalid &&
-          postingForm.get('contractor')?.touched
+          postingForm.get('details')?.invalid &&
+          postingForm.get('details')?.touched
         "
-      />
-      <div class="invalid-feedback">Contractor is required.</div>
+      ></textarea>
+      <div class="invalid-feedback">Details are required.</div>
     </div>
 
     <div class="mb-3">
-      <label for="jobOrder" class="form-label">Job Order</label>
+      <label for="date" class="form-label">Date</label>
       <input
         type="text"
-        id="jobOrder"
+        id="date"
         class="form-control"
-        formControlName="jobOrder"
+        formControlName="date"
+        placeholder="MMMM dd, yyyy"
         [class.is-invalid]="
-          postingForm.get('jobOrder')?.invalid &&
-          postingForm.get('jobOrder')?.touched
+          postingForm.get('date')?.invalid && postingForm.get('date')?.touched
         "
       />
-      <div class="invalid-feedback">Job order is required.</div>
+      <div class="invalid-feedback">Date is required.</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="attachment" class="form-label">Attachment</label>
+      <input
+        type="file"
+        id="attachment"
+        class="form-control"
+        (change)="onFileChange($event)"
+      />
+      <small class="text-muted">Optional</small>
     </div>
   </div>
 
@@ -109,7 +103,7 @@
         role="status"
         aria-hidden="true"
       ></span>
-      {{ post === null ? "Create" : "Update" }}
+      {{ post ? "Update" : "Create" }}
     </button>
   </div>
 </form>

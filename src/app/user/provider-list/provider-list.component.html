@@ -1,7 +1,32 @@
 <div
   class="container-fluid p-3 d-flex align-items-center justify-content-center flex-column gap-3"
 >
-  <h1 class="fw-bold text-primary text-center mb-4">{{ type }} Providers</h1>
+  <div
+    class="container-fluid p-3 d-flex align-items-center justify-content-center flex-column gap-3"
+  >
+    <h1 class="fw-bold text-primary text-center mb-4 text-uppercase">
+      List of TVET PROVIDERS and assessment centers
+    </h1>
+    <!-- 
+    <div class="card shadow-sm border-0" style="max-width: 600px; width: 100%">
+      <div class="card-body">
+        <h5 class="fw-semibold text-dark mb-2">
+          • TESDA Occidental Mindoro Provincial Training Center
+        </h5>
+        <ul class="list-unstyled text-muted small mb-0">
+          <li>
+            <strong>Address:</strong> Sitio Agsuli, Sto. Niño, Sablayan,
+            Occidental Mindoro
+          </li>
+          <li><strong>Contact Number:</strong> 09209131977</li>
+          <li>
+            <strong>Email:</strong>
+            {{ "region4b.ptcoccidentalmindoro@tesda.gov.ph" }}
+          </li>
+        </ul>
+      </div>
+    </div> -->
+  </div>
 
   @for (item of provider$ | async; track $index) {
   <div class="card shadow-sm w-100 border-0" style="max-width: 1000px">
@@ -49,52 +74,27 @@
       </div>
 
       <!-- Two-column section -->
-      <div class="d-flex flex-column flex-lg-row gap-4">
-        <!-- Services -->
+      <div
+        class="d-flex flex-column flex-lg-row gap-4"
+        *ngFor="let service of item.services"
+      >
         <div class="flex-grow-1">
           <h5 class="mb-3 text-primary fw-semibold">
             Registered Training Programs
           </h5>
-          <div ngbAccordion>
-            @for (service of item.services; track $index) {
-            <div ngbAccordionItem>
-              <h2 ngbAccordionHeader>
-                <button ngbAccordionButton>
-                  {{ service.title }}
-                </button>
-              </h2>
-              <div ngbAccordionCollapse>
-                <div ngbAccordionBody>
-                  <p class="mb-2">{{ service.description }}</p>
-                </div>
-              </div>
-            </div>
-            }
-          </div>
+          <small class="text-muted d-flex align-items-center">
+            <span class="me-2" style="font-size: 1.2em">•</span>
+            {{ service.title }}
+          </small>
         </div>
-
-        <!-- Requirements -->
         <div class="flex-grow-1">
-          <div class="d-flex align-items-center justify-content-between mb-3">
-            <h5 class="text-primary fw-semibold mb-0">Requirements</h5>
-            <button
-              class="btn btn-sm btn-outline-secondary"
-              title="Download requirements file"
-              *ngIf="item.provider.file"
-              (click)="downloadFile(item.provider.file)"
-            >
-              <i class="bi bi-download"></i>
-            </button>
-          </div>
-
-          <ul class="list-group list-group-flush small">
-            @for (requirement of item.provider.requirements; track $index) {
-            <li class="list-group-item px-0 border-0 ps-2">
-              <i class="bi bi-check-circle text-success me-2"></i>
-              {{ requirement }}
-            </li>
-            }
-          </ul>
+          <h5 class="mb-3 text-primary fw-semibold">
+            AC Acredited Qualifications
+          </h5>
+          <small class="text-muted d-flex align-items-center">
+            <span class="me-2" style="font-size: 1.2em">•</span>
+            {{ service.qualification }}
+          </small>
         </div>
       </div>
     </div>

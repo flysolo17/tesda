@@ -58,7 +58,9 @@ export class LandingPageComponent {
   login() {
     const modalRef = this.modalService.open(LoginDialogComponent);
     modalRef.result.then(async (uid) => {
-      if (uid) {
+      if (uid === 'register') {
+        this.register();
+      } else {
         const shouldPrompt = !(await this.feedbackService.hasFeedback(uid));
         if (shouldPrompt) {
           this.openFeedbackDialog();

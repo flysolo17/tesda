@@ -12,6 +12,13 @@ import {
   updateDoc,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+  Storage,
+} from '@angular/fire/storage';
 
 @Injectable({
   providedIn: 'root',
@@ -19,16 +26,7 @@ import { Observable } from 'rxjs';
 export class PostingService {
   private readonly PHIL_GEPS_COLLECTION = 'philgeps-postings';
 
-  constructor(private firestore: Firestore) {}
-  create(philgeps: PhilGEPS) {
-    const ref = collection(
-      this.firestore,
-      this.PHIL_GEPS_COLLECTION
-    ).withConverter(PhilGEPSConverter);
-    const docRef = doc(ref);
-    philgeps.id = docRef.id;
-    return setDoc(docRef, philgeps);
-  }
+  constructor(private firestore: Firestore, private storage: Storage) {}
 
   getAll(): Observable<PhilGEPS[]> {
     const q = query(
@@ -39,20 +37,84 @@ export class PostingService {
     );
     return collectionData(q);
   }
-  update(philgeps: PhilGEPS) {
-    const ref = collection(
-      this.firestore,
-      this.PHIL_GEPS_COLLECTION
-    ).withConverter(PhilGEPSConverter);
-    const docRef = doc(ref, philgeps.id);
-    const updatedPhilgeps = {
-      ...philgeps,
-      updatedAt: new Date(),
-    };
-    return updateDoc(docRef, updatedPhilgeps);
+
+  async create(philgeps: PhilGEPS, file?: File | null): Promise<boolean> {
+    try {
+      const collectionRef = collection(
+        this.firestore,
+        this.PHIL_GEPS_COLLECTION
+      ).withConverter(PhilGEPSConverter);
+      const docRef = doc(collectionRef);
+
+      philgeps.id = docRef.id;
+      philgeps.createdAt = new Date();
+      philgeps.updatedAt = new Date();
+
+      if (file) {
+        const filePath = `philgeps/${docRef.id}/${file.name}`;
+        const storageRef = ref(this.storage, filePath);
+        await uploadBytes(storageRef, file);
+        const downloadURL = await getDownloadURL(storageRef);
+        philgeps.attachment = downloadURL; // store URL
+      } else {
+        philgeps.attachment = null;
+      }
+
+      await setDoc(docRef, philgeps);
+      return true;
+    } catch (error) {
+      console.error('Error creating PhilGEPS posting:', error);
+      return false;
+    }
   }
 
-  delete(id: string) {
-    return deleteDoc(doc(this.firestore, this.PHIL_GEPS_COLLECTION, id));
+  async update(philgeps: PhilGEPS, file?: File | null): Promise<boolean> {
+    try {
+      const docRef = doc(
+        collection(this.firestore, this.PHIL_GEPS_COLLECTION).withConverter(
+          PhilGEPSConverter
+        ),
+        philgeps.id
+      );
+
+      // Upload new file if provided
+      if (file) {
+        const filePath = `philgeps/${philgeps.id}/${file.name}`;
+        const storageRef = ref(this.storage, filePath);
+        await uploadBytes(storageRef, file);
+        const downloadURL = await getDownloadURL(storageRef);
+        philgeps.attachment = downloadURL;
+      }
+
+      philgeps.updatedAt = new Date();
+      await updateDoc(docRef, philgeps);
+      return true;
+    } catch (error) {
+      console.error('Error updating PhilGEPS posting:', error);
+      return false;
+    }
+  }
+
+  async delete(philgeps: PhilGEPS): Promise<boolean> {
+    try {
+      // Delete attachment from storage if exists
+      if (philgeps.attachment) {
+        const fileRef = ref(this.storage, philgeps.attachment);
+        await deleteObject(fileRef).catch((err) =>
+          console.warn('Failed to delete file:', err)
+        );
+      }
+
+      const docRef = doc(
+        this.firestore,
+        this.PHIL_GEPS_COLLECTION,
+        philgeps.id
+      );
+      await deleteDoc(docRef);
+      return true;
+    } catch (error) {
+      console.error('Error deleting PhilGEPS posting:', error);
+      return false;
+    }
   }
 }

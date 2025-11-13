@@ -20,6 +20,9 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { StringFormat } from '@angular/fire/storage';
 import { QueryDocumentSnapshot } from '@angular/fire/firestore';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { Requirements } from '../../models/Requirement';
+import { RequirementService } from '../../services/requirement.service';
 
 @Component({
   selector: 'app-services-list',
@@ -41,6 +44,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 export class ServicesListComponent implements OnInit {
   private offcanvasService = inject(NgbOffcanvas);
   private programService = inject(ProgramsService);
+  private requirementService = inject(RequirementService);
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
 
@@ -63,9 +67,8 @@ export class ServicesListComponent implements OnInit {
   lastIndex: QueryDocumentSnapshot<Services> | null = null;
   isLoading = false;
   noMoreData = false;
-
+  requirements$: Requirements[] = [];
   ngOnInit(): void {
-    // Read initial query params
     this.activatedRoute.queryParamMap.subscribe((params) => {
       const newType = params.get('type') || 'All Services';
       const newSearch = params.get('search') || null;
@@ -150,6 +153,12 @@ export class ServicesListComponent implements OnInit {
 
   openOffcanvas(content: TemplateRef<any>, service: Services) {
     this.selectedService = service;
+    this.requirements$ = [];
+
+    this.requirementService.getRequirements(service.id).then((reqs) => {
+      this.requirements$ = reqs;
+    });
+
     this.offcanvasService
       .open(content, {
         ariaLabelledBy: 'offcanvas-basic-title',
