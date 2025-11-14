@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PostingService } from '../../services/posting.service';
 import { CommonModule } from '@angular/common';
 
@@ -9,9 +9,14 @@ import { CommonModule } from '@angular/common';
   templateUrl: './phil-geps-list.component.html',
   styleUrl: './phil-geps-list.component.scss',
 })
-export class PhilGepsListComponent {
-  postings$ = this.postingService.getAll();
+export class PhilGepsListComponent implements OnInit {
+  postings$ = this.postingService.getWithAttachments();
   constructor(private postingService: PostingService) {}
+  ngOnInit(): void {
+    this.postings$.subscribe((data) => {
+      console.log(data);
+    });
+  }
   getFilename(url: string): string | null {
     try {
       const pathname = new URL(url, window.location.origin).pathname;

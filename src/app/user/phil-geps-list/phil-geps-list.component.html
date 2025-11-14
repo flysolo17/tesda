@@ -5,11 +5,26 @@
 
       <ng-container *ngFor="let item of postings$ | async; let i = index">
         <div class="border-bottom pb-3 mb-4">
-          <h4 class="fw-semibold text-dark mb-1">{{ item.title }}</h4>
+          <h4 class="fw-semibold text-dark mb-1">{{ item.philgeps.title }}</h4>
           <span class="text-muted d-block mb-2">{{
-            item.date | date : "longDate"
+            item.philgeps.date | date : "longDate"
           }}</span>
-          <p class="text-muted">{{ item.details }}</p>
+          <p class="text-muted">{{ item.philgeps.details }}</p>
+          <div *ngFor="let link of item.attachments" class="mb-2">
+            <ng-container *ngIf="link?.file; else plainLabel">
+              <a
+                [href]="link.file"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-decoration-none text-primary"
+              >
+                <i class="bi bi-link-45deg me-1"></i>{{ link.title }}
+              </a>
+            </ng-container>
+            <ng-template #plainLabel>
+              <span class="text-body">{{ link?.file }}</span>
+            </ng-template>
+          </div>
         </div>
       </ng-container>
 
