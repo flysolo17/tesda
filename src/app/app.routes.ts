@@ -230,6 +230,7 @@ export const routes: Routes = [
           {
             path: 'create-seal',
             component: CreateSealComponent,
+            canDeactivate: [exitPageGuard],
           },
         ],
       },

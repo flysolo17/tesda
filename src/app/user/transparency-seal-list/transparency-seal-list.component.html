@@ -46,7 +46,7 @@
                 class="text-primary fw-semibold border-0 shadow-none text-start"
                 type="button"
               >
-                {{ item.title | uppercase }}
+                {{ item.transparencySeal.title | uppercase }}
               </button>
             </h2>
 
@@ -56,19 +56,26 @@
                   class="d-flex flex-column overflow-auto"
                   style="max-height: 200px"
                 >
-                  <div *ngFor="let link of item.quickLinks || []" class="mb-2">
-                    <ng-container *ngIf="link?.link; else plainLabel">
+                  <span
+                    >Cost :
+                    {{ item.transparencySeal.cost | currency : "PHP" }}</span
+                  >
+                  <span class="mb-3"
+                    >Date : {{ item.transparencySeal.date }}</span
+                  >
+                  <div *ngFor="let link of item.attachments || []" class="mb-2">
+                    <ng-container *ngIf="link?.file; else plainLabel">
                       <a
-                        [href]="link.link"
+                        [href]="link.file"
                         target="_blank"
                         rel="noopener noreferrer"
                         class="text-decoration-none text-primary"
                       >
-                        <i class="bi bi-link-45deg me-1"></i>{{ link?.label }}
+                        <i class="bi bi-link-45deg me-1"></i>{{ link.title }}
                       </a>
                     </ng-container>
                     <ng-template #plainLabel>
-                      <span class="text-body">{{ link?.label }}</span>
+                      <span class="text-body">{{ link?.title }}</span>
                     </ng-template>
                   </div>
                 </div>

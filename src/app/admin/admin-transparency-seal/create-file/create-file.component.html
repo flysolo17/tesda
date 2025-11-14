@@ -1,0 +1,72 @@
+<form [formGroup]="attachmentForm" (submit)="submit()">
+  <div class="modal-header">
+    <h4 class="modal-title">Create File Attachment</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="activeModal.dismiss('Cross click')"
+      [disabled]="isLoading"
+    ></button>
+  </div>
+
+  <div class="modal-body" [class.opacity-50]="isLoading">
+    <div class="form-floating mb-3">
+      <input
+        type="text"
+        class="form-control"
+        formControlName="title"
+        id="title"
+        placeholder="Enter title"
+        [disabled]="isLoading"
+      />
+      <label for="title">Title</label>
+      <div
+        *ngIf="
+          attachmentForm.get('title')?.invalid &&
+          attachmentForm.get('title')?.touched
+        "
+        class="text-danger small mt-1"
+      >
+        Title is required.
+      </div>
+    </div>
+
+    <div class="form-floating mb-3">
+      <input
+        type="file"
+        class="form-control"
+        id="file"
+        accept=".pdf,.doc,.docx,.txt"
+        (change)="onFileSelected($event)"
+        [disabled]="isLoading"
+      />
+      <label for="file" class="form-label">Attach File</label>
+      <div *ngIf="selectedFile" class="mt-1 small text-success">
+        Selected file: {{ selectedFile.name }}
+      </div>
+    </div>
+
+    <div *ngIf="isLoading" class="text-center my-3">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Uploading...</span>
+      </div>
+      <div class="small mt-2 text-muted">Uploading file, please wait...</div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      (click)="activeModal.close('Close click')"
+      [disabled]="isLoading"
+    >
+      Close
+    </button>
+    <button class="btn btn-success" type="submit" [disabled]="isLoading">
+      <span *ngIf="!isLoading">Save</span>
+      <span *ngIf="isLoading">Saving...</span>
+    </button>
+  </div>
+</form>

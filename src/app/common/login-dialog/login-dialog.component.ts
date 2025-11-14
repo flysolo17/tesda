@@ -50,7 +50,7 @@ export class LoginDialogComponent {
 
     const { email, password } = this.loginForm.value;
     this.loading$ = true;
-
+    console.log(this.loginForm.value);
     this.authService
       .loginWithEmailAndPassword(email, password)
       .then((data) => {
@@ -66,6 +66,8 @@ export class LoginDialogComponent {
         }
       })
       .catch((e) => {
+        console.error('Login error:', e);
+        this.toastr.showError(e.message ?? 'Unknown Error');
         this.toastr.showError(e['message'] ?? 'Unknown Error');
         this.loading$ = false;
       });
@@ -81,6 +83,7 @@ export class LoginDialogComponent {
 
         if (data.type === UserType.ADMIN) {
           this.activeModal.close(true);
+          this.authService.logout();
         } else {
           this.activeModal.close(data.id);
         }

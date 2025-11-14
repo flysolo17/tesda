@@ -29,6 +29,7 @@ import {
 import { map, Observable, of, switchMap } from 'rxjs';
 import { User, UserConverter, UserType } from '../models/Users';
 import { Router } from '@angular/router';
+import { em } from '@fullcalendar/core/internal-common';
 
 @Injectable({
   providedIn: 'root',
@@ -89,6 +90,23 @@ export class AuthService {
     return this.getOrThrowUserFromFirestore(result.user.uid);
   }
 
+  // --- HELPER: Fetch Firestore user ---
+  private async getOrThrowUserFromFirestore(uid: string): Promise<User> {
+    const userDocRef = doc(
+      collection(this.firestore, this.USER_COLLECTION).withConverter(
+        UserConverter
+      ),
+      uid
+    );
+    const userSnapshot = await getDoc(userDocRef);
+
+    if (!userSnapshot.exists()) {
+      await signOut(this.auth);
+      throw new Error('User not found in Firestore.');
+    }
+
+    return userSnapshot.data()!;
+  }
   async registerWithGoogle(): Promise<User> {
     const cred = await signInWithPopup(this.auth, new GoogleAuthProvider());
     const uid = cred.user.uid;
@@ -112,24 +130,6 @@ export class AuthService {
       profile: cred.user.photoURL || '',
       type: UserType.USER,
     });
-  }
-
-  // --- HELPER: Fetch Firestore user ---
-  private async getOrThrowUserFromFirestore(uid: string): Promise<User> {
-    const userDocRef = doc(
-      collection(this.firestore, this.USER_COLLECTION).withConverter(
-        UserConverter
-      ),
-      uid
-    );
-    const userSnapshot = await getDoc(userDocRef);
-
-    if (!userSnapshot.exists()) {
-      await signOut(this.auth);
-      throw new Error('User not found in Firestore.');
-    }
-
-    return userSnapshot.data()!;
   }
 
   // --- LOGOUT ---

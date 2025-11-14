@@ -11,6 +11,26 @@ import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './transparency-seal-list.component.scss',
 })
 export class TransparencySealListComponent {
-  transparencySeals$ = this.transparencySealService.getAll();
+  transparencySeals$ = this.transparencySealService.getWithAttachments();
   constructor(private transparencySealService: TransparencySealService) {}
+
+  downloadFile(url: string, fileName: string) {
+    fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const blobUrl = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = fileName;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+
+        a.click();
+        document.body.removeChild(a);
+
+        window.URL.revokeObjectURL(blobUrl);
+      })
+      .catch((err) => console.error('Download error:', err));
+  }
 }

@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TransparencySealService } from '../../services/transparency-seal.service';
 import Swal from 'sweetalert2';
+import { collection, doc, Firestore } from '@angular/fire/firestore';
+import { TransparencySeal } from '../../models/TransparencySeal';
 @Component({
   selector: 'app-admin-transparency-seal',
   standalone: true,
@@ -11,10 +13,14 @@ import Swal from 'sweetalert2';
   styleUrl: './admin-transparency-seal.component.scss',
 })
 export class AdminTransparencySealComponent {
-  transparencySeal$ = this.transparencyService.getAll();
-  constructor(private transparencyService: TransparencySealService) {}
+  transparencySeal$ = this.transparencyService.getWithAttachments();
+  constructor(
+    private transparencyService: TransparencySealService,
+    private firestore: Firestore,
+    private router: Router
+  ) {}
 
-  delete(id: string) {
+  delete(trans: TransparencySeal) {
     Swal.fire({
       title: 'Are you sure?',
       text: 'This transparency seal will be permanently deleted.',
@@ -28,7 +34,7 @@ export class AdminTransparencySealComponent {
     }).then((result) => {
       if (result.isConfirmed) {
         this.transparencyService
-          .delete(id)
+          .delete(trans)
           .then(() => {
             Swal.fire({
               icon: 'success',
@@ -49,5 +55,17 @@ export class AdminTransparencySealComponent {
           });
       }
     });
+  }
+  new(id: string | null = null) {
+    if (id === null) {
+      const newId = doc(collection(this.firestore, 'transparency-seal')).id;
+      this.router.navigate(['/administration/main/create-seal'], {
+        queryParams: { id: newId },
+      });
+    } else {
+      this.router.navigate(['/administration/main/create-seal'], {
+        queryParams: { id: id },
+      });
+    }
   }
 }

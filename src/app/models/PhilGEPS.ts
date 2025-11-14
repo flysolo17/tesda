@@ -6,7 +6,7 @@ export interface PhilGEPS {
   cost: number;
   details: string;
   attachment?: string | null;
-  date: string; //MMMM dd, yyyy
+  date: string;
   createdAt: Date;
   updatedAt: Date;
 }

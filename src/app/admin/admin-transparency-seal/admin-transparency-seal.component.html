@@ -14,7 +14,7 @@
       <button
         class="btn btn-success d-flex gap-2"
         type="button"
-        [routerLink]="['/administration/main/create-seal']"
+        (click)="new()"
       >
         <i class="bi bi-plus"></i>
         New
@@ -23,56 +23,48 @@
   </div>
 </nav>
 
-<div class="card shadow-sm border-0">
+<div class="card shadow-sm border-0 m-4">
   <div class="card-body p-0">
     <div class="table-responsive">
       <table class="table table-hover align-middle mb-0">
         <thead class="table-primary">
           <tr>
-            <th>#</th>
             <th>Title</th>
-            <th>Quick Links</th>
-            <th>Created</th>
+            <th>Cost</th>
+            <th>Date</th>
+            <th>File Attachments</th>
+            <th>Created At</th>
             <th class="text-end">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let item of transparencySeal$ | async; let i = index">
-            <td>{{ i + 1 }}</td>
-            <td class="fw-semibold">{{ item.title }}</td>
+            <td class="fw-semibold">{{ item.transparencySeal.title }}</td>
             <td>
-              <ng-container *ngIf="item.quickLinks.length > 0; else noLinks">
-                <div
-                  class="d-flex flex-wrap overflow-auto"
-                  style="max-width: 300px; white-space: nowrap"
-                >
-                  <ng-container
-                    *ngFor="let link of item.quickLinks; let last = last"
-                  >
-                    <ng-container *ngIf="link.link; else plainLabel">
-                      <a
-                        [href]="link.link"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="text-decoration-none text-primary me-1"
-                      >
-                        <i class="bi bi-link-45deg"></i> {{ link.label }}
-                      </a>
-                    </ng-container>
-                    <ng-template #plainLabel>
-                      <span class="text-body me-1">{{ link.label }}</span>
-                    </ng-template>
-                    <span *ngIf="!last">, </span>
-                  </ng-container>
-                </div>
-              </ng-container>
-
-              <ng-template #noLinks>
-                <span class="text-muted fst-italic">No links</span>
-              </ng-template>
+              {{ item.transparencySeal.cost | currency : "PHP" }}
             </td>
             <td>
-              {{ item.createdAt | date : "mediumDate" }}
+              {{ item.transparencySeal.date }}
+            </td>
+            <td>
+              <div *ngFor="let link of item.attachments" class="mb-2">
+                <ng-container *ngIf="link?.file; else plainLabel">
+                  <a
+                    [href]="link.file"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-decoration-none text-primary"
+                  >
+                    <i class="bi bi-link-45deg me-1"></i>{{ link.title }}
+                  </a>
+                </ng-container>
+                <ng-template #plainLabel>
+                  <span class="text-body">{{ link?.file }}</span>
+                </ng-template>
+              </div>
+            </td>
+            <td>
+              {{ item.transparencySeal.createdAt | date : "mediumDate" }}
             </td>
             <td class="text-end">
               <div class="btn-group">
@@ -80,14 +72,14 @@
                   class="btn btn-sm btn-outline-primary"
                   title="Edit"
                   [routerLink]="['/administration/main/create-seal']"
-                  [queryParams]="{ id: item.id }"
+                  [queryParams]="{ id: item.transparencySeal.id }"
                 >
                   <i class="bi bi-pencil-square"></i>
                 </button>
                 <button
                   class="btn btn-sm btn-outline-danger"
                   title="Delete"
-                  (click)="delete(item.id)"
+                  (click)="delete(item.transparencySeal)"
                 >
                   <i class="bi bi-trash"></i>
                 </button>

@@ -10,9 +10,17 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { QuickLink, TransparencySeal } from '../../../models/TransparencySeal';
+import {
+  FileAttachments,
+  QuickLink,
+  TransparencySeal,
+} from '../../../models/TransparencySeal';
 
 import Swal from 'sweetalert2';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CreateFileComponent } from '../create-file/create-file.component';
+import { FileAttachmentService } from '../../../services/file-attachment.service';
+import { dA } from '@fullcalendar/core/internal-common';
 
 @Component({
   selector: 'app-create-seal',
@@ -26,18 +34,49 @@ export class CreateSealComponent implements OnInit {
   transparencySeal: TransparencySeal | null = null;
   transparencyForm: FormGroup;
   isLoading = false;
+  hasUnsavedChanges = true;
+  attachments$: FileAttachments[] = [];
   constructor(
     private location: Location,
     private transparencySealService: TransparencySealService,
     private fb: FormBuilder,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private modalService: NgbModal,
+    private attachmentService: FileAttachmentService
   ) {
     this.transparencyForm = fb.nonNullable.group({
       title: ['', Validators.required],
-      links: this.fb.array([]),
+      cost: ['', Validators.required],
+      date: ['', [Validators.required]],
     });
   }
 
+  delete(id: string, filePath: string | null): void {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'This file will be permanently deleted.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.attachmentService
+          .delete(id, filePath)
+          .then(() => {
+            Swal.fire('Deleted!', 'The file has been deleted.', 'success');
+          })
+          .catch((error) => {
+            console.error(error);
+            Swal.fire(
+              'Error',
+              'Failed to delete the file. Please try again.',
+              'error'
+            );
+          });
+      }
+    });
+  }
   back() {
     this.location.back();
   }
@@ -45,7 +84,14 @@ export class CreateSealComponent implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.queryParamMap.subscribe((params) => {
       this.id = params.get('id');
-      if (this.id) this.getById(this.id);
+      if (this.id) {
+        this.attachmentService
+          .getAllByTransparencyId(this.id)
+          .subscribe((data) => {
+            this.attachments$ = data;
+          });
+        this.getById(this.id);
+      }
     });
   }
 
@@ -60,31 +106,23 @@ export class CreateSealComponent implements OnInit {
     });
   }
 
-  addLink(): void {
-    this.links.push(this.newLink());
-  }
-
-  removeLink(index: number): void {
-    this.links.removeAt(index);
-  }
-
   getById(id: string) {
     this.transparencySealService.getById(id).then((e) => {
       if (e) {
         this.transparencySeal = e;
         this.transparencyForm.patchValue({
           title: e.title,
+          cost: e.cost,
+          date: e.date,
         });
-
-        if (e.quickLinks && Array.isArray(e.quickLinks)) {
-          e.quickLinks.forEach((l: QuickLink) =>
-            this.links.push(this.newLink(l))
-          );
-        }
       }
     });
   }
   submit() {
+    if (this.id === null) {
+      Swal.fire('Missing ID', 'Transparency ID is required.', 'error');
+      return;
+    }
     if (this.transparencyForm.invalid) {
       Swal.fire({
         icon: 'warning',
@@ -94,20 +132,39 @@ export class CreateSealComponent implements OnInit {
       });
       return;
     }
-
-    const { title, links } = this.transparencyForm.value;
-    const transparencySeal: TransparencySeal = {
-      id: this.id || '',
-      title,
-      quickLinks: links,
-      createdAt: this.transparencySeal?.createdAt || new Date(),
-      updatedAt: new Date(),
+    const handleSuccess = (message: string) => {
+      Swal.fire({
+        icon: 'success',
+        title: message,
+        timer: 1500,
+        showConfirmButton: false,
+        willClose: () => {
+          this.hasUnsavedChanges = false;
+          this.location.back(); // or modalService.dismissAll();
+        },
+      });
     };
+    const { title, cost, date } = this.transparencyForm.value;
 
     if (this.transparencySeal === null) {
-      this.create(transparencySeal);
+      const newTrans: TransparencySeal = {
+        id: this.id,
+        title: title,
+        date: date,
+        cost: cost,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      this.create(newTrans);
     } else {
-      this.update(transparencySeal);
+      const updatedTrans: TransparencySeal = {
+        ...this.transparencySeal,
+        title: title,
+        date: date,
+        cost: cost,
+        updatedAt: new Date(),
+      };
+      this.update(updatedTrans);
     }
   }
 
@@ -121,7 +178,11 @@ export class CreateSealComponent implements OnInit {
           title: 'Created Successfully',
           text: 'Transparency seal has been added.',
           confirmButtonColor: '#0d6efd',
-        }).then(() => this.back());
+        }).then(() => {
+          this.transparencyForm.reset();
+          this.hasUnsavedChanges = false;
+          this.back();
+        });
       })
       .catch(() => {
         Swal.fire({
@@ -144,7 +205,11 @@ export class CreateSealComponent implements OnInit {
           title: 'Updated Successfully',
           text: 'Transparency seal has been updated.',
           confirmButtonColor: '#0d6efd',
-        }).then(() => this.back());
+        }).then(() => {
+          this.hasUnsavedChanges = false;
+          this.transparencyForm.reset();
+          this.back();
+        });
       })
       .catch(() => {
         Swal.fire({
@@ -155,5 +220,26 @@ export class CreateSealComponent implements OnInit {
         });
       })
       .finally(() => (this.isLoading = false));
+  }
+
+  createAttachment() {
+    const modal = this.modalService.open(CreateFileComponent);
+    modal.componentInstance.transparencyId = this.id;
+  }
+
+  /** Unsaved changes guard */
+  async canDeactivate(): Promise<boolean> {
+    if (!this.hasUnsavedChanges) return true;
+
+    const result = await Swal.fire({
+      icon: 'warning',
+      title: 'Unsaved changes',
+      text: 'You have unsaved changes. Do you really want to leave?',
+      showCancelButton: true,
+      confirmButtonText: 'Leave',
+      cancelButtonText: 'Stay',
+    });
+
+    return result.isConfirmed;
   }
 }
