@@ -1,39 +1,21 @@
-<div
-  class="container-fluid p-3 d-flex align-items-center justify-content-center flex-column gap-3"
->
-  <div
-    class="container-fluid p-3 d-flex align-items-center justify-content-center flex-column gap-3"
-  >
+<div class="container-fluid p-3 d-flex flex-column align-items-center gap-3">
+  <div class="container px-3">
     <h1 class="fw-bold text-primary text-center mb-4 text-uppercase">
       List of TVET PROVIDERS and assessment centers
     </h1>
-    <!-- 
-    <div class="card shadow-sm border-0" style="max-width: 600px; width: 100%">
-      <div class="card-body">
-        <h5 class="fw-semibold text-dark mb-2">
-          • TESDA Occidental Mindoro Provincial Training Center
-        </h5>
-        <ul class="list-unstyled text-muted small mb-0">
-          <li>
-            <strong>Address:</strong> Sitio Agsuli, Sto. Niño, Sablayan,
-            Occidental Mindoro
-          </li>
-          <li><strong>Contact Number:</strong> 09209131977</li>
-          <li>
-            <strong>Email:</strong>
-            {{ "region4b.ptcoccidentalmindoro@tesda.gov.ph" }}
-          </li>
-        </ul>
-      </div>
-    </div> -->
   </div>
 
   @for (item of provider$ | async; track $index) {
-  <div class="card shadow-sm w-100 border-0" style="max-width: 1000px">
+  <div
+    class="card shadow-sm w-100 border-0"
+    style="max-width: 100%; width: 100%"
+  >
     <div class="card-body">
       <!-- Provider Header -->
-      <div class="d-flex align-items-center mb-4 border-bottom pb-3">
-        <div class="me-3">
+      <div
+        class="d-flex flex-column flex-md-row align-items-start mb-4 border-bottom pb-3 gap-3"
+      >
+        <div>
           <div
             *ngIf="!item.provider.file"
             class="bg-light rounded-circle border d-flex align-items-center justify-content-center text-muted"
@@ -54,17 +36,17 @@
 
       <!-- Provider Info Grid -->
       <div class="row mb-4">
-        <div class="col-md-4 mb-2">
+        <div class="col-12 col-md-4 mb-2">
           <small class="text-uppercase text-muted d-block">Email</small>
           <span>{{ item.provider.email || "—" }}</span>
         </div>
-        <div class="col-md-4 mb-2">
+        <div class="col-12 col-md-4 mb-2">
           <small class="text-uppercase text-muted d-block"
             >Contact Number</small
           >
           <span>{{ item.provider.contactNumber || "—" }}</span>
         </div>
-        <div class="col-md-4 mb-2" *ngIf="item.provider.location">
+        <div class="col-12 col-md-4 mb-2" *ngIf="item.provider.location">
           <small class="text-uppercase text-muted d-block">Coordinates</small>
           <span>
             {{ item.provider.location.latitude }},
@@ -75,26 +57,63 @@
 
       <!-- Two-column section -->
       <div
-        class="d-flex flex-column flex-lg-row gap-4"
-        *ngFor="let service of item.services"
+        class="d-grid gap-4"
+        style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr))"
       >
-        <div class="flex-grow-1">
+        <!-- Registered Training Programs -->
+        <div>
           <h5 class="mb-3 text-primary fw-semibold">
             Registered Training Programs
           </h5>
-          <small class="text-muted d-flex align-items-center">
-            <span class="me-2" style="font-size: 1.2em">•</span>
-            {{ service.title }}
-          </small>
+          <div
+            class="mb-3"
+            *ngFor="let service of getRegisteredPrograms(item.services)"
+          >
+            <div
+              class="d-grid"
+              style="grid-template-columns: auto 1fr; width: 100%"
+            >
+              <span
+                class="text-muted"
+                style="font-size: 1.2em; line-height: 1; align-self: start"
+                >•</span
+              >
+              <small
+                class="text-muted ms-2"
+                style="word-break: break-word; white-space: normal"
+              >
+                {{ service }}
+              </small>
+            </div>
+          </div>
         </div>
-        <div class="flex-grow-1">
+
+        <!-- AC Accredited Qualifications -->
+        <div>
           <h5 class="mb-3 text-primary fw-semibold">
-            AC Acredited Qualifications
+            AC Accredited Qualifications
           </h5>
-          <small class="text-muted d-flex align-items-center">
-            <span class="me-2" style="font-size: 1.2em">•</span>
-            {{ service.qualification }}
-          </small>
+          <div
+            class="mb-3"
+            *ngFor="let service of getAccreditedQualifications(item.services)"
+          >
+            <div
+              class="d-grid"
+              style="grid-template-columns: auto 1fr; width: 100%"
+            >
+              <span
+                class="text-muted"
+                style="font-size: 1.2em; line-height: 1; align-self: start"
+                >•</span
+              >
+              <small
+                class="text-muted ms-2"
+                style="word-break: break-word; white-space: normal"
+              >
+                {{ service }}
+              </small>
+            </div>
+          </div>
         </div>
       </div>
     </div>

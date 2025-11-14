@@ -1,54 +1,178 @@
-import { CommonModule, Location } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { TransparencySealService } from '../../../services/transparency-seal.service';
+import { PhilGEPS } from '../../../models/PhilGEPS';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PostingService } from '../../../services/posting.service';
 import {
-  FormArray,
   FormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import {
-  FileAttachments,
-  QuickLink,
-  TransparencySeal,
-} from '../../../models/TransparencySeal';
-
+import { CommonModule, Location } from '@angular/common';
+import { reference } from '@popperjs/core';
 import Swal from 'sweetalert2';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CreateFileComponent } from '../create-file/create-file.component';
+import { ActivatedRoute } from '@angular/router';
 import { FileAttachmentService } from '../../../services/file-attachment.service';
-import { dA } from '@fullcalendar/core/internal-common';
-
+import { FileAttachments } from '../../../models/TransparencySeal';
+import { CreateFileComponent } from '../../admin-transparency-seal/create-file/create-file.component';
 @Component({
-  selector: 'app-create-seal',
+  selector: 'app-create-posting',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
-  templateUrl: './create-seal.component.html',
-  styleUrl: './create-seal.component.scss',
+  imports: [ReactiveFormsModule, FormsModule, CommonModule],
+  templateUrl: './create-posting.component.html',
+  styleUrl: './create-posting.component.scss',
 })
-export class CreateSealComponent implements OnInit {
+export class CreatePostingComponent implements OnInit {
+  post: PhilGEPS | null = null;
   id: string | null = null;
-  transparencySeal: TransparencySeal | null = null;
-  transparencyForm: FormGroup;
+  postingForm: FormGroup;
   isLoading = false;
-  hasUnsavedChanges = true;
   attachments$: FileAttachments[] = [];
+  hasUnsavedChanges = true;
   constructor(
-    private location: Location,
-    private transparencySealService: TransparencySealService,
     private fb: FormBuilder,
+    private postingService: PostingService,
+    private location: Location,
     private activatedRoute: ActivatedRoute,
     private modalService: NgbModal,
     private attachmentService: FileAttachmentService
   ) {
-    this.transparencyForm = fb.nonNullable.group({
+    this.postingForm = this.fb.nonNullable.group({
       title: ['', Validators.required],
-      cost: ['', Validators.required],
-      date: ['', [Validators.required]],
+      cost: [null, Validators.required],
+      details: ['', Validators.required],
+      date: ['', Validators.required],
     });
+  }
+
+  ngOnInit(): void {
+    this.activatedRoute.queryParamMap.subscribe((params) => {
+      this.id = params.get('id');
+      if (this.id) {
+        this.attachmentService
+          .getAllByTransparencyId(this.id)
+          .subscribe((data) => {
+            this.attachments$ = data;
+          });
+        this.getById(this.id);
+      }
+    });
+  }
+
+  getById(id: string) {
+    this.postingService.getById(id).then((e) => {
+      if (e) {
+        this.post = e;
+        this.postingForm.patchValue({
+          title: e.title,
+          details: e.details,
+          cost: e.cost,
+          date: e.date,
+        });
+      }
+    });
+  }
+  async submit() {
+    if (this.id === null) {
+      Swal.fire('Missing ID', 'Transparency ID is required.', 'error');
+      return;
+    }
+    if (this.postingForm.invalid) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Invalid Form',
+        text: 'Please fill out all required fields before submitting.',
+        confirmButtonColor: '#0d6efd',
+      });
+      return;
+    }
+
+    const { title, cost, details, date } = this.postingForm.value;
+    if (this.post === null) {
+      const newPost: PhilGEPS = {
+        id: this.id,
+        title: title,
+        cost: cost,
+        details: details,
+        date: date,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      this.create(newPost);
+    } else {
+      const updatedPost: PhilGEPS = {
+        ...this.post,
+        title: title,
+        cost: cost,
+        details: details,
+        date: date,
+        updatedAt: new Date(),
+      };
+      this.update(updatedPost);
+    }
+  }
+
+  create(philgeps: PhilGEPS) {
+    this.isLoading = true;
+    this.postingService
+      .create(philgeps)
+      .then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Created Successfully',
+          text: 'Transparency seal has been added.',
+          confirmButtonColor: '#0d6efd',
+        }).then(() => {
+          this.postingForm.reset();
+          this.hasUnsavedChanges = false;
+          this.back();
+        });
+      })
+      .catch(() => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Creation Failed',
+          text: 'An error occurred while creating the transparency seal.',
+          confirmButtonColor: '#dc3545',
+        });
+      })
+      .finally(() => (this.isLoading = false));
+  }
+
+  update(philgeps: PhilGEPS) {
+    this.isLoading = true;
+    this.postingService
+      .update(philgeps)
+      .then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Updated Successfully',
+          text: 'PhilGEPS has been updated.',
+          confirmButtonColor: '#0d6efd',
+        }).then(() => {
+          this.hasUnsavedChanges = false;
+          this.postingForm.reset();
+          this.back();
+        });
+      })
+      .catch(() => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Update Failed',
+          text: 'An error occurred while updating the transparency seal.',
+          confirmButtonColor: '#dc3545',
+        });
+      })
+      .finally(() => (this.isLoading = false));
+  }
+
+  back() {
+    this.location.back();
+  }
+  createAttachment() {
+    const modal = this.modalService.open(CreateFileComponent);
+    modal.componentInstance.transparencyId = this.id;
   }
 
   delete(id: string, filePath: string | null): void {
@@ -76,144 +200,6 @@ export class CreateSealComponent implements OnInit {
           });
       }
     });
-  }
-  back() {
-    this.location.back();
-  }
-
-  ngOnInit(): void {
-    this.activatedRoute.queryParamMap.subscribe((params) => {
-      this.id = params.get('id');
-      if (this.id) {
-        this.attachmentService
-          .getAllByTransparencyId(this.id)
-          .subscribe((data) => {
-            this.attachments$ = data;
-          });
-        this.getById(this.id);
-      }
-    });
-  }
-
-  get links(): FormArray {
-    return this.transparencyForm.get('links') as FormArray;
-  }
-
-  newLink(link?: QuickLink): FormGroup {
-    return this.fb.group({
-      label: [link?.label || '', Validators.required],
-      link: [link?.link || ''],
-    });
-  }
-
-  getById(id: string) {
-    this.transparencySealService.getById(id).then((e) => {
-      if (e) {
-        this.transparencySeal = e;
-        this.transparencyForm.patchValue({
-          title: e.title,
-          cost: e.cost,
-          date: e.date,
-        });
-      }
-    });
-  }
-  submit() {
-    if (this.id === null) {
-      Swal.fire('Missing ID', 'Transparency ID is required.', 'error');
-      return;
-    }
-    if (this.transparencyForm.invalid) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Invalid Form',
-        text: 'Please fill out all required fields before submitting.',
-        confirmButtonColor: '#0d6efd',
-      });
-      return;
-    }
-
-    const { title, cost, date } = this.transparencyForm.value;
-
-    if (this.transparencySeal === null) {
-      const newTrans: TransparencySeal = {
-        id: this.id,
-        title: title,
-        date: date,
-        cost: cost,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      this.create(newTrans);
-    } else {
-      const updatedTrans: TransparencySeal = {
-        ...this.transparencySeal,
-        title: title,
-        date: date,
-        cost: cost,
-        updatedAt: new Date(),
-      };
-      this.update(updatedTrans);
-    }
-  }
-
-  create(transparencySeal: TransparencySeal) {
-    this.isLoading = true;
-    this.transparencySealService
-      .create(transparencySeal)
-      .then(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Created Successfully',
-          text: 'Transparency seal has been added.',
-          confirmButtonColor: '#0d6efd',
-        }).then(() => {
-          this.transparencyForm.reset();
-          this.hasUnsavedChanges = false;
-          this.back();
-        });
-      })
-      .catch(() => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Creation Failed',
-          text: 'An error occurred while creating the transparency seal.',
-          confirmButtonColor: '#dc3545',
-        });
-      })
-      .finally(() => (this.isLoading = false));
-  }
-
-  update(transparencySeal: TransparencySeal) {
-    this.isLoading = true;
-    this.transparencySealService
-      .update(transparencySeal)
-      .then(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Updated Successfully',
-          text: 'Transparency seal has been updated.',
-          confirmButtonColor: '#0d6efd',
-        }).then(() => {
-          this.hasUnsavedChanges = false;
-          this.transparencyForm.reset();
-          this.back();
-        });
-      })
-      .catch(() => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Update Failed',
-          text: 'An error occurred while updating the transparency seal.',
-          confirmButtonColor: '#dc3545',
-        });
-      })
-      .finally(() => (this.isLoading = false));
-  }
-
-  createAttachment() {
-    const modal = this.modalService.open(CreateFileComponent);
-    modal.componentInstance.transparencyId = this.id;
   }
 
   /** Unsaved changes guard */

@@ -6,11 +6,13 @@ import {
   NgbTypeaheadModule,
 } from '@ng-bootstrap/ng-bootstrap';
 import { PhilGEPS } from '../../models/PhilGEPS';
-import { CreatePostingComponent } from '../dialogs/create-posting/create-posting.component';
+import { CreatePostingComponent } from './create-posting/create-posting.component';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { collection, doc, Firestore } from '@angular/fire/firestore';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-admin-philgeps-posting',
   standalone: true,
@@ -25,66 +27,29 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
   templateUrl: './admin-philgeps-posting.component.html',
   styleUrl: './admin-philgeps-posting.component.scss',
 })
-export class AdminPhilgepsPostingComponent implements OnInit {
-  postings: PhilGEPS[] = [];
-  filteredPostings: PhilGEPS[] = [];
+export class AdminPhilgepsPostingComponent {
+  postings$ = this.postingService.getWithAttachments();
 
   searchTerm = new FormControl('');
-  page = 1;
-  pageSize = 10;
 
   constructor(
     private postingService: PostingService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private firestore: Firestore,
+    private router: Router
   ) {}
 
-  ngOnInit(): void {
-    this.loadPostings();
-
-    // Subscribe to search term changes for live filtering
-    this.searchTerm.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged())
-      .subscribe((term) => {
-        this.applySearch(term);
+  create(id: string | null = null) {
+    if (id == null) {
+      const newId = doc(collection(this.firestore, 'philgeps-postings')).id;
+      this.router.navigate(['/administration/main/create-posting'], {
+        queryParams: { id: newId },
       });
-  }
-
-  loadPostings() {
-    this.postingService.getAll().subscribe((data) => {
-      this.postings = data;
-      this.applySearch(this.searchTerm.value);
-    });
-  }
-
-  applySearch(term: string | null) {
-    if (!term) {
-      this.filteredPostings = [...this.postings];
     } else {
-      const lowerTerm = term.toLowerCase();
-      this.filteredPostings = this.postings.filter(
-        (p) =>
-          p.title.toLowerCase().includes(lowerTerm) ||
-          p.details.toLowerCase().includes(lowerTerm) ||
-          p.date.toLowerCase().includes(lowerTerm)
-      );
+      this.router.navigate(['/administration/main/create-posting'], {
+        queryParams: { id },
+      });
     }
-  }
-
-  create(post: PhilGEPS | null = null) {
-    const modalRef = this.modalService.open(CreatePostingComponent, {
-      size: 'lg',
-      backdrop: 'static',
-    });
-    modalRef.componentInstance.post = post;
-    modalRef.result
-      .then((result) => {
-        if (result) this.loadPostings();
-      })
-      .catch(() => {});
-  }
-
-  edit(post: PhilGEPS) {
-    this.create(post);
   }
 
   delete(post: PhilGEPS) {
@@ -101,7 +66,6 @@ export class AdminPhilgepsPostingComponent implements OnInit {
           .delete(post)
           .then(() => {
             Swal.fire('Deleted!', 'The posting has been deleted.', 'success');
-            this.loadPostings();
           })
           .catch(() => {
             Swal.fire('Error!', 'Failed to delete posting.', 'error');

@@ -171,27 +171,12 @@ export class CreateServiceComponent implements OnInit {
     this.isLoading = true;
     const service: Services = { ...this.serviceForm.value, id: this.id };
 
-    const handleSuccess = (message: string) => {
-      Swal.fire({
-        icon: 'success',
-        title: message,
-        timer: 1500,
-        showConfirmButton: false,
-        willClose: () => {
-          this.hasUnsavedChanges = false;
-          this.location.back(); // or modalService.dismissAll();
-        },
-      });
-    };
-
     const operation = this.service$
       ? this.programService.update(service)
       : this.programService.create(service);
 
     operation
-      .then(() =>
-        handleSuccess(this.service$ ? 'Service updated!' : 'Service created!')
-      )
+      .then(() => this.back())
       .catch((err) =>
         Swal.fire({
           icon: 'error',

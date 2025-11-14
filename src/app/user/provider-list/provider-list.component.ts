@@ -7,7 +7,11 @@ import {
 import { map, Observable, of } from 'rxjs';
 import { Provider, ProviderType } from '../../models/Provider';
 import { CommonModule } from '@angular/common';
-import { NgbAccordionModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbAccordionModule,
+  NgbModal,
+  NgbSlide,
+} from '@ng-bootstrap/ng-bootstrap';
 
 import { AuthService } from '../../services/auth.service';
 import { SurveyComponent } from '../survey/survey.component';
@@ -16,6 +20,8 @@ import { SurveyService } from '../../services/survey.service';
 import { User, UserType } from '../../models/Users';
 import { user } from '@angular/fire/auth';
 import Swal from 'sweetalert2';
+import { dA } from '@fullcalendar/core/internal-common';
+import { Services, ServiceType } from '../../models/Services';
 
 @Component({
   selector: 'app-provider-list',
@@ -102,5 +108,13 @@ export class ProviderListComponent implements OnInit {
         });
         console.error('Survey submission error:', error);
       });
+  }
+
+  getRegisteredPrograms(services: Services[]): string[] {
+    return services.map((e) => e.title);
+  }
+
+  getAccreditedQualifications(services: Services[]): string[] {
+    return services.map((e) => e.qualification);
   }
 }

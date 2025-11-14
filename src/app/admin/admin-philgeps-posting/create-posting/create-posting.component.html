@@ -1,0 +1,141 @@
+<nav class="navbar navbar-dark bg-primary">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">
+      <button class="btn btn-light" (click)="back()">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      {{ post === null ? "Create Posting" : "Update Posting" }}
+    </span>
+  </div>
+</nav>
+<div class="container p-4">
+  <form [formGroup]="postingForm" (submit)="submit()" class="row g-4 w-100">
+    <div class="form-floating col-6">
+      <input
+        type="text"
+        id="title"
+        class="form-control"
+        formControlName="title"
+        [class.is-invalid]="
+          postingForm.get('title')?.invalid && postingForm.get('title')?.touched
+        "
+      />
+      <label for="title" class="form-label">Title</label>
+      <div class="invalid-feedback">Title is required.</div>
+    </div>
+
+    <div class="form-floating col-3">
+      <input
+        type="number"
+        id="cost"
+        class="form-control"
+        formControlName="cost"
+        [class.is-invalid]="
+          postingForm.get('cost')?.invalid && postingForm.get('cost')?.touched
+        "
+      />
+      <label for="cost" class="form-label">Cost</label>
+      <div class="invalid-feedback">Cost is required.</div>
+    </div>
+    <div class="form-floating col-3">
+      <input
+        type="date"
+        id="date"
+        class="form-control"
+        formControlName="date"
+        placeholder="MMMM dd, yyyy"
+        [class.is-invalid]="
+          postingForm.get('date')?.invalid && postingForm.get('date')?.touched
+        "
+      />
+      <label for="date" class="form-label">Date</label>
+      <div class="invalid-feedback">Date is required.</div>
+    </div>
+
+    <div class="form-floating">
+      <textarea
+        id="details"
+        class="form-control"
+        formControlName="details"
+        style="min-height: 100px"
+        placeholder="Details"
+        rows="3"
+        [class.is-invalid]="
+          postingForm.get('details')?.invalid &&
+          postingForm.get('details')?.touched
+        "
+      ></textarea>
+      <label for="details">Details</label>
+      <div class="invalid-feedback">Details are required.</div>
+    </div>
+
+    <div class="col-12 d-flex align-items-center justify-content-between">
+      <h4>File Attachment</h4>
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        (click)="createAttachment()"
+      >
+        <i class="bi bi-plus"></i>
+      </button>
+    </div>
+    <div class="col-12">
+      <table class="table table-bordered table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>File</th>
+
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let attach of attachments$; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ attach.title }}</td>
+            <td>
+              <a
+                *ngIf="attach.file"
+                [href]="attach.file"
+                target="_blank"
+                type="button"
+                class="d-flex align-items-center text-decoration-none"
+              >
+                <i class="bi bi-file-earmark-text me-1"></i>
+                View File
+              </a>
+            </td>
+
+            <td>
+              <button
+                class="btn btn-sm btn-outline-danger"
+                type="button"
+                (click)="delete(attach.id, attach.file ?? null)"
+              >
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="attachments$.length === 0">
+            <td colspan="5" class="text-center">No attachments found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="postingForm.invalid || isLoading"
+    >
+      <span
+        *ngIf="isLoading"
+        class="spinner-border spinner-border-sm me-2"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      {{ post ? "Update" : "Create" }}
+    </button>
+  </form>
+</div>

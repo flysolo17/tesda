@@ -38,9 +38,15 @@
     <tbody>
       <tr *ngFor="let service of services$ | async; let i = index">
         <td>{{ i + 1 }}</td>
-        <td>{{ service.title }}</td>
-        <td>{{ service.type }}</td>
-        <td>{{ service.qualification }}</td>
+        <td>
+          <span class="ellipsis">{{ service.title }}</span>
+        </td>
+        <td>
+          <span class="ellipsis">{{ service.type }}</span>
+        </td>
+        <td>
+          <span class="ellipsis">{{ service.qualification }}</span>
+        </td>
         <td>{{ service.updatedAt | date : "short" }}</td>
         <td>
           <button
