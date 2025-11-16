@@ -1,25 +1,24 @@
-<div class="modal-header border-0 pb-0">
-  <h5 class="modal-title fw-semibold">
-    {{ activity ? "Update Activity" : "Create Activity" }}
-  </h5>
-  <button
-    type="button"
-    class="btn-close"
-    aria-label="Close"
-    (click)="onCancel()"
-  ></button>
-</div>
+<nav class="navbar navbar-dark bg-primary">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">
+      <button class="btn btn-light" (click)="back()">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      {{ activity === null ? "Create Service" : "Update Service" }}
+    </span>
+  </div>
+</nav>
 
-<form
-  [formGroup]="activityForm"
-  (ngSubmit)="onSubmit()"
-  class="needs-validation"
-  novalidate
->
-  <div class="modal-body">
+<div class="container-fluid py-4">
+  <form
+    [formGroup]="activityForm"
+    (ngSubmit)="onSubmit()"
+    class="needs-validation"
+    novalidate
+  >
     <div class="row g-4">
       <!-- Title -->
-      <div class="col-12">
+      <div class="col-8">
         <div class="form-floating">
           <input
             type="text"
@@ -39,7 +38,8 @@
         </div>
       </div>
 
-      <div class="col-12">
+      <!-- Location -->
+      <div class="col-4">
         <div class="form-floating">
           <input
             type="text"
@@ -59,7 +59,7 @@
 
       <!-- Image Upload -->
       <div class="col-12">
-        <label for="image" class="form-label fw-semibold">Upload Image</label>
+        <label for="image" class="form-label">Upload Image</label>
         <input
           type="file"
           accept="image/*"
@@ -95,74 +95,53 @@
 
       <!-- Date Picker -->
       <div class="col-md-6">
-        <label for="date" class="form-label fw-semibold">Date</label>
-        <div class="input-group">
-          <input
-            class="form-control"
-            id="date"
-            placeholder="Select date"
-            formControlName="date"
-            ngbDatepicker
-            #d="ngbDatepicker"
-            [class.is-invalid]="
-              activityForm.get('date')?.invalid &&
-              activityForm.get('date')?.touched
-            "
-          />
-          <button
-            class="btn btn-outline-secondary"
-            type="button"
-            (click)="d.toggle()"
-          >
-            <i class="bi bi-calendar3"></i>
-          </button>
-          <div class="invalid-feedback d-block">Date is required.</div>
-        </div>
+        <label for="date" class="form-label">Date</label>
+        <input
+          class="form-control"
+          id="date"
+          type="date"
+          formControlName="date"
+          [class.is-invalid]="
+            activityForm.get('date')?.invalid &&
+            activityForm.get('date')?.touched
+          "
+        />
+        <div class="invalid-feedback d-block">Date is required.</div>
       </div>
 
       <!-- Time Picker -->
       <div class="col-md-6">
-        <label class="form-label fw-semibold">Time</label>
-        <div
-          [class.border-danger]="
+        <label for="time" class="form-label">Time</label>
+        <input
+          class="form-control"
+          id="time"
+          type="time"
+          formControlName="time"
+          [class.is-invalid]="
             activityForm.get('time')?.invalid &&
             activityForm.get('time')?.touched
           "
-        >
-          <ngb-timepicker
-            formControlName="time"
-            [spinners]="true"
-            [seconds]="false"
-            [meridian]="true"
-          ></ngb-timepicker>
-        </div>
-        <div
-          *ngIf="
-            activityForm.get('time')?.invalid &&
-            activityForm.get('time')?.touched
-          "
-          class="text-danger small mt-1"
-        >
-          Time is required.
-        </div>
+        />
+        <div class="invalid-feedback">Time is required.</div>
       </div>
     </div>
-  </div>
 
-  <div class="modal-footer border-0 pt-0">
-    <button
-      type="button"
-      class="btn btn-outline-secondary"
-      (click)="onCancel()"
-    >
-      Cancel
-    </button>
-    <button
-      type="submit"
-      class="btn btn-primary px-4"
-      [disabled]="activityForm.invalid"
-    >
-      {{ activity ? "Update" : "Create" }}
-    </button>
-  </div>
-</form>
+    <!-- Buttons -->
+    <div class="mt-4" align="end">
+      <button
+        type="button"
+        class="btn btn-outline-secondary me-2"
+        (click)="back()"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        class="btn btn-primary px-4"
+        [disabled]="activityForm.invalid"
+      >
+        {{ activity ? "Update" : "Save" }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -8,12 +8,14 @@ import {
   deleteDoc,
   doc,
   Firestore,
+  getDoc,
   orderBy,
   query,
   setDoc,
   updateDoc,
 } from '@angular/fire/firestore';
 import {
+  deleteObject,
   getDownloadURL,
   ref,
   Storage,
@@ -28,8 +30,9 @@ export class ActivityService {
   constructor(private firestore: Firestore, private storage: Storage) {}
 
   async add(activity: Activity, image: File): Promise<void> {
-    const id = activity.id || crypto.randomUUID();
-    const imagePath = `${this.ACTIVITY_COLLECTION}/${id}/image.jpg`;
+    const extension = image.name.split('.').pop() || 'jpg';
+    const random = crypto.randomUUID();
+    const imagePath = `${this.ACTIVITY_COLLECTION}/${activity.id}/${random}.${extension}`;
     const imageRef = ref(this.storage, imagePath);
 
     await uploadBytes(imageRef, image);
@@ -38,14 +41,13 @@ export class ActivityService {
     const now = new Date();
     const newActivity: Activity = {
       ...activity,
-      id,
       image: imageUrl,
       createdAt: now,
       updatedAt: now,
     };
 
     await setDoc(
-      doc(this.firestore, this.ACTIVITY_COLLECTION, id).withConverter(
+      doc(this.firestore, this.ACTIVITY_COLLECTION, activity.id).withConverter(
         ActivityConverter
       ),
       newActivity
@@ -56,7 +58,9 @@ export class ActivityService {
     let imageUrl = activity.image;
 
     if (image) {
-      const imagePath = `${this.ACTIVITY_COLLECTION}/${activity.id}/image.jpg`;
+      const extension = image.name.split('.').pop() || 'jpg';
+      const random = crypto.randomUUID();
+      const imagePath = `${this.ACTIVITY_COLLECTION}/${activity.id}/${random}.${extension}`;
       const imageRef = ref(this.storage, imagePath);
       await uploadBytes(imageRef, image);
       imageUrl = await getDownloadURL(imageRef);
@@ -76,9 +80,17 @@ export class ActivityService {
     );
   }
 
-  async delete(id: string) {
-    await deleteDoc(doc(this.firestore, this.ACTIVITY_COLLECTION, id));
+  async delete(activity: Activity): Promise<void> {
+    // 1️⃣ Delete image from Firebase Storage if it exists
+    if (activity.image) {
+      const imageRef = ref(this.storage, activity.image);
+      await deleteObject(imageRef);
+    }
+
+    // 2️⃣ Delete Firestore document
+    await deleteDoc(doc(this.firestore, this.ACTIVITY_COLLECTION, activity.id));
   }
+
   getAll(): Observable<Activity[]> {
     const q = query(
       collection(this.firestore, this.ACTIVITY_COLLECTION).withConverter(
@@ -87,5 +99,22 @@ export class ActivityService {
       orderBy('sortableDate', 'asc')
     );
     return collectionData(q);
+  }
+
+  getById(id: string): Promise<Activity | null> {
+    const docRef = doc(
+      collection(this.firestore, this.ACTIVITY_COLLECTION).withConverter(
+        ActivityConverter
+      ),
+      id
+    );
+
+    return getDoc(docRef).then((snapshot) => {
+      if (snapshot.exists()) {
+        return snapshot.data();
+      } else {
+        return null;
+      }
+    });
   }
 }

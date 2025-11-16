@@ -44,6 +44,7 @@ import { AdminEventsComponent } from './admin/admin-events/admin-events.componen
 import { AdminSurveyComponent } from './admin/admin-survey/admin-survey.component';
 import { exitPageGuard } from './admin/admin-services/exit-page.guard';
 import { CreatePostingComponent } from './admin/admin-philgeps-posting/create-posting/create-posting.component';
+import { CreateActivityComponent } from './admin/about/admin-activities/create-activity/create-activity.component';
 
 export const routes: Routes = [
   {
@@ -220,6 +221,11 @@ export const routes: Routes = [
           {
             path: 'activities',
             component: AdminActivitiesComponent,
+          },
+          {
+            path: 'create-activity',
+            component: CreateActivityComponent,
+            canDeactivate: [exitPageGuard],
           },
           {
             path: 'feedback',

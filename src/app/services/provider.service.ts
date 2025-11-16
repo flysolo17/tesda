@@ -37,23 +37,15 @@ export class ProviderService {
     private programService: ProgramsService
   ) {}
 
-  async createProvider(provider: Provider, file: File | null) {
+  async createProvider(provider: Provider) {
     const providersRef = collection(this.firestore, this.collectionName);
     const docRef = doc(providersRef);
     const id = docRef.id;
-    let fileUrl: string | null = null;
-
-    if (file) {
-      const ext = file.name.split('.').pop(); // Get file extension
-      const fileRef = ref(this.storage, `services/files/${id}.${ext}`);
-      await uploadBytes(fileRef, file);
-      fileUrl = await getDownloadURL(fileRef);
-    }
 
     const newProvider: Provider = {
       ...provider,
       id: id,
-      file: fileUrl,
+
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -122,22 +114,16 @@ export class ProviderService {
     );
     return collectionData(q, { idField: 'id' });
   }
-  async update(provider: Provider, file: File | null = null) {
+  async update(provider: Provider) {
     const docRef = doc(
       this.firestore,
       this.collectionName,
       provider.id
     ).withConverter(ProviderConverter);
-    let fileUrl: string | null = null;
-    if (file) {
-      const ext = file.name.split('.').pop();
-      const fileRef = ref(this.storage, `services/files/${provider.id}.${ext}`);
-      await uploadBytes(fileRef, file);
-      fileUrl = await getDownloadURL(fileRef);
-    }
+
     const updatedProvider: Provider = {
       ...provider,
-      file: fileUrl ?? provider.file,
+
       updatedAt: new Date(),
     };
     return updateDoc(docRef, updatedProvider);

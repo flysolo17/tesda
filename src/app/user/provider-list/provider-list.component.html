@@ -10,30 +10,10 @@
     class="card shadow-sm w-100 border-0"
     style="max-width: 100%; width: 100%"
   >
+    <div class="card-header">
+      <h4 class="card-title">{{ item.provider.name }}</h4>
+    </div>
     <div class="card-body">
-      <!-- Provider Header -->
-      <div
-        class="d-flex flex-column flex-md-row align-items-start mb-4 border-bottom pb-3 gap-3"
-      >
-        <div>
-          <div
-            *ngIf="!item.provider.file"
-            class="bg-light rounded-circle border d-flex align-items-center justify-content-center text-muted"
-            style="width: 80px; height: 80px"
-          >
-            <i class="bi bi-building fs-3"></i>
-          </div>
-        </div>
-
-        <div>
-          <h4 class="card-title mb-1">{{ item.provider.name }}</h4>
-          <p class="text-muted mb-0">
-            {{ item.provider.address }}, {{ item.provider.province }},
-            {{ item.provider.region }}
-          </p>
-        </div>
-      </div>
-
       <!-- Provider Info Grid -->
       <div class="row mb-4">
         <div class="col-12 col-md-4 mb-2">
@@ -46,12 +26,9 @@
           >
           <span>{{ item.provider.contactNumber || "—" }}</span>
         </div>
-        <div class="col-12 col-md-4 mb-2" *ngIf="item.provider.location">
-          <small class="text-uppercase text-muted d-block">Coordinates</small>
-          <span>
-            {{ item.provider.location.latitude }},
-            {{ item.provider.location.longitude }}
-          </span>
+        <div class="col-12 col-md-4 mb-2">
+          <small class="text-uppercase text-muted d-block">Address</small>
+          <span>{{ item.provider.address }}</span>
         </div>
       </div>
 

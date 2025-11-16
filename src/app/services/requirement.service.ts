@@ -134,7 +134,7 @@ export class RequirementService {
         RequirementConverter
       ),
       where('serviceId', '==', id),
-      orderBy('createdAt', 'desc')
+      orderBy('createdAt', 'asc')
     );
     return collectionData(q);
   }

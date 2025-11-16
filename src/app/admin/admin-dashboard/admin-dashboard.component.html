@@ -1,7 +1,12 @@
 <!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Roboto:wght@400;500;700&display=swap"
+  rel="stylesheet"
+/>
 
-<div class="d-flex justify-content-between align-items-center mb-4 dashboard-header">
+<div
+  class="d-flex justify-content-between align-items-center mb-4 dashboard-header"
+>
   <h3 class="fw-semibold mb-0">Admin Dashboard</h3>
 
   <div class="d-flex align-items-center gap-3">
@@ -9,12 +14,17 @@
     <div class="position-relative">
       <button class="btn btn-outline-secondary position-relative" id="notifBtn">
         <i class="bi bi-bell fs-5"></i>
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+        <span
+          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+        >
           3
         </span>
       </button>
       <!-- Notification Dropdown -->
-      <div class="dropdown-menu dropdown-menu-end shadow-sm mt-2" id="notifDropdown">
+      <div
+        class="dropdown-menu dropdown-menu-end shadow-sm mt-2"
+        id="notifDropdown"
+      >
         <h6 class="dropdown-header fw-semibold">Notifications</h6>
         <a class="dropdown-item" href="#">New booking request</a>
         <a class="dropdown-item" href="#">System update available</a>
@@ -29,7 +39,13 @@
         data-bs-toggle="dropdown"
         aria-expanded="false"
       >
-        <img src="../../../assets/images/logo.png" alt="Profile" class="rounded-circle" width="32" height="32" />
+        <img
+          src="../../../assets/images/logo.png"
+          alt="Profile"
+          class="rounded-circle"
+          width="32"
+          height="32"
+        />
         <span class="fw-semibold">Admin</span>
         <i class="bi bi-caret-down-fill"></i>
       </button>
@@ -44,55 +60,56 @@
 </div>
 
 <div class="container-fluid py-4 admin-dashboard">
-<!-- === Stats Cards Row === -->
-<div class="row g-4 mb-3">
-  <div class="col-sm-6 col-lg-3">
-    <div class="card dashboard-card bg-primary text-white shadow-sm">
-      <div class="card-body">
-        <p class="card-text mb-1">Total Services</p>
-        <h4 class="card-title fw-semibold">0</h4>
+  <!-- === Stats Cards Row === -->
+  <div class="row g-4 mb-3">
+    <div class="col-sm-6 col-lg-3">
+      <div class="card dashboard-card bg-primary text-white shadow-sm">
+        <div class="card-body">
+          <p class="card-text mb-1">Total Services</p>
+          <h4 class="card-title fw-semibold">0</h4>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+      <div class="card dashboard-card bg-success text-white shadow-sm">
+        <div class="card-body">
+          <p class="card-text mb-1">Completed Appointments</p>
+          <h4 class="card-title fw-semibold">0</h4>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+      <div class="card dashboard-card bg-warning text-white shadow-sm">
+        <div class="card-body">
+          <p class="card-text mb-1">Pending Requests</p>
+          <h4 class="card-title fw-semibold">0</h4>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+      <div class="card dashboard-card bg-info text-white shadow-sm">
+        <div class="card-body">
+          <p class="card-text mb-1">Active Users</p>
+          <h4 class="card-title fw-semibold">0</h4>
+        </div>
       </div>
     </div>
   </div>
-
-  <div class="col-sm-6 col-lg-3">
-    <div class="card dashboard-card bg-success text-white shadow-sm">
-      <div class="card-body">
-        <p class="card-text mb-1">Completed Appointments</p>
-        <h4 class="card-title fw-semibold">0</h4>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-sm-6 col-lg-3">
-    <div class="card dashboard-card bg-warning text-white shadow-sm">
-      <div class="card-body">
-        <p class="card-text mb-1">Pending Requests</p>
-        <h4 class="card-title fw-semibold">0</h4>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-sm-6 col-lg-3">
-    <div class="card dashboard-card bg-info text-white shadow-sm">
-      <div class="card-body">
-        <p class="card-text mb-1">Active Users</p>
-        <h4 class="card-title fw-semibold">0</h4>
-      </div>
-    </div>
-  </div>
-</div>
-
 
   <!-- === Charts Row 1 === -->
   <div class="row g-4 mb-3">
     <div class="col-lg-4">
       <div class="card shadow-sm p-3 h-100">
         <h6 class="fw-semibold mb-3">Visitors Overview</h6>
-        <canvas baseChart
+        <canvas
+          baseChart
           [data]="visitorsChartData"
-          [type]="visitorsChartType"
-          [options]="visitorsChartOptions">
+          [type]="'bar'"
+          [options]="visitorsChartOptions"
+        >
         </canvas>
       </div>
     </div>
@@ -100,10 +117,12 @@
     <div class="col-lg-4">
       <div class="card shadow-sm p-3 h-100">
         <h6 class="fw-semibold mb-3">Feedback Trends</h6>
-        <canvas baseChart
+        <canvas
+          baseChart
           [data]="feedbackChartData"
           [type]="feedbackChartType"
-          [options]="feedbackChartOptions">
+          [options]="feedbackChartOptions"
+        >
         </canvas>
       </div>
     </div>
@@ -115,7 +134,10 @@
           <span class="badge bg-danger">{{ newRequests.length }}</span>
         </div>
 
-        <div *ngFor="let req of newRequests" class="request-card mb-2 p-2 border rounded d-flex justify-content-between align-items-center">
+        <div
+          *ngFor="let req of newRequests"
+          class="request-card mb-2 p-2 border rounded d-flex justify-content-between align-items-center"
+        >
           <div>
             <p class="mb-1 text-primary fw-semibold">{{ req.title }}</p>
             <small class="text-muted">From: {{ req.from }}</small>
@@ -131,10 +153,12 @@
     <div class="col-md-6">
       <div class="card shadow-sm p-3 h-100">
         <h6 class="fw-semibold mb-3">Service Distribution</h6>
-        <canvas baseChart
+        <canvas
+          baseChart
           [data]="servicesChartData"
           [type]="servicesChartType"
-          [options]="servicesChartOptions">
+          [options]="servicesChartOptions"
+        >
         </canvas>
       </div>
     </div>
@@ -142,10 +166,12 @@
     <div class="col-md-6">
       <div class="card shadow-sm p-3 h-100">
         <h6 class="fw-semibold mb-3">Activity Statistics</h6>
-        <canvas baseChart
+        <canvas
+          baseChart
           [data]="activitiesChartData"
           [type]="activitiesChartType"
-          [options]="activitiesChartOptions">
+          [options]="activitiesChartOptions"
+        >
         </canvas>
       </div>
     </div>

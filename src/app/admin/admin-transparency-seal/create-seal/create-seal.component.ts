@@ -12,7 +12,6 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import {
   FileAttachments,
-  QuickLink,
   TransparencySeal,
 } from '../../../models/TransparencySeal';
 
@@ -46,8 +45,6 @@ export class CreateSealComponent implements OnInit {
   ) {
     this.transparencyForm = fb.nonNullable.group({
       title: ['', Validators.required],
-      cost: ['', Validators.required],
-      date: ['', [Validators.required]],
     });
   }
 
@@ -99,21 +96,12 @@ export class CreateSealComponent implements OnInit {
     return this.transparencyForm.get('links') as FormArray;
   }
 
-  newLink(link?: QuickLink): FormGroup {
-    return this.fb.group({
-      label: [link?.label || '', Validators.required],
-      link: [link?.link || ''],
-    });
-  }
-
   getById(id: string) {
     this.transparencySealService.getById(id).then((e) => {
       if (e) {
         this.transparencySeal = e;
         this.transparencyForm.patchValue({
           title: e.title,
-          cost: e.cost,
-          date: e.date,
         });
       }
     });
@@ -139,8 +127,7 @@ export class CreateSealComponent implements OnInit {
       const newTrans: TransparencySeal = {
         id: this.id,
         title: title,
-        date: date,
-        cost: cost,
+
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -149,8 +136,7 @@ export class CreateSealComponent implements OnInit {
       const updatedTrans: TransparencySeal = {
         ...this.transparencySeal,
         title: title,
-        date: date,
-        cost: cost,
+
         updatedAt: new Date(),
       };
       this.update(updatedTrans);

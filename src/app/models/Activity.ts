@@ -7,8 +7,8 @@ export interface Activity {
   title: string;
   location: string;
   description: string;
-  date: NgbDateStruct; //MMM/DD/YYYY
-  time: NgbTimeStruct; // hh:mm aa
+  date: string;
+  time: string;
   createdAt: Date;
   updatedAt: Date;
   sortableDate: Date;

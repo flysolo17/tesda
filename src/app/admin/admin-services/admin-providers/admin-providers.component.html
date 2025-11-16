@@ -37,8 +37,8 @@
         <thead class="table-light">
           <tr>
             <th>Name</th>
-            <th>Region</th>
-            <th>Province</th>
+            <th>Type</th>
+
             <th>Address</th>
             <th>Contact</th>
             <th>Email</th>
@@ -48,8 +48,7 @@
         <tbody>
           <tr *ngFor="let provider of providers; trackBy: trackById">
             <td>{{ provider.name }}</td>
-            <td>{{ provider.region }}</td>
-            <td>{{ provider.province }}</td>
+            <td>{{ provider.type }}</td>
             <td>{{ provider.address }}</td>
             <td>{{ provider.contactNumber || "-" }}</td>
             <td>{{ provider.email || "-" }}</td>

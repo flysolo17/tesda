@@ -3,15 +3,9 @@ import { QueryDocumentSnapshot } from '@angular/fire/firestore';
 export interface TransparencySeal {
   id: string;
   title: string;
-  date: string;
-  cost: string;
+
   createdAt: Date;
   updatedAt: Date;
-}
-
-export interface QuickLink {
-  label: string;
-  link: string;
 }
 
 export const TransparencySealConverter = {

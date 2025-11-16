@@ -1,24 +1,17 @@
 import { QueryDocumentSnapshot } from '@angular/fire/firestore';
 
 export enum ProviderType {
-  TVET = 'TVET Programs & Assesment Centers',
-  PROVINCIAL = 'Provincial Office External Services',
+  TVET = 'TESDA TRAINING INSTITUTE',
+  PROVINCIAL = 'TECHNICAL VOCATIONAL INSTITUTIONS',
 }
 export interface Provider {
   id: string;
   name: string;
-  region: string;
-  province: string;
+
   address: string;
-  file: string | null;
-  requirements: string[];
   type: ProviderType;
   email: string;
   contactNumber: string;
-  location?: {
-    latitude: number;
-    longitude: number;
-  };
   createdAt: Date;
   updatedAt: Date;
 }

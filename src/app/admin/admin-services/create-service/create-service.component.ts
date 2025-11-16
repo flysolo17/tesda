@@ -176,7 +176,10 @@ export class CreateServiceComponent implements OnInit {
       : this.programService.create(service);
 
     operation
-      .then(() => this.back())
+      .then(() => {
+        this.hasUnsavedChanges = false;
+        this.back();
+      })
       .catch((err) =>
         Swal.fire({
           icon: 'error',

@@ -14,19 +14,6 @@ export const exitPageGuard: CanDeactivateFn<CanComponentDeactivate> = async (
   // Skip if no canDeactivate method
   if (!component.canDeactivate) return true;
 
-  const canLeave = await Promise.resolve(component.canDeactivate());
-  if (canLeave) return true;
-
-  // Show SweetAlert2 confirmation
-  const result = await Swal.fire({
-    title: 'Are you sure?',
-    text: 'You have unsaved changes. Do you really want to leave this page?',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Yes, leave page',
-    cancelButtonText: 'Stay here',
-    reverseButtons: true,
-  });
-
-  return result.isConfirmed;
+  // Await the component's own confirmation logic
+  return await Promise.resolve(component.canDeactivate());
 };
