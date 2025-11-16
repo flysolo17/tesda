@@ -6,6 +6,7 @@ import {
   fetchSignInMethodsForEmail,
   GoogleAuthProvider,
   linkWithCredential,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -30,6 +31,7 @@ import { map, Observable, of, switchMap } from 'rxjs';
 import { User, UserConverter, UserType } from '../models/Users';
 import { Router } from '@angular/router';
 import { em } from '@fullcalendar/core/internal-common';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root',
@@ -38,33 +40,6 @@ export class AuthService {
   private readonly USER_COLLECTION = 'users';
 
   constructor(private auth: Auth, private firestore: Firestore) {}
-
-  private async createUserDocument(
-    uid: string,
-    data: Partial<User>
-  ): Promise<User> {
-    const userRef = doc(
-      collection(this.firestore, this.USER_COLLECTION).withConverter(
-        UserConverter
-      ),
-      uid
-    );
-
-    const userData: User = {
-      id: uid,
-      name: data.name ?? '',
-      age: data.age ?? 18,
-      gender: data.gender ?? '',
-      email: data.email ?? '',
-      profile: data.profile ?? '',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      type: data.type ?? UserType.USER,
-    };
-
-    await setDoc(userRef, userData);
-    return userData;
-  }
 
   async registerWithEmailAndPassword(
     name: string,
@@ -78,16 +53,66 @@ export class AuthService {
       email,
       password
     );
-    return this.createUserDocument(cred.user.uid, { name, age, gender, email });
+
+    const userData: User = {
+      id: cred.user.uid,
+      name,
+      age,
+      gender,
+      email,
+      profile: '',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      type: UserType.USER,
+    };
+
+    const userRef = doc(
+      collection(this.firestore, this.USER_COLLECTION).withConverter(
+        UserConverter
+      ),
+      userData.id
+    );
+
+    await setDoc(userRef, userData);
+
+    const returnUrl = 'https://tesda-system.web.app/';
+    await sendEmailVerification(cred.user, { url: returnUrl });
+
+    await signOut(this.auth);
+
+    return userData;
   }
 
   async loginWithEmailAndPassword(
     email: string,
     password: string
   ): Promise<User> {
-    const result = await signInWithEmailAndPassword(this.auth, email, password);
+    try {
+      const result = await signInWithEmailAndPassword(
+        this.auth,
+        email,
+        password
+      );
 
-    return this.getOrThrowUserFromFirestore(result.user.uid);
+      if (!result.user.emailVerified) {
+        await sendEmailVerification(result.user);
+        await signOut(this.auth);
+
+        await Swal.fire({
+          icon: 'warning',
+          title: 'Email Not Verified',
+          text: 'A verification email has been sent to your inbox. Please verify your email before logging in.',
+          confirmButtonText: 'OK',
+        });
+
+        throw new Error('Email not verified');
+      }
+
+      return this.getOrThrowUserFromFirestore(result.user.uid);
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw error;
+    }
   }
 
   // --- HELPER: Fetch Firestore user ---
@@ -123,13 +148,17 @@ export class AuthService {
     if (snap.exists()) {
       return snap.data()!;
     }
-
-    return this.createUserDocument(uid, {
-      name: cred.user.displayName || '',
-      email,
-      profile: cred.user.photoURL || '',
-      type: UserType.USER,
-    });
+    const user: User = {
+      id: '',
+      type: UserType.ADMIN,
+      name: '',
+      email: '',
+      gender: '',
+      age: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    return user;
   }
 
   // --- LOGOUT ---

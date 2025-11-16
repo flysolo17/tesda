@@ -32,6 +32,7 @@ import { Services, ServiceType } from '../../models/Services';
 })
 export class ProviderListComponent implements OnInit {
   provider$: Observable<ProviderWithServices[]> = of([]);
+  title: string = 'List of TVET PROVIDERS and assessment centers';
   type: ProviderType | null = null;
   users: User | null = null;
   constructor(
@@ -43,6 +44,16 @@ export class ProviderListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.activatedRoute.queryParamMap.subscribe((params) => {
+      const rawType = params.get('type');
+      const type = Object.values(ProviderType).includes(rawType as ProviderType)
+        ? (rawType as ProviderType)
+        : null;
+      if (type !== null) {
+        this.title = type;
+      }
+      this.provider$ = this.providerService.getProviderByType(type);
+    });
     this.authService.getCurrentUser().subscribe(async (user) => {
       if (user) {
         this.users = user;
@@ -56,15 +67,6 @@ export class ProviderListComponent implements OnInit {
             this.openSurvey();
           }
         }
-      }
-    });
-    this.activatedRoute.queryParams.subscribe((param) => {
-      this.type = param['type'];
-      if (this.type) {
-        this.provider$ = this.providerService.getProviderByType(this.type);
-        this.provider$.subscribe((data) => {
-          console.log(data);
-        });
       }
     });
   }

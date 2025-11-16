@@ -56,13 +56,6 @@
                   class="d-flex flex-column overflow-auto"
                   style="max-height: 200px"
                 >
-                  <span
-                    >Cost :
-                    {{ item.transparencySeal.cost | currency : "PHP" }}</span
-                  >
-                  <span class="mb-3"
-                    >Date : {{ item.transparencySeal.date }}</span
-                  >
                   <div *ngFor="let link of item.attachments || []" class="mb-2">
                     <ng-container *ngIf="link?.file; else plainLabel">
                       <a

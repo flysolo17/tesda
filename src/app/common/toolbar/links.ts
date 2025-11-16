@@ -36,14 +36,11 @@ export const dropdowns: Dropdowns = {
   'Programs & Services': [
     {
       url: '/landing-page/provider',
-      label: ProviderType.TVET,
-      queryParams: {
-        type: ProviderType.TVET,
-      },
+      label: 'TVET Programs & Assesment Center',
     },
     {
       url: '/landing-page/services',
-      label: ProviderType.PROVINCIAL,
+      label: 'Provicial Office And Service Providers',
     },
   ],
 
@@ -64,15 +61,29 @@ export const dropdowns: Dropdowns = {
     },
   ],
   Contacts: [
-    { url: '/landing-page/contacts/central-office', label: 'CENTRAL OFFICE' },
-    { url: '/landing-page/contacts/regional-office', label: 'REGIONAL OFFICE' },
+    { url: 'https://www.tesda.gov.ph/Directory', label: 'CENTRAL OFFICE' },
+    {
+      url: 'https://www.tesda.gov.ph/Directory/Regions',
+      label: 'REGIONAL OFFICE',
+    },
     {
       url: '/landing-page/contacts/occidental-mindoro-tti',
       label: 'OCCIDENTAL MINDORO TESDA TRAINING INSTITUTE',
     },
-    { url: '/landing-page/contacts/ttis', label: 'TTIS' },
-    { url: '/landing-page/contacts/tvis', label: 'TVIS' },
-    { url: '/landing-page/contacts/board-members', label: 'BOARD MEMBERS' },
+    {
+      url: '/landing-page/provider',
+      label: 'TTIS',
+      queryParams: {
+        type: ProviderType.TTI,
+      },
+    },
+    {
+      url: '/landing-page/provider',
+      label: 'TVIS',
+      queryParams: {
+        type: ProviderType.TVI,
+      },
+    },
   ],
 };
 

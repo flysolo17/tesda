@@ -45,23 +45,28 @@ export class ProviderService {
     const newProvider: Provider = {
       ...provider,
       id: id,
-
       createdAt: new Date(),
       updatedAt: new Date(),
     };
     return setDoc(docRef, newProvider);
   }
 
-  getProviderByType(type: ProviderType): Observable<ProviderWithServices[]> {
+  getProviderByType(
+    type: ProviderType | null = null
+  ): Observable<ProviderWithServices[]> {
     const providersRef = collection(
       this.firestore,
       this.collectionName
     ).withConverter(ProviderConverter);
-    const providersQuery = query(
-      providersRef,
-      where('type', '==', type),
-      orderBy('createdAt', 'asc')
-    );
+
+    const providersQuery =
+      type == null
+        ? query(providersRef, orderBy('createdAt', 'asc'))
+        : query(
+            providersRef,
+            where('type', '==', type),
+            orderBy('createdAt', 'asc')
+          );
 
     return from(getDocs(providersQuery)).pipe(
       map((snapshot) => snapshot.docs.map((doc) => doc.data())),
@@ -110,10 +115,11 @@ export class ProviderService {
       collection(this.firestore, this.collectionName).withConverter(
         ProviderConverter
       ),
-      orderBy('updatedAt', 'desc')
+      orderBy('updatedAt', 'asc')
     );
     return collectionData(q, { idField: 'id' });
   }
+
   async update(provider: Provider) {
     const docRef = doc(
       this.firestore,

@@ -1,8 +1,8 @@
 import { QueryDocumentSnapshot } from '@angular/fire/firestore';
 
 export enum ProviderType {
-  TVET = 'TESDA TRAINING INSTITUTE',
-  PROVINCIAL = 'TECHNICAL VOCATIONAL INSTITUTIONS',
+  TTI = 'TESDA TRAINING INSTITUTE',
+  TVI = 'TECHNICAL VOCATIONAL INSTITUTIONS',
 }
 export interface Provider {
   id: string;

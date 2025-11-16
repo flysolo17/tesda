@@ -68,10 +68,13 @@ export class RegisterDialogComponent {
         Swal.fire({
           icon: 'success',
           title: 'Registration Successful!',
-          text: 'You can now log in using your credentials.',
+          text: 'A verification email has been sent. Please verify before logging in.',
           showConfirmButton: false,
-          timer: 2000,
+          timer: 2500,
         });
+
+        this.userForm.reset();
+        this.activeModal.close();
 
         this.userForm.reset();
         this.activeModal.close();
