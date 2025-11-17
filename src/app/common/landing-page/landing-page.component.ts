@@ -23,6 +23,7 @@ import {
 import { Message } from '../../models/Message';
 import { FeedbackDialogComponent } from '../feedback-dialog/feedback-dialog.component';
 import { FeedbackService } from '../../services/feedback.service';
+import { ForgotPasswordDialogComponent } from '../forgot-password-dialog/forgot-password-dialog.component';
 
 @Component({
   selector: 'app-landing-page',
@@ -60,6 +61,8 @@ export class LandingPageComponent {
     modalRef.result.then(async (uid) => {
       if (uid === 'register') {
         this.register();
+      } else if (uid === 'forgotPassword') {
+        this.openForgotPasswordDialog();
       } else {
         const shouldPrompt = !(await this.feedbackService.hasFeedback(uid));
         if (shouldPrompt) {
@@ -69,6 +72,9 @@ export class LandingPageComponent {
     });
   }
 
+  openForgotPasswordDialog() {
+    this.modalService.open(ForgotPasswordDialogComponent);
+  }
   logout() {
     this.loading$ = true;
     this.authService

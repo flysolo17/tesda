@@ -12,6 +12,8 @@ import { UserType } from '../../models/Users';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ForgotPasswordDialogComponent } from '../../common/forgot-password-dialog/forgot-password-dialog.component';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -26,7 +28,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private modalService: NgbModal
   ) {
     this.loginForm = fb.nonNullable.group({
       email: ['', [Validators.required, Validators.email]],
@@ -73,5 +76,8 @@ export class LoginComponent implements OnInit {
         Swal.fire('Error', e['message'] ?? 'Unknown Error', 'error');
       })
       .finally(() => (this.loading$ = false));
+  }
+  forgotPassword() {
+    this.modalService.open(ForgotPasswordDialogComponent);
   }
 }

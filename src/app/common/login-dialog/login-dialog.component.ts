@@ -98,4 +98,7 @@ export class LoginDialogComponent {
   registerClicked() {
     this.activeModal.close('register');
   }
+  forgotPasswordClicked() {
+    this.activeModal.close('forgotPassword');
+  }
 }

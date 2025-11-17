@@ -45,6 +45,8 @@ import { AdminSurveyComponent } from './admin/admin-survey/admin-survey.componen
 import { exitPageGuard } from './admin/admin-services/exit-page.guard';
 import { CreatePostingComponent } from './admin/admin-philgeps-posting/create-posting/create-posting.component';
 import { CreateActivityComponent } from './admin/about/admin-activities/create-activity/create-activity.component';
+import { SchedulesComponent } from './admin/admin-appointment/schedules/schedules.component';
+import { ProfileComponent } from './common/profile/profile.component';
 
 export const routes: Routes = [
   {
@@ -168,6 +170,10 @@ export const routes: Routes = [
             component: AdminAppointmentComponent,
           },
           {
+            path: 'schedules',
+            component: SchedulesComponent,
+          },
+          {
             path: 'messages',
             component: MessagingComponent,
           },
@@ -243,6 +249,10 @@ export const routes: Routes = [
             path: 'create-seal',
             component: CreateSealComponent,
             canDeactivate: [exitPageGuard],
+          },
+          {
+            path: 'profile',
+            component: ProfileComponent,
           },
         ],
       },

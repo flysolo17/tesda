@@ -1,11 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute, RouterModule, RouterOutlet } from '@angular/router';
+import {
+  ActivatedRoute,
+  Router,
+  RouterModule,
+  RouterOutlet,
+} from '@angular/router';
 import {
   NgbCollapseModule,
   NgbDropdownModule,
   NgbNavModule,
 } from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from '../../services/auth.service';
+import Swal from 'sweetalert2';
+import { delay } from 'rxjs';
 
 interface NavItems {
   label: string;
@@ -39,7 +47,17 @@ export class NavigationComponent {
     {
       label: 'Appointments',
       icon: 'bi bi-calendar-check-fill',
-      route: 'appointments',
+
+      more: [
+        {
+          label: 'Appointments',
+          route: 'appointments',
+        },
+        {
+          label: 'Schedules',
+          route: 'schedules',
+        },
+      ],
     },
     {
       label: 'Messages',
@@ -137,6 +155,42 @@ export class NavigationComponent {
   toggle(item: NavItems) {
     if (item.more) item.open = !item.open;
   }
+  users$ = this.authService.getCurrentUser();
+  constructor(
+    public activatedRoute: ActivatedRoute,
+    private route: Router,
+    private authService: AuthService
+  ) {}
 
-  constructor(public route: ActivatedRoute) {}
+  logout() {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will be logged out of your account.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, logout',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.authService
+          .logout()
+          .then(() => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Logged Out',
+              text: 'You have been successfully logged out.',
+            });
+            delay(1000);
+            this.route.navigate(['']);
+          })
+          .catch((error) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Logout Failed',
+              text: error?.message || 'Something went wrong. Please try again.',
+            });
+          });
+      }
+    });
+  }
 }

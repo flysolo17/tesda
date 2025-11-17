@@ -7,6 +7,7 @@ import {
   GoogleAuthProvider,
   linkWithCredential,
   sendEmailVerification,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -271,5 +272,10 @@ export class AuthService {
       console.error('Google login failed:', error);
       throw new Error(error.message || 'Google login failed.');
     }
+  }
+
+  forgotPassword(email: string) {
+    const returnUrl = 'https://tesda-system.web.app/';
+    return sendPasswordResetEmail(this.auth, email, { url: returnUrl });
   }
 }
