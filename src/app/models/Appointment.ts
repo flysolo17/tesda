@@ -5,6 +5,7 @@ export interface Appointment {
   uid: string;
   personalInformation: PersonalInformation;
   serviceInformation: ServiceInformation;
+  sid: string;
   date: string;
   time: string;
   location: string;
@@ -33,12 +34,12 @@ export interface PersonalInformation {
 export interface ServiceInformation {
   id: string;
   name: string;
-  image?: string; // optional service image
 }
 
 export enum AppointmentStatus {
   PENDING = 'PENDING',
   CONFIRMED = 'CONFIRMED',
+  REJECTED = 'REJECTED',
   CANCELLED = 'CANCELLED',
   COMPLETED = 'COMPLETED',
 }

@@ -31,7 +31,7 @@ import { Services, ServiceType } from '../../models/Services';
   styleUrl: './provider-list.component.scss',
 })
 export class ProviderListComponent implements OnInit {
-  provider$: Observable<ProviderWithServices[]> = of([]);
+  provider$: Observable<Provider[]> = of([]);
   title: string = 'List of TVET PROVIDERS and assessment centers';
   type: ProviderType | null = null;
   users: User | null = null;
@@ -52,7 +52,7 @@ export class ProviderListComponent implements OnInit {
       if (type !== null) {
         this.title = type;
       }
-      this.provider$ = this.providerService.getProviderByType(type);
+      this.provider$ = this.providerService.getAllProviders();
     });
     this.authService.getCurrentUser().subscribe(async (user) => {
       if (user) {

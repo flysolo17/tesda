@@ -26,6 +26,7 @@ import {
   limit,
   query,
   setDoc,
+  updateDoc,
   where,
 } from '@angular/fire/firestore';
 import { map, Observable, of, switchMap } from 'rxjs';
@@ -33,6 +34,12 @@ import { User, UserConverter, UserType } from '../models/Users';
 import { Router } from '@angular/router';
 import { em } from '@fullcalendar/core/internal-common';
 import Swal from 'sweetalert2';
+import {
+  getDownloadURL,
+  ref,
+  Storage,
+  uploadBytes,
+} from '@angular/fire/storage';
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +47,37 @@ import Swal from 'sweetalert2';
 export class AuthService {
   private readonly USER_COLLECTION = 'users';
 
-  constructor(private auth: Auth, private firestore: Firestore) {}
+  constructor(
+    private auth: Auth,
+    private firestore: Firestore,
+    private storage: Storage
+  ) {}
+
+  async uploadProfile(id: string, profile: File): Promise<void> {
+    try {
+      // Create a unique path for the profile image
+      const timestamp = Date.now();
+      const extension = profile.name.split('.').pop();
+      const filePath = `profiles/${id}_${timestamp}.${extension}`;
+      const storageRef = ref(this.storage, filePath);
+
+      // Upload the file
+      await uploadBytes(storageRef, profile);
+
+      // Get the download URL
+      const downloadURL = await getDownloadURL(storageRef);
+
+      // Update the user document with the new profile URL
+      const userRef = doc(this.firestore, 'users', id);
+      await updateDoc(userRef, {
+        profile: downloadURL,
+        updatedAt: new Date(),
+      });
+    } catch (error) {
+      console.error('Profile upload failed:', error);
+      throw error;
+    }
+  }
 
   async registerWithEmailAndPassword(
     name: string,
@@ -82,6 +119,11 @@ export class AuthService {
     await signOut(this.auth);
 
     return userData;
+  }
+  updateUser(user: User): Promise<void> {
+    const userRef = doc(this.firestore, this.USER_COLLECTION, user.id);
+    const { id, ...userData } = user;
+    return updateDoc(userRef, userData);
   }
 
   async loginWithEmailAndPassword(

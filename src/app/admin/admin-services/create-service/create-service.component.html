@@ -63,45 +63,6 @@
         </div>
       </div>
 
-      <!-- Provider Selection -->
-      <div class="col-12">
-        <label class="form-label fw-semibold mb-2">Select Providers</label>
-
-        <!-- Selected Providers -->
-        <div class="mb-2">
-          <span
-            *ngFor="let id of serviceForm.get('provider')?.value"
-            class="badge bg-primary me-2"
-          >
-            {{ getProviderName(id) }}
-            <button
-              type="button"
-              class="btn-close btn-close-white btn-sm ms-1"
-              aria-label="Remove"
-              (click)="removeProvider(id)"
-            ></button>
-          </span>
-        </div>
-
-        <!-- Dropdown -->
-        <div class="input-group">
-          <select class="form-select" formControlName="selectedProvider">
-            <option [ngValue]="null">Choose provider...</option>
-            <option *ngFor="let provider of providers" [ngValue]="provider.id">
-              {{ provider.name }}
-            </option>
-          </select>
-          <button
-            type="button"
-            class="btn btn-outline-secondary"
-            (click)="addProvider()"
-            [disabled]="!serviceForm.get('selectedProvider')?.value"
-          >
-            Add
-          </button>
-        </div>
-      </div>
-
       <div class="col-12">
         <div class="d-flex align-items-center justify-content-between mb-3">
           <h3>Requirements</h3>

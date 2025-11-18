@@ -7,11 +7,12 @@ export enum ProviderType {
 export interface Provider {
   id: string;
   name: string;
-
   address: string;
   type: ProviderType;
   email: string;
   contactNumber: string;
+  trainingPrograms: string[];
+  accreditedQualifications: string[];
   createdAt: Date;
   updatedAt: Date;
 }

@@ -11,24 +11,24 @@
     style="max-width: 100%; width: 100%"
   >
     <div class="card-header">
-      <h4 class="card-title">{{ item.provider.name }}</h4>
+      <h4 class="card-title">{{ item.name }}</h4>
     </div>
     <div class="card-body">
       <!-- Provider Info Grid -->
       <div class="row mb-4">
         <div class="col-12 col-md-4 mb-2">
           <small class="text-uppercase text-muted d-block">Email</small>
-          <span>{{ item.provider.email || "—" }}</span>
+          <span>{{ item.email || "—" }}</span>
         </div>
         <div class="col-12 col-md-4 mb-2">
           <small class="text-uppercase text-muted d-block"
             >Contact Number</small
           >
-          <span>{{ item.provider.contactNumber || "—" }}</span>
+          <span>{{ item.contactNumber || "—" }}</span>
         </div>
         <div class="col-12 col-md-4 mb-2">
           <small class="text-uppercase text-muted d-block">Address</small>
-          <span>{{ item.provider.address }}</span>
+          <span>{{ item.address }}</span>
         </div>
       </div>
 
@@ -42,10 +42,7 @@
           <h5 class="mb-3 text-primary fw-semibold">
             Registered Training Programs
           </h5>
-          <div
-            class="mb-3"
-            *ngFor="let service of getRegisteredPrograms(item.services)"
-          >
+          <div class="mb-3" *ngFor="let service of item.trainingPrograms">
             <div
               class="d-grid"
               style="grid-template-columns: auto 1fr; width: 100%"
@@ -72,7 +69,7 @@
           </h5>
           <div
             class="mb-3"
-            *ngFor="let service of getAccreditedQualifications(item.services)"
+            *ngFor="let service of item.accreditedQualifications"
           >
             <div
               class="d-grid"

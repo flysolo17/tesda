@@ -47,6 +47,7 @@ import { CreatePostingComponent } from './admin/admin-philgeps-posting/create-po
 import { CreateActivityComponent } from './admin/about/admin-activities/create-activity/create-activity.component';
 import { SchedulesComponent } from './admin/admin-appointment/schedules/schedules.component';
 import { ProfileComponent } from './common/profile/profile.component';
+import { CreateAppointmentComponent } from './common/create-appointment/create-appointment.component';
 
 export const routes: Routes = [
   {
@@ -112,6 +113,15 @@ export const routes: Routes = [
       {
         path: 'news-and-events',
         component: NewsAndEventsListComponent,
+      },
+      {
+        path: 'profile',
+        component: ProfileComponent,
+      },
+      {
+        path: 'create-appointment',
+        component: CreateAppointmentComponent,
+        canActivate: [authGuard],
       },
     ],
   },

@@ -105,21 +105,6 @@ export class AdminAppointmentComponent implements OnInit {
     this.loadSchedules(this.selectedMonth);
   }
 
-  viewDetails(appt: Appointment): void {
-    // Open modal or route to detail view
-  }
-
-  confirm(appt: Appointment): void {
-    // Update status to CONFIRMED
-  }
-
-  cancel(appt: Appointment): void {
-    // Update status to CANCELLED
-  }
-
-  complete(appt: Appointment): void {
-    // Update status to COMPLETED
-  }
   handleEventClick(arg: any): void {
     const schedule = arg.event.extendedProps;
     alert(`Schedule at ${schedule.time} with ${schedule.slots} slots`);

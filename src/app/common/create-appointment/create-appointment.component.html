@@ -1,0 +1,163 @@
+<div class="container-fluid p-4">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title">Create Appointment</h5>
+    </div>
+    <div class="card-body">
+      <div
+        *ngIf="hasPendingAppointment"
+        class="alert alert-warning d-flex align-items-center"
+        role="alert"
+      >
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        You already have a ongoing appointment. Please complete your appointment
+        before booking another.
+      </div>
+
+      <form
+        *ngIf="!hasPendingAppointment"
+        [formGroup]="appointmentForm"
+        (ngSubmit)="submit()"
+        class="row p-3 g-3"
+      >
+        <div class="col-8">
+          <div class="row g-3">
+            <!-- Name -->
+            <div class="col-8">
+              <div class="form-floating">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="name"
+                  formControlName="name"
+                  placeholder="Name"
+                />
+                <label for="name">Name</label>
+              </div>
+            </div>
+
+            <!-- Contact -->
+            <div class="col-4">
+              <div class="form-floating">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="contact"
+                  formControlName="contact"
+                  placeholder="Contact"
+                />
+                <label for="contact">Contact</label>
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="col-8">
+              <div class="form-floating">
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  formControlName="email"
+                  placeholder="Email"
+                />
+                <label for="email">Email</label>
+              </div>
+            </div>
+
+            <!-- Date -->
+            <div class="col-4">
+              <div class="form-floating">
+                <input
+                  type="date"
+                  class="form-control"
+                  id="date"
+                  formControlName="date"
+                  [min]="minDate"
+                  (change)="
+                    onServiceAndDateChanged(
+                      appointmentForm.value.serviceId,
+                      appointmentForm.value.date
+                    )
+                  "
+                />
+                <label for="date">Date</label>
+              </div>
+            </div>
+
+            <!-- Service Selection -->
+            <div class="col-12">
+              <div class="form-floating">
+                <select
+                  class="form-select"
+                  id="serviceId"
+                  formControlName="serviceId"
+                  (change)="
+                    onServiceAndDateChanged(
+                      appointmentForm.value.serviceId,
+                      appointmentForm.value.date
+                    )
+                  "
+                >
+                  <option value="" disabled>Select a service</option>
+                  <option
+                    *ngFor="let service of services$"
+                    [value]="service.id"
+                  >
+                    {{ service.title }}
+                  </option>
+                </select>
+                <label for="serviceId">Service</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Schedule Preview -->
+        <div class="col-4">
+          <div class="d-flex align-items-center justify-content-between">
+            <h4 class="mb-3">Available Slots</h4>
+            <div
+              *ngIf="isGettingSchedules"
+              class="spinner-border text-primary"
+              role="status"
+            >
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+
+          <ul class="list-group">
+            @if (schedules.length === 0) {
+            <li class="list-group-item text-center text-muted">
+              No available slots
+            </li>
+            }
+            <li
+              class="list-group-item"
+              *ngFor="let item of schedules; trackBy: trackByIndex"
+              [class.active]="item === selectedSchedule"
+              (click)="onSelectSchedule(item)"
+              style="cursor: pointer"
+            >
+              <div class="ms-2 me-auto">
+                <div class="fw-bold">{{ item.time }}</div>
+                {{ item.slots }} slots
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="col-12 text-center">
+          <button
+            class="btn btn-success"
+            [disabled]="
+              selectedServiceId == null ||
+              appointmentForm.invalid ||
+              isGettingSchedules
+            "
+          >
+            Submit Appointment
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

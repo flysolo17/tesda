@@ -109,88 +109,6 @@ export const SAMPLE_FEEDBACKS: Feedback[] = [
     submittedAt: new Date('2023-04-12'),
   },
 ];
-export const SAMPLE_SCHEDULES: Schedule[] = [
-  {
-    id: '1',
-    date: '2025-11-15',
-    time: '09:00 AM',
-    slots: 3,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '2',
-    date: '2025-11-16',
-    time: '11:00 AM',
-    slots: 2,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '3',
-    date: '2025-11-18',
-    time: '10:00 AM',
-    slots: 4,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '4',
-    date: '2025-11-20',
-    time: '02:00 PM',
-    slots: 1,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '5',
-    date: '2025-11-22',
-    time: '09:30 AM',
-    slots: 5,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '6',
-    date: '2025-11-25',
-    time: '01:00 PM',
-    slots: 2,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '7',
-    date: '2025-12-01',
-    time: '08:00 AM',
-    slots: 3,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '8',
-    date: '2025-12-05',
-    time: '12:00 PM',
-    slots: 4,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '9',
-    date: '2025-12-10',
-    time: '10:30 AM',
-    slots: 2,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: '10',
-    date: '2025-12-15',
-    time: '03:00 PM',
-    slots: 3,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
 
 export function generateAppointmentId(length: number = 11): string {
   let id = '';
@@ -199,56 +117,6 @@ export function generateAppointmentId(length: number = 11): string {
   }
   return id;
 }
-
-// TESDA sample services
-const SERVICES: ServiceInformation[] = [
-  {
-    id: 'svc1',
-    name: 'Bread & Pastry Production NC II',
-    image: 'assets/services/bread_pastry.png',
-  },
-  {
-    id: 'svc2',
-    name: 'Electrical Installation & Maintenance NC II',
-    image: 'assets/services/electrical_installation.png',
-  },
-  {
-    id: 'svc3',
-    name: 'Automotive Servicing NC II',
-    image: 'assets/services/automotive_servicing.png',
-  },
-  {
-    id: 'svc4',
-    name: 'Caregiving NC II',
-    image: 'assets/services/caregiving.png',
-  },
-  {
-    id: 'svc5',
-    name: 'Beauty Care (Nail Care) Services NC II',
-    image: 'assets/services/beauty_care_nail.png',
-  },
-  {
-    id: 'svc6',
-    name: 'Housekeeping NC II',
-    image: 'assets/services/housekeeping.png',
-  },
-  {
-    id: 'svc7',
-    name: 'Front Office Services NC II',
-    image: 'assets/services/front_office.png',
-  },
-  { id: 'svc8', name: 'Plumbing NC II', image: 'assets/services/plumbing.png' },
-  {
-    id: 'svc9',
-    name: 'Computer System Servicing NC II',
-    image: 'assets/services/computer_system_servicing.png',
-  },
-  {
-    id: 'svc10',
-    name: 'Food & Beverage Services NC II',
-    image: 'assets/services/food_beverage_services.png',
-  },
-];
 
 // Sample personal info
 const NAMES: PersonalInformation[] = [
@@ -275,22 +143,19 @@ function randomTime(): string {
   return `${formattedHour}:${minutes} ${period}`;
 }
 
-// Generate 10 sample appointments
-export const SAMPLE_APPOINTMENTS: Appointment[] = Array.from({
-  length: 10,
-}).map((_, i) => ({
-  id: generateAppointmentId(),
-  uid: 'aXt1APcHQbddczQ4Cit4bfdMU5l2', // same UID
-  personalInformation: NAMES[i % NAMES.length],
-  serviceInformation: SERVICES[i % SERVICES.length],
-  date: randomDate(new Date(2025, 10, 15), new Date(2025, 11, 31)),
-  time: randomTime(),
-  location: `Clinic Room ${Math.floor(Math.random() * 5) + 1}`,
-  status:
-    Object.values(AppointmentStatus)[
-      Math.floor(Math.random() * Object.values(AppointmentStatus).length)
-    ],
-  notes: Math.random() < 0.5 ? 'Bring previous medical records.' : '',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-}));
+export function generateRandomNumberWithDate(): string {
+  // Generate a 15-digit random number
+  let random = '';
+  for (let i = 0; i < 15; i++) {
+    random += Math.floor(Math.random() * 10).toString();
+  }
+
+  // Format date as yyyyMMdd
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const date = `${yyyy}${mm}${dd}`;
+
+  return random + date;
+}

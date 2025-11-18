@@ -11,7 +11,7 @@
     ></button>
   </div>
 
-  <div class="modal-body">
+  <div class="modal-body" style="max-height: 65vh; overflow-y: auto">
     <div class="row">
       <div class="col-md-12">
         <!-- Name -->
@@ -104,6 +104,62 @@
           <label for="email">Email</label>
           <div class="invalid-feedback">Please enter a valid email.</div>
         </div>
+      </div>
+      <div class="col-md-6">
+        <h5 class="text-primary">Training Programs</h5>
+        <div
+          *ngFor="let program of trainingPrograms.controls; let i = index"
+          class="input-group mb-2"
+        >
+          <input
+            type="text"
+            class="form-control"
+            [formControl]="program"
+            placeholder="Training Program"
+          />
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="removeTrainingProgram(i)"
+          >
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary"
+          (click)="addTrainingProgram()"
+        >
+          + Add Training Program
+        </button>
+      </div>
+      <div class="col-md-6">
+        <h5 class="text-primary">Ac Accredited Qualifications</h5>
+        <div
+          *ngFor="let qual of accreditedQualifications.controls; let i = index"
+          class="input-group mb-2"
+        >
+          <input
+            type="text"
+            class="form-control"
+            [formControl]="qual"
+            placeholder="Accredited Qualification"
+          />
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="removeAccreditedQualification(i)"
+          >
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary"
+          (click)="addAccreditedQualification()"
+        >
+          + Add Qualification
+        </button>
       </div>
     </div>
   </div>

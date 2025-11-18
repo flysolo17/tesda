@@ -1,1 +1,82 @@
-<p>create-schedule-dialog works!</p>
+<div class="modal-header">
+  <h4 class="modal-title">Create Schedule</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="close()"
+  ></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="scheduleForm" (submit)="submit()" class="row g-3" *ngIf="">
+    <!-- Select Service -->
+    <div class="form-floating col-md-12">
+      <select
+        id="serviceId"
+        class="form-select"
+        formControlName="serviceId"
+        aria-label="Select service"
+      >
+        <option value="" disabled>Select a service</option>
+        <option *ngFor="let service of services$" [value]="service.id">
+          {{ service.title }}
+        </option>
+      </select>
+      <label for="serviceId">Service</label>
+    </div>
+
+    <!-- Slots -->
+    <div class="form-floating col-md-12">
+      <input
+        type="number"
+        id="slots"
+        class="form-control"
+        formControlName="slots"
+        placeholder="Slots"
+        min="1"
+      />
+      <label for="slots">Slots</label>
+    </div>
+
+    <!-- Date -->
+    <div class="form-floating col-md-6">
+      <input
+        type="date"
+        id="date"
+        class="form-control"
+        formControlName="date"
+        placeholder="Date"
+        [min]="today"
+      />
+      <label for="date">Date</label>
+    </div>
+
+    <!-- Time -->
+    <div class="form-floating col-md-6">
+      <select
+        id="time"
+        class="form-select"
+        formControlName="time"
+        aria-label="Select time"
+      >
+        <option value="" disabled>Select time</option>
+        <option *ngFor="let time of time$" [value]="time">
+          {{ time }}
+        </option>
+      </select>
+      <label for="time">Time</label>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="col-12 d-flex justify-content-end mt-3">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="scheduleForm.invalid"
+      >
+        Save Schedule
+      </button>
+    </div>
+  </form>
+</div>

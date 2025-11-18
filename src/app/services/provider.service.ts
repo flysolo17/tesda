@@ -51,57 +51,6 @@ export class ProviderService {
     return setDoc(docRef, newProvider);
   }
 
-  getProviderByType(
-    type: ProviderType | null = null
-  ): Observable<ProviderWithServices[]> {
-    const providersRef = collection(
-      this.firestore,
-      this.collectionName
-    ).withConverter(ProviderConverter);
-
-    const providersQuery =
-      type == null
-        ? query(providersRef, orderBy('createdAt', 'asc'))
-        : query(
-            providersRef,
-            where('type', '==', type),
-            orderBy('createdAt', 'asc')
-          );
-
-    return from(getDocs(providersQuery)).pipe(
-      map((snapshot) => snapshot.docs.map((doc) => doc.data())),
-      switchMap((providers: Provider[]) => {
-        if (providers.length === 0) return of([]);
-
-        const servicesRef = collection(
-          this.firestore,
-          'services'
-        ).withConverter(ServicesConverter);
-        return from(getDocs(servicesRef)).pipe(
-          map((snapshot) => snapshot.docs.map((doc) => doc.data())),
-          map((allServices: Services[]) =>
-            providers.map((provider) => ({
-              provider,
-              services: allServices.filter((s) =>
-                Array.isArray(s.provider)
-                  ? s.provider.includes(provider.id)
-                  : s.provider === provider.id
-              ),
-            }))
-          ),
-          catchError((err) => {
-            console.error('Error fetching services:', err);
-            return of(providers.map((p) => ({ provider: p, services: [] })));
-          })
-        );
-      }),
-      catchError((err) => {
-        console.error('Error fetching providers:', err);
-        return of([]);
-      })
-    );
-  }
-
   async getAll(): Promise<Provider[]> {
     const q = collection(this.firestore, this.collectionName).withConverter(
       ProviderConverter

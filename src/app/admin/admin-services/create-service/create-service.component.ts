@@ -34,7 +34,7 @@ export class CreateServiceComponent implements OnInit {
   isLoading = false;
   serviceTypes = Object.values(ServiceType);
   id: string | null = null;
-  providers: Provider[] = [];
+
   service$: Services | null = null;
   requirements$: Requirements[] = [];
   hasUnsavedChanges = true;
@@ -54,14 +54,10 @@ export class CreateServiceComponent implements OnInit {
       description: [''],
       qualification: ['', Validators.required],
       type: [ServiceType.G2B, Validators.required],
-      provider: [[], Validators.required],
-      selectedProvider: [null],
     });
   }
 
   ngOnInit(): void {
-    this.loadProviders();
-
     this.activatedRoute.queryParamMap.pipe(take(1)).subscribe((params) => {
       this.id = params.get('id');
       if (this.id) {
@@ -69,36 +65,6 @@ export class CreateServiceComponent implements OnInit {
         this.loadService(this.id);
       }
     });
-  }
-
-  /** Providers handling */
-  private async loadProviders() {
-    try {
-      this.providers = await this.providerService.getAll();
-    } catch (err) {
-      console.error('Failed to load providers', err);
-    }
-  }
-
-  getProviderName(id: string): string {
-    return this.providers.find((p) => p.id === id)?.name || 'Unknown';
-  }
-
-  addProvider(): void {
-    const control = this.serviceForm.get('provider');
-    const selected = this.serviceForm.get('selectedProvider')?.value;
-    const current = control?.value || [];
-
-    if (selected && !current.includes(selected)) {
-      control?.setValue([...current, selected]);
-    }
-    this.serviceForm.get('selectedProvider')?.setValue(null);
-  }
-
-  removeProvider(id: string): void {
-    const control = this.serviceForm.get('provider');
-    const current = control?.value || [];
-    control?.setValue(current.filter((pid: string) => pid !== id));
   }
 
   /** Requirements */
@@ -151,7 +117,6 @@ export class CreateServiceComponent implements OnInit {
           qualification: service.qualification,
           description: service.description,
           type: service.type,
-          provider: service.provider || [],
         });
       }
     } catch (err) {

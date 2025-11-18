@@ -7,7 +7,6 @@ export interface Services {
   qualification: string;
   type: ServiceType;
 
-  provider: string[];
   createdAt: Date;
   updatedAt: Date;
 }

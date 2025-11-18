@@ -34,6 +34,14 @@ import { RequirementConverter } from '../models/Requirement';
 export class ProgramsService {
   private readonly SERVICES_COLLECTION = 'services';
   constructor(private firestore: Firestore, private storage: Storage) {}
+  async getAllServices(): Promise<Services[]> {
+    const q = collection(
+      this.firestore,
+      this.SERVICES_COLLECTION
+    ).withConverter(ServicesConverter);
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => doc.data());
+  }
 
   create(service: Services) {
     const docRef = doc(this.firestore, this.SERVICES_COLLECTION, service.id);

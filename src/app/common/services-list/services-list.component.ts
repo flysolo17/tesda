@@ -23,6 +23,10 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Requirements } from '../../models/Requirement';
 import { RequirementService } from '../../services/requirement.service';
+import { AuthService } from '../../services/auth.service';
+import { User } from '../../models/Users';
+import { user } from '@angular/fire/auth';
+import { dA } from '@fullcalendar/core/internal-common';
 
 @Component({
   selector: 'app-services-list',
@@ -45,9 +49,10 @@ export class ServicesListComponent implements OnInit {
   private offcanvasService = inject(NgbOffcanvas);
   private programService = inject(ProgramsService);
   private requirementService = inject(RequirementService);
+  private authService = inject(AuthService);
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
-
+  user$: User | null = null;
   // Offcanvas
   closeResult: WritableSignal<string> = signal('');
   selectedService: Services | null = null;
@@ -69,6 +74,9 @@ export class ServicesListComponent implements OnInit {
   noMoreData = false;
   requirements$: Requirements[] = [];
   ngOnInit(): void {
+    this.authService.getCurrentUser().subscribe((data) => {
+      this.user$ = data;
+    });
     this.activatedRoute.queryParamMap.subscribe((params) => {
       const newType = params.get('type') || 'All Services';
       const newSearch = params.get('search') || null;
@@ -187,10 +195,13 @@ export class ServicesListComponent implements OnInit {
     window.open(fileUrl, '_blank'); // Opens the file in a new tab
   }
 
-  bookAppointment(serviceId: string | undefined) {
-    if (!serviceId) return;
-    this.router.navigate(['/appointment/book'], {
-      queryParams: { serviceId },
-    });
+  bookAppointment(serviceId: string | null) {
+    this.router
+      .navigate(['/landing-page/create-appointment'], {
+        queryParams: { id: serviceId },
+      })
+      .finally(() => {
+        this.offcanvasService.dismiss();
+      });
   }
 }

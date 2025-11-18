@@ -1,0 +1,43 @@
+<div class="modal-header">
+  <h4 class="modal-title">Submit Appointment</h4>
+</div>
+
+<div class="modal-body">
+  <div class="mb-3">
+    <h5 class="text-primary">Personal Information</h5>
+    <dl class="row mb-0">
+      <dt class="col-sm-4">Name</dt>
+      <dd class="col-sm-8">{{ appointment.personalInformation.name }}</dd>
+
+      <dt class="col-sm-4">Email</dt>
+      <dd class="col-sm-8">{{ appointment.personalInformation.email }}</dd>
+
+      <dt class="col-sm-4">Contact</dt>
+      <dd class="col-sm-8">{{ appointment.personalInformation.contact }}</dd>
+    </dl>
+  </div>
+
+  <div class="mb-3">
+    <h5 class="text-primary">Service Details</h5>
+    <dl class="row mb-0">
+      <dt class="col-sm-4">Service</dt>
+      <dd class="col-sm-8">{{ appointment.serviceInformation.name }}</dd>
+
+      <dt class="col-sm-4">Location</dt>
+      <dd class="col-sm-8">
+        Sitio Agsuli, Sto. Nino, Sablayan, Occidental Mindoro
+      </dd>
+
+      <dt class="col-sm-4">Date</dt>
+      <dd class="col-sm-8">{{ appointment.date | date : "fullDate" }}</dd>
+
+      <dt class="col-sm-4">Time</dt>
+      <dd class="col-sm-8">{{ appointment.time }}</dd>
+    </dl>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-outline-secondary" (click)="close()">Cancel</button>
+  <button class="btn btn-success" (click)="confirm()">Submit</button>
+</div>

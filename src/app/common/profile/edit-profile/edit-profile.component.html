@@ -1,0 +1,75 @@
+<div class="modal-header bg-success">
+  <h4 class="modal-title text-white">Edit Profile</h4>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="userForm" (submit)="submit()">
+    <div class="row g-3">
+      <!-- Name -->
+      <div class="col-12 form-floating">
+        <input
+          type="text"
+          id="name"
+          class="form-control"
+          formControlName="name"
+          placeholder="Name"
+        />
+        <label for="name">Name</label>
+      </div>
+
+      <!-- Email (readonly) -->
+      <div class="col-12 form-floating">
+        <input
+          type="email"
+          id="email"
+          class="form-control"
+          [value]="user?.email"
+          readonly
+          placeholder="Email"
+        />
+        <label for="email">Email</label>
+      </div>
+
+      <!-- Age -->
+      <div class="col-md-6 form-floating">
+        <input
+          type="number"
+          id="age"
+          class="form-control"
+          formControlName="age"
+          placeholder="Age"
+        />
+        <label for="age">Age</label>
+      </div>
+
+      <!-- Gender -->
+      <div class="col-md-6 form-floating">
+        <select
+          id="gender"
+          class="form-select"
+          formControlName="gender"
+          aria-label="Gender"
+        >
+          <option value="" disabled>Select gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+        <label for="gender">Gender</label>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button type="button" class="btn btn-outline-secondary" (click)="close()">
+        Cancel
+      </button>
+      <button
+        type="submit"
+        class="btn btn-success"
+        [disabled]="userForm.invalid"
+      >
+        Save
+      </button>
+    </div>
+  </form>
+</div>

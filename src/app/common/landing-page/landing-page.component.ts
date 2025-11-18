@@ -24,6 +24,7 @@ import { Message } from '../../models/Message';
 import { FeedbackDialogComponent } from '../feedback-dialog/feedback-dialog.component';
 import { FeedbackService } from '../../services/feedback.service';
 import { ForgotPasswordDialogComponent } from '../forgot-password-dialog/forgot-password-dialog.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-landing-page',
@@ -75,13 +76,44 @@ export class LandingPageComponent {
   openForgotPasswordDialog() {
     this.modalService.open(ForgotPasswordDialogComponent);
   }
-  logout() {
-    this.loading$ = true;
-    this.authService
-      .logout()
-      .then(() => {})
-      .finally(() => (this.loading$ = false));
+  logout(): void {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will be logged out of your account.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, logout',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.loading$ = true;
+        this.authService
+          .logout()
+          .then(() => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Logged out',
+              text: 'You have been successfully logged out.',
+              timer: 2000,
+              showConfirmButton: false,
+            });
+          })
+          .catch(() => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Logout failed',
+              text: 'Something went wrong while logging out.',
+            });
+          })
+          .finally(() => {
+            this.loading$ = false;
+          });
+      }
+    });
   }
+
   navigateToDashboard(type: UserType | null) {
     if (type === UserType.ADMIN) {
       this.router.navigate(['/administration/main']);

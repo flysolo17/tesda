@@ -5,14 +5,18 @@ import {
   collectionData,
   doc,
   Firestore,
+  getDocs,
+  limit,
   orderBy,
   query,
   setDoc,
+  updateDoc,
   where,
   writeBatch,
 } from '@angular/fire/firestore';
-import { map, Observable } from 'rxjs';
-import { SAMPLE_SCHEDULES } from '../utils/Constants';
+import { forkJoin, map, Observable, of, switchMap } from 'rxjs';
+import { Services } from '../models/Services';
+import { ProgramsService } from './programs.service';
 
 export interface SchedulesPerDay {
   date: string;
@@ -20,27 +24,94 @@ export interface SchedulesPerDay {
   schedules: Schedule[];
 }
 
+export interface ScheduleWithService {
+  schedule: Schedule;
+  service: Services | null;
+}
 @Injectable({
   providedIn: 'root',
 })
 export class ScheduleService {
   private readonly SCHEDULE_COLLECTION = 'schedules';
-  constructor(private firestore: Firestore) {}
-
-  create(date: string, time: string, slots: number) {
-    const ref = collection(this.firestore, this.SCHEDULE_COLLECTION);
-    const sched: Schedule = {
-      id: doc(ref).id,
-      date: date,
-      time: time,
-      slots: slots,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    return setDoc(
-      doc(this.firestore, this.SCHEDULE_COLLECTION, sched.id),
-      sched
+  constructor(
+    private firestore: Firestore,
+    private programService: ProgramsService
+  ) {}
+  async getScheduleByDate(
+    serviceId: string,
+    date: string
+  ): Promise<Schedule[]> {
+    const q = query(
+      collection(this.firestore, this.SCHEDULE_COLLECTION).withConverter(
+        ScheduleConverter
+      ),
+      where('serviceId', '==', serviceId),
+      where('date', '==', date)
     );
+    return getDocs(q).then((snapshot) =>
+      snapshot.docs.map((doc) => doc.data())
+    );
+  }
+  getAllScheduleWithServices(): Observable<ScheduleWithService[]> {
+    const q = query(
+      collection(this.firestore, this.SCHEDULE_COLLECTION).withConverter(
+        ScheduleConverter
+      ),
+      orderBy('date', 'asc')
+    );
+
+    return collectionData(q).pipe(
+      switchMap((schedules: Schedule[]) => {
+        if (schedules.length === 0) return of([]);
+
+        const enriched = schedules.map((schedule) =>
+          this.programService.getById(schedule.serviceId).then((service) => ({
+            schedule,
+            service,
+          }))
+        );
+
+        return forkJoin(enriched);
+      })
+    );
+  }
+  async create(schedule: Schedule): Promise<void> {
+    const q = query(
+      collection(this.firestore, this.SCHEDULE_COLLECTION).withConverter(
+        ScheduleConverter
+      ),
+      where('serviceId', '==', schedule.serviceId),
+      where('date', '==', schedule.date),
+      where('time', '==', schedule.time),
+      limit(1)
+    );
+
+    return getDocs(q).then((snapshot) => {
+      if (!snapshot.empty) {
+        // Schedule exists — increment slots
+        const existingDoc = snapshot.docs[0];
+        const existingSchedule = existingDoc.data();
+        const updatedSlots =
+          (existingSchedule.slots || 0) + (schedule.slots || 1);
+
+        return updateDoc(existingDoc.ref, {
+          slots: updatedSlots,
+          updatedAt: new Date(),
+        });
+      } else {
+        // Schedule doesn't exist — create new
+        return setDoc(
+          doc(this.firestore, this.SCHEDULE_COLLECTION, schedule.id),
+          schedule
+        );
+      }
+    });
+  }
+
+  updateSchedule(schedule: Schedule): Promise<void> {
+    const { id, ...data } = schedule; // Exclude 'id' from the update payload
+    const docRef = doc(this.firestore, this.SCHEDULE_COLLECTION, id);
+    return updateDoc(docRef, data);
   }
   getScheduleByMonth(
     month: number,
@@ -77,14 +148,5 @@ export class ScheduleService {
         }));
       })
     );
-  }
-
-  addAll(schedule: Schedule[] = SAMPLE_SCHEDULES) {
-    const batch = writeBatch(this.firestore);
-    schedule.forEach((e) => {
-      const docRef = doc(this.firestore, this.SCHEDULE_COLLECTION, e.id);
-      batch.set(docRef, e);
-    });
-    return batch.commit();
   }
 }

@@ -14,15 +14,13 @@ export const authGuard: CanActivateFn = (route, state) => {
     switchMap((user) => {
       if (user) {
         return visitorLog.saveLog(user.id).then(() => {
-          console.log('Save');
           return user.type === UserType.USER;
         });
       } else {
-        return of(
-          router.createUrlTree([''], {
-            queryParams: { returnUrl: state.url },
-          })
-        );
+        const urlTree = router.createUrlTree(['/landing-page'], {
+          queryParams: { returnUrl: state.url },
+        });
+        return of(urlTree);
       }
     })
   );

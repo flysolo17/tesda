@@ -122,9 +122,23 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
             <li>
-              <a class="dropdown-item" (click)="navigate(user.type)">
+              <a
+                class="dropdown-item"
+                (click)="navigate(user.type)"
+                *ngIf="user.type === 'admin'"
+              >
                 <i class="fa-solid fa-gauge-high me-2 text-primary"></i>
                 Dashboard
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                [routerLink]="['profile']"
+                *ngIf="user.type === 'user'"
+              >
+                <i class="fa-solid fa-gauge-high me-2 text-primary"></i>
+                Appointments
               </a>
             </li>
             <li>
@@ -141,6 +155,16 @@
                 >
                   {{ unseenMessagesCount }}
                 </span>
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                [routerLink]="['profile']"
+                *ngIf="user.type === 'user'"
+              >
+                <i class="fa-solid fa-gauge-high me-2 text-primary"></i>
+                Profile
               </a>
             </li>
             <li><hr class="dropdown-divider" /></li>

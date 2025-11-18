@@ -143,7 +143,10 @@
 
         <!-- Action Buttons -->
         <div class="d-flex gap-2 flex-wrap">
-          <button class="btn btn-primary flex-grow-1">
+          <button
+            class="btn btn-primary flex-grow-1"
+            (click)="bookAppointment(selectedService?.id ?? null)"
+          >
             <i class="bi bi-calendar-check me-1"></i> Book Appointment
           </button>
         </div>

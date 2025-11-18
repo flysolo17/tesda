@@ -64,17 +64,11 @@
                         </button>
                         <ul class="dropdown-menu">
                           <li>
-                            <button
-                              class="dropdown-item"
-                              (click)="viewDetails(appt)"
-                            >
-                              View Details
-                            </button>
+                            <button class="dropdown-item">View Details</button>
                           </li>
                           <li>
                             <button
                               class="dropdown-item"
-                              (click)="confirm(appt)"
                               [disabled]="appt.status !== 'PENDING'"
                             >
                               Confirm
@@ -83,7 +77,6 @@
                           <li>
                             <button
                               class="dropdown-item"
-                              (click)="cancel(appt)"
                               [disabled]="appt.status === 'CANCELLED'"
                             >
                               Cancel
@@ -92,7 +85,6 @@
                           <li>
                             <button
                               class="dropdown-item"
-                              (click)="complete(appt)"
                               [disabled]="appt.status !== 'CONFIRMED'"
                             >
                               Complete
