@@ -14,6 +14,7 @@ import {
 import { AuthService } from '../../services/auth.service';
 import Swal from 'sweetalert2';
 import { delay } from 'rxjs';
+import { AppointmentStatus } from '../../models/Appointment';
 
 interface NavItems {
   label: string;
@@ -52,6 +53,9 @@ export class NavigationComponent {
         {
           label: 'Appointments',
           route: 'appointments',
+          queryParams: {
+            status: AppointmentStatus.PENDING,
+          },
         },
         {
           label: 'Schedules',

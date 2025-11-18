@@ -1,124 +1,101 @@
-<nav class="navbar navbar-dark bg-primary">
-  <div class="container-fluid">
-    <a class="navbar-brand">Appointments</a>
-    <div class="d-flex gap-3" role="search">
-      <button class="btn btn-success">Create Schedule</button>
-    </div>
-  </div>
-</nav>
+<div class="container-fluid vh-100 m-0 p-0 overflow-hidden">
+  <div class="d-flex flex-column h-100 overflow-hidden">
+    <nav class="navbar navbar-dark bg-primary">
+      <div class="container-fluid">
+        <a class="navbar-brand">Appointments</a>
+        <form class="d-flex gap-2" role="search">
+          <input
+            class="form-control me-2"
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+          />
+          <button
+            class="btn btn-success"
+            type="button"
+            style="min-width: 100px"
+          >
+            <i class="bi bi-arrow-clockwise"></i>
+            Refresh
+          </button>
+        </form>
+      </div>
+    </nav>
 
-<div class="container-fluid m-3">
-  <div class="card">
-    <div class="card-header">
-      <ul ngbNav #nav="ngbNav" class="nav-tabs">
-        @for (item of status$; track $index) {
-        <li ngbNavItem>
-          <button ngbNavLink>{{ item }}</button>
-          <ng-template ngbNavContent>
-            <div class="table-responsive">
-              <table class="table table-hover align-middle">
-                <thead class="table-light">
-                  <tr>
-                    <th scope="col">Client</th>
-                    <th scope="col">Contact</th>
-                    <th scope="col">Service</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Time</th>
-                    <th scope="col">Location</th>
-
-                    <th scope="col">Created</th>
-                    <th scope="col">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let appt of appointments$ | async; let i = index">
-                    <td>
-                      <strong>{{ appt.personalInformation.name }}</strong
-                      ><br />
-                      <small class="text-muted">{{
-                        appt.personalInformation.email
-                      }}</small>
-                    </td>
-                    <td>{{ appt.personalInformation.contact }}</td>
-                    <td>
-                      {{ appt.serviceInformation.name }}
-                    </td>
-                    <td>{{ appt.date }}</td>
-                    <td>{{ appt.time }}</td>
-                    <td>{{ appt.location }}</td>
-
-                    <td>
-                      <small class="text-muted">{{
-                        appt.createdAt | date : "short"
-                      }}</small>
-                    </td>
-                    <td>
-                      <div class="dropdown">
-                        <button
-                          class="btn btn-sm btn-outline-dark dropdown-toggle"
-                          type="button"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                        >
-                          Actions
-                        </button>
-                        <ul class="dropdown-menu">
-                          <li>
-                            <button class="dropdown-item">View Details</button>
-                          </li>
-                          <li>
-                            <button
-                              class="dropdown-item"
-                              [disabled]="appt.status !== 'PENDING'"
-                            >
-                              Confirm
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              class="dropdown-item"
-                              [disabled]="appt.status === 'CANCELLED'"
-                            >
-                              Cancel
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              class="dropdown-item"
-                              [disabled]="appt.status !== 'CONFIRMED'"
-                            >
-                              Complete
-                            </button>
-                          </li>
-                        </ul>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </ng-template>
-        </li>
-        }
-      </ul>
-    </div>
-    <div class="card-body">
-      <div [ngbNavOutlet]="nav"></div>
-    </div>
-  </div>
-</div>
-
-<div class="container-fluid m-3">
-  <div class="card">
-    <div class="card-header d-flex align-items-center justify-content-between">
-      <h4 class="card-title">Schedules</h4>
-      <button class="btn btn-primary">
-        <i class="bi bi-plus"></i>
-        New
-      </button>
-    </div>
-    <div class="card-body">
-      <full-calendar [options]="calendarOptions"></full-calendar>
+    <div class="container-fluid flex-grow-1 p-3">
+      <div class="schedule-container">
+        <ul class="nav nav-pills nav-fill">
+          @for (status of status$; track $index) {
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              [routerLink]="['/administration/main/appointments']"
+              [queryParams]="{ status: status }"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+            >
+              {{ status }}
+            </a>
+          </li>
+          }
+        </ul>
+        <div class="scrollable-table-wrapper">
+          <table class="table table-hover table-borderless mb-0">
+            <thead class="table-light sticky-top">
+              <tr>
+                <th scope="col">Personal Info</th>
+                <th scope="col">Contact</th>
+                <th scope="col">Purpose</th>
+                <th scope="col">Date</th>
+                <th scope="col">Time</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of appointments$ | async; track $index) {
+              <tr>
+                <td>
+                  {{ item.personalInformation.name }}<br />
+                  {{ item.personalInformation.email }}
+                </td>
+                <td>{{ item.personalInformation.contact }}</td>
+                <td>{{ item.serviceInformation.name }}</td>
+                <td>{{ item.date }}</td>
+                <td>{{ item.time }}</td>
+                <td>
+                  <div class="d-flex gap-1">
+                    @if (item.status == 'PENDING') {
+                    <button class="btn btn-danger" (click)="reject(item)">
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                    <button class="btn btn-success" (click)="confirm(item)">
+                      <i class="bi bi-check-lg"></i>
+                    </button>
+                    } @if (item.status == 'CONFIRMED') {
+                    <button
+                      class="btn btn-outline-danger"
+                      (click)="cancel(item)"
+                    >
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                    <button class="btn btn-success" (click)="complete(item)">
+                      <i class="bi bi-check-lg"></i>
+                      Complete
+                    </button>
+                    } @if (item.status == 'REJECTED'){
+                    <button class="btn btn-success" (click)="complete(item)">
+                      <i class="bi bi-calendar-event-fill"></i>
+                      Reschedule
+                    </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>

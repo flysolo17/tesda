@@ -1,34 +1,37 @@
-<div class="container-fluid p-4">
+<div class="container-fluid p-3">
   <div class="card">
     <div class="card-header">
       <h5 class="card-title">Create Appointment</h5>
     </div>
+
     <div class="card-body">
+      <!-- Warning -->
       <div
         *ngIf="hasPendingAppointment"
         class="alert alert-warning d-flex align-items-center"
         role="alert"
       >
         <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        You already have a ongoing appointment. Please complete your appointment
-        before booking another.
+        You already have an ongoing appointment. Please complete it first.
       </div>
 
+      <!-- FORM -->
       <form
         *ngIf="!hasPendingAppointment"
         [formGroup]="appointmentForm"
         (ngSubmit)="submit()"
-        class="row p-3 g-3"
+        class="appointment-wrap"
       >
-        <div class="col-8">
+        <!-- LEFT SIDE -->
+        <div class="appointment-left">
           <div class="row g-3">
             <!-- Name -->
-            <div class="col-8">
+            <div class="col-12">
               <div class="form-floating">
                 <input
                   type="text"
-                  class="form-control"
                   id="name"
+                  class="form-control"
                   formControlName="name"
                   placeholder="Name"
                 />
@@ -37,12 +40,12 @@
             </div>
 
             <!-- Contact -->
-            <div class="col-4">
+            <div class="col-12">
               <div class="form-floating">
                 <input
                   type="text"
-                  class="form-control"
                   id="contact"
+                  class="form-control"
                   formControlName="contact"
                   placeholder="Contact"
                 />
@@ -51,12 +54,12 @@
             </div>
 
             <!-- Email -->
-            <div class="col-8">
+            <div class="col-12">
               <div class="form-floating">
                 <input
                   type="email"
-                  class="form-control"
                   id="email"
+                  class="form-control"
                   formControlName="email"
                   placeholder="Email"
                 />
@@ -65,12 +68,12 @@
             </div>
 
             <!-- Date -->
-            <div class="col-4">
+            <div class="col-12">
               <div class="form-floating">
                 <input
                   type="date"
-                  class="form-control"
                   id="date"
+                  class="form-control"
                   formControlName="date"
                   [min]="minDate"
                   (change)="
@@ -84,12 +87,12 @@
               </div>
             </div>
 
-            <!-- Service Selection -->
+            <!-- Purpose -->
             <div class="col-12">
               <div class="form-floating">
                 <select
-                  class="form-select"
                   id="serviceId"
+                  class="form-select"
                   formControlName="serviceId"
                   (change)="
                     onServiceAndDateChanged(
@@ -98,7 +101,7 @@
                     )
                   "
                 >
-                  <option value="" disabled>Select a service</option>
+                  <option value="" disabled>Select Purpose</option>
                   <option
                     *ngFor="let service of services$"
                     [value]="service.id"
@@ -106,23 +109,22 @@
                     {{ service.title }}
                   </option>
                 </select>
-                <label for="serviceId">Service</label>
+                <label for="serviceId">Purpose</label>
               </div>
             </div>
           </div>
+          <!-- end row -->
         </div>
 
-        <!-- Schedule Preview -->
-        <div class="col-4">
-          <div class="d-flex align-items-center justify-content-between">
-            <h4 class="mb-3">Available Slots</h4>
+        <!-- RIGHT SIDE -->
+        <div class="appointment-right mt-3">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h4 class="m-0">Available Slots</h4>
+
             <div
               *ngIf="isGettingSchedules"
               class="spinner-border text-primary"
-              role="status"
-            >
-              <span class="visually-hidden">Loading...</span>
-            </div>
+            ></div>
           </div>
 
           <ul class="list-group">
@@ -131,6 +133,7 @@
               No available slots
             </li>
             }
+
             <li
               class="list-group-item"
               *ngFor="let item of schedules; trackBy: trackByIndex"
@@ -138,22 +141,15 @@
               (click)="onSelectSchedule(item)"
               style="cursor: pointer"
             >
-              <div class="ms-2 me-auto">
-                <div class="fw-bold">{{ item.time }}</div>
-                {{ item.slots }} slots
-              </div>
+              <div class="fw-bold">{{ item.time }}</div>
+              {{ item.slots }} slots
             </li>
           </ul>
         </div>
-        <div class="col-12 text-center">
-          <button
-            class="btn btn-success"
-            [disabled]="
-              selectedServiceId == null ||
-              appointmentForm.invalid ||
-              isGettingSchedules
-            "
-          >
+
+        <!-- Submit -->
+        <div class="col-12 text-center mt-3">
+          <button class="btn btn-success w-100 w-md-auto">
             Submit Appointment
           </button>
         </div>

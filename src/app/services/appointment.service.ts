@@ -1,15 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Query } from '@angular/core';
 import {
   collection,
   collectionData,
+  CollectionReference,
   deleteDoc,
   doc,
   docData,
   Firestore,
   getDocs,
+  limit,
   orderBy,
   query,
+  QueryConstraint,
+  QueryDocumentSnapshot,
   setDoc,
+  startAfter,
   Timestamp,
   updateDoc,
   where,
@@ -23,13 +28,18 @@ import {
 
 import { map, Observable } from 'rxjs';
 import { generateRandomNumberWithDate } from '../utils/Constants';
+import { Services } from '../models/Services';
+import { EmailService } from './email.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppointmentService {
   private readonly APPOINTMENT_COLLECTION = 'appointments';
-  constructor(private firestore: Firestore) {}
+  constructor(
+    private firestore: Firestore,
+    private emailService: EmailService
+  ) {}
   async hasPendingAppointment(uid: string): Promise<boolean> {
     const q = query(
       collection(this.firestore, this.APPOINTMENT_COLLECTION),
@@ -60,13 +70,37 @@ export class AppointmentService {
 
     return collectionData(q);
   }
-  // READ SINGLE
+
   getById(id: string): Observable<Appointment | null> {
     const docRef = doc(
       this.firestore,
       `${this.APPOINTMENT_COLLECTION}/${id}`
     ).withConverter(AppointmentConverter);
     return docData(docRef).pipe(map((e) => e ?? null));
+  }
+  async getAppointments(
+    lastIndex: QueryDocumentSnapshot<Appointment> | null,
+    status: AppointmentStatus,
+    count: number
+  ): Promise<Appointment[]> {
+    const appointmentsRef = collection(
+      this.firestore,
+      this.APPOINTMENT_COLLECTION
+    ).withConverter(AppointmentConverter);
+
+    const constraints: QueryConstraint[] = [
+      where('status', '==', status),
+      orderBy('date', 'asc'),
+      limit(count),
+    ];
+
+    if (lastIndex) {
+      constraints.push(startAfter(lastIndex));
+    }
+
+    const q = query(appointmentsRef, ...constraints);
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => doc.data());
   }
   getAll(): Observable<Appointment[]> {
     const q = query(
@@ -92,8 +126,8 @@ export class AppointmentService {
   }
   create(appointment: Appointment) {
     const ref = collection(this.firestore, this.APPOINTMENT_COLLECTION);
-
     appointment.id = generateRandomNumberWithDate();
+
     return setDoc(doc(ref, appointment.id), appointment);
   }
   // DELETE
@@ -107,11 +141,30 @@ export class AppointmentService {
    * @param id Appointment ID
    * @param status New status (AppointmentStatus)
    */
-  updateStatus(id: string, status: AppointmentStatus) {
-    const docRef = doc(this.firestore, `${this.APPOINTMENT_COLLECTION}/${id}`);
-    return updateDoc(docRef, {
+  updateStatus(appointment: Appointment, status: AppointmentStatus) {
+    const docRef = doc(
+      this.firestore,
+      `${this.APPOINTMENT_COLLECTION}/${appointment.id}`
+    );
+
+    // Update Firestore first
+    const updatePromise = updateDoc(docRef, {
+      notes: appointment.notes,
       status,
       updatedAt: Timestamp.fromDate(new Date()),
     });
+
+    // Send email notification after update
+    updatePromise.then(() => {
+      if (status === AppointmentStatus.CONFIRMED) {
+        this.emailService.confirmed(appointment);
+      } else if (status === AppointmentStatus.REJECTED) {
+        this.emailService.reject(appointment);
+      } else if (status === AppointmentStatus.CANCELLED) {
+        this.emailService.cancelled(appointment);
+      }
+    });
+
+    return updatePromise;
   }
 }

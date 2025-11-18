@@ -1,0 +1,31 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ title }}</h5>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="cancel()"
+  ></button>
+</div>
+
+<div class="modal-body">
+  <div class="mb-3">
+    <label for="notes" class="form-label">Notes (optional)</label>
+    <textarea
+      id="notes"
+      class="form-control"
+      rows="4"
+      [formControl]="notes"
+      placeholder="Add any remarks or instructions here..."
+    ></textarea>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+    Cancel
+  </button>
+  <button type="button" class="btn btn-primary" (click)="close()">
+    Confirm
+  </button>
+</div>

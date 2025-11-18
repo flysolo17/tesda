@@ -1,56 +1,22 @@
-/* Minimalist card styles */
-.stat-card {
-  border-radius: 0.8rem;
-  transition: transform 0.2s;
-  &:hover {
-    transform: translateY(-3px);
-  }
-}
-
-.table-card {
-  border-radius: 0.8rem;
+.schedule-container {
+  background-color: white;
+  height: 100%;
+  padding: 1rem;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   overflow: hidden;
-  table {
-    margin-bottom: 0;
-  }
-  tr:hover {
-    background-color: #f8f9fa;
-  }
 }
 
-.status-badge {
-  font-size: 0.8rem;
-  padding: 0.35em 0.5em;
-  border-radius: 0.5rem;
+.scrollable-table-wrapper {
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: calc(100vh - 200px); /* adjust based on navbar + padding */
 }
 
-.calendar-card {
-  border-radius: 0.8rem;
-  overflow: hidden;
-  .fc {
-    font-size: 0.9rem;
-  }
-}
-
-/* Inputs & selects */
-.form-control,
-.form-select {
-  border-radius: 0.6rem;
-  box-shadow: none;
-}
-
-.toolbar {
-  border-radius: 0.8rem;
-  background-color: #f8f9fa;
-  gap: 0.5rem;
-
-  select,
-  input {
-    border-radius: 0.6rem;
-    box-shadow: none;
-  }
-
-  button {
-    border-radius: 0.6rem;
-  }
+thead.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }

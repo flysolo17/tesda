@@ -10,8 +10,19 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
     />
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
+    ></script>
   </head>
   <body>
     <app-root></app-root>
+    <script type="text/javascript">
+      (function () {
+        emailjs.init({
+          publicKey: "YOUR_PUBLIC_KEY",
+        });
+      })();
+    </script>
   </body>
 </html>
