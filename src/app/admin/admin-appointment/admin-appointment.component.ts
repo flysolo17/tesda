@@ -27,6 +27,7 @@ import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { QueryDocumentSnapshot } from '@angular/fire/firestore';
 import Swal from 'sweetalert2';
 import { EditStatusComponent } from './edit-status/edit-status.component';
+import { RescheduleDialogComponent } from './reschedule-dialog/reschedule-dialog.component';
 
 @Component({
   selector: 'app-admin-appointment',
@@ -251,5 +252,19 @@ export class AdminAppointmentComponent implements OnInit {
           });
         }
       });
+  }
+  reschedule(appointment: Appointment) {
+    const modalRef = this.modalSerive.open(RescheduleDialogComponent, {
+      size: 'lg',
+    });
+    modalRef.componentInstance.appointment = appointment;
+    modalRef.result.then((data) => {
+      if (data === 'success') {
+        const updated = this.appointments$
+          .getValue()
+          .filter((a) => a.id !== appointment.id);
+        this.appointments$.next(updated);
+      }
+    });
   }
 }

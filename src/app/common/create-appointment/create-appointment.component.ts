@@ -20,6 +20,9 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AppointmentPreviewComponent } from './appointment-preview/appointment-preview.component';
 import { Appointment, AppointmentStatus } from '../../models/Appointment';
 import Swal from 'sweetalert2';
+import { Survey } from '../../models/Survey';
+import { SurveyComponent } from '../../user/survey/survey.component';
+import { SurveyService } from '../../services/survey.service';
 
 @Component({
   selector: 'app-create-appointment',
@@ -44,6 +47,7 @@ export class CreateAppointmentComponent implements OnInit {
     private scheduleService: ScheduleService,
     private activatedRoute: ActivatedRoute,
     private modalService: NgbModal,
+    private surveyService: SurveyService,
     private appointmentService: AppointmentService, // assumed service for saving appointments
     private router: Router // for navigation after submission
   ) {
@@ -144,5 +148,48 @@ export class CreateAppointmentComponent implements OnInit {
 
     const modalRef = this.modalService.open(AppointmentPreviewComponent);
     modalRef.componentInstance.appointment = appointment;
+    modalRef.result.then((data) => {
+      if (data === true) {
+        this.openSurvey();
+      }
+    });
+  }
+
+  openSurvey() {
+    const modalRef = this.modalService.open(SurveyComponent);
+    modalRef.result
+      .then((result: Survey | any) => {
+        if (result) {
+          result.uid = this.user$?.id;
+          result.profile = this.user$?.profile;
+          result.name = this.user$?.name;
+          this.saveSurvey(result);
+        }
+      })
+      .catch((error) => {
+        console.log('Survey modal dismissed:', error);
+      });
+  }
+
+  saveSurvey(survey: Survey) {
+    this.surveyService
+      .create(survey)
+      .then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Survey Submitted',
+          text: 'Thank you for completing the survey!',
+          confirmButtonColor: '#3085d6',
+        });
+      })
+      .catch((error) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Submission Failed',
+          text: 'Something went wrong. Please try again later.',
+          confirmButtonColor: '#d33',
+        });
+        console.error('Survey submission error:', error);
+      });
   }
 }

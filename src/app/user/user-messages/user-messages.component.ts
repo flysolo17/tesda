@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MainStateService } from '../main-state.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MessagingService } from '../../services/messaging.service';
 import { ToastrService } from '../../services/toastr.service';
@@ -17,6 +17,7 @@ import { take } from 'rxjs';
 export class UserMessagesComponent implements OnInit {
   private state = inject(MainStateService);
   private messageService = inject(MessagingService);
+  private location = inject(Location);
   private toastr = inject(ToastrService);
   readonly convo$ = this.state.conversation$;
 
@@ -64,5 +65,9 @@ export class UserMessagesComponent implements OnInit {
           this.toastr.showError('Failed to send message.');
         });
     });
+  }
+
+  back() {
+    this.location.back();
   }
 }

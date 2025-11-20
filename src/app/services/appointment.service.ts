@@ -8,11 +8,13 @@ import {
   docData,
   Firestore,
   getDocs,
+  increment,
   limit,
   orderBy,
   query,
   QueryConstraint,
   QueryDocumentSnapshot,
+  serverTimestamp,
   setDoc,
   startAfter,
   Timestamp,
@@ -125,10 +127,51 @@ export class AppointmentService {
     return updateDoc(docRef, data);
   }
   create(appointment: Appointment) {
-    const ref = collection(this.firestore, this.APPOINTMENT_COLLECTION);
-    appointment.id = generateRandomNumberWithDate();
+    const batch = writeBatch(this.firestore);
 
-    return setDoc(doc(ref, appointment.id), appointment);
+    appointment.id = generateRandomNumberWithDate();
+    batch.set(
+      doc(
+        collection(this.firestore, this.APPOINTMENT_COLLECTION),
+        appointment.id
+      ),
+      appointment
+    );
+    const scheduleRef = doc(this.firestore, 'schedules', appointment.sid);
+    batch.update(scheduleRef, {
+      slots: increment(-1),
+      updatedAt: new Date(),
+    });
+    return batch.commit();
+  }
+  async reschedule(appointment: Appointment): Promise<void> {
+    const batch = writeBatch(this.firestore);
+
+    const appointmentRef = doc(
+      this.firestore,
+      this.APPOINTMENT_COLLECTION,
+      appointment.id
+    );
+    const scheduleRef = doc(this.firestore, 'schedules', appointment.sid);
+
+    batch.update(appointmentRef, {
+      ...appointment,
+      updatedAt: serverTimestamp(),
+    });
+
+    batch.update(scheduleRef, {
+      slots: increment(-1),
+      updatedAt: serverTimestamp(),
+    });
+
+    // Combine both operations into a single Promise chain
+    return Promise.all([
+      batch.commit(),
+      this.emailService.rescheduled(appointment),
+    ]).then(() => {
+      // All succeeded
+      return;
+    });
   }
   // DELETE
   delete(id: string) {
@@ -166,5 +209,15 @@ export class AppointmentService {
     });
 
     return updatePromise;
+  }
+  getAppointmentsByUID(uid: string) {
+    const q = query(
+      collection(this.firestore, this.APPOINTMENT_COLLECTION).withConverter(
+        AppointmentConverter
+      ),
+      where('uid', '==', uid),
+      orderBy('updatedAt', 'desc')
+    );
+    return collectionData(q);
   }
 }

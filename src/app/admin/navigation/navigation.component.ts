@@ -44,7 +44,7 @@ interface NavItems {
 })
 export class NavigationComponent {
   navItems: NavItems[] = [
-    { label: 'Dashboard', route: 'dashboard', icon: 'bi bi-house' },
+    { label: 'Dashboard', route: 'dashboard', icon: 'bi bi-box-fill' },
     {
       label: 'Appointments',
       icon: 'bi bi-calendar-check-fill',
@@ -69,13 +69,31 @@ export class NavigationComponent {
       route: 'messages',
     },
     {
-      label: 'About',
-      icon: 'bi bi-table',
+      label: 'Homepage',
+      icon: 'bi bi-house-fill',
       more: [
         {
           label: 'Manage Banners',
           route: 'banners',
         },
+        {
+          label: 'Manage Announcements',
+          route: 'announcements',
+        },
+        {
+          label: 'News and Events',
+          route: 'news-and-events',
+        },
+        {
+          label: 'Calendar of Activities',
+          route: 'activities',
+        },
+      ],
+    },
+    {
+      label: 'About',
+      icon: 'bi bi-info-circle-fill',
+      more: [
         {
           label: 'Careers',
           route: 'careers',
@@ -104,32 +122,7 @@ export class NavigationComponent {
         },
       ],
     },
-    {
-      label: 'Announcements',
-      icon: 'bi bi-megaphone-fill',
-      route: '/announcements',
-      more: [
-        {
-          label: 'Announcements',
-          route: 'announcements',
-          queryParams: { type: 'announcement' },
-        },
-        {
-          label: 'News',
-          route: 'announcements',
-          queryParams: { type: 'news' },
-        },
-        {
-          label: 'Events',
-          route: 'announcements',
-          queryParams: { type: 'event' },
-        },
-        {
-          label: 'Create Announcement',
-          route: 'create-announcement',
-        },
-      ],
-    },
+
     {
       label: 'Feedback',
       icon: 'bi-chat-dots', // Bootstrap icon for feedback/chat

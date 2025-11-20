@@ -50,9 +50,7 @@ export class ViewAnnouncementComponent implements OnInit {
   async loadAnnouncement(id: string) {
     try {
       const data = await this.announcementService.getById(id);
-      if (data.exists()) {
-        this.announcement = data.data();
-      }
+      this.announcement = data;
     } catch (error) {
       this.toastr.showError('Failed to load announcement.');
       console.error(error);

@@ -1,7 +1,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-dark bg-primary mb-3">
   <div class="container-fluid">
-    <a class="navbar-brand text-white">Announcements</a>
+    <a class="navbar-brand text-white">News and Events</a>
     <form
       class="d-flex align-items-center"
       role="search"
@@ -32,15 +32,16 @@
       <table class="table table-hover table-borderless align-middle">
         <thead class="table-light">
           <tr>
-            <th>Title</th>
-            <th class="text-end">Created</th>
-            <th class="text-end">Actions</th>
+            <th scope="col">Title</th>
+            <th scope="col">Type</th>
+            <th scope="col">Created</th>
+            <th scope="col" class="text-end">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let a of announcements; let i = index">
-            <!-- Title: image + flex-grow title -->
-            <td>
+          <tr *ngFor="let a of announcements$ | async; let i = index">
+            <!-- Title: larger font, ellipsis -->
+            <td class="fw-bold text-truncate">
               <div class="d-flex align-items-center">
                 <img
                   [src]="a.image"
@@ -54,8 +55,13 @@
               </div>
             </td>
 
-            <!-- Created date -->
-            <td class="text-end text-nowrap">
+            <!-- Summary: slightly smaller, ellipsis -->
+            <td class="text-muted text-truncate">
+              <span class="fs-6">{{ a.type }}</span>
+            </td>
+
+            <!-- Created date: right-aligned, nowrap -->
+            <td class="text-nowrap" style="white-space: nowrap">
               {{ a.createdAt | date : "shortDate" }}
             </td>
 
@@ -82,8 +88,8 @@
             </td>
           </tr>
           <tr *ngIf="announcements.length === 0">
-            <td colspan="3" class="text-center text-muted py-4">
-              <i class="bi bi-info-circle"></i> No announcements found.
+            <td colspan="6" class="text-center text-muted py-4">
+              <i class="bi bi-info-circle"></i> No news and events found.
             </td>
           </tr>
         </tbody>
@@ -95,7 +101,7 @@
         <div class="spinner-border text-primary" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
-        <p class="mt-3 text-muted">Loading announcements...</p>
+        <p class="mt-3 text-muted">Loading news and events...</p>
       </div>
     </ng-template>
   </div>

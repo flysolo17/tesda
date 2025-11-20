@@ -48,6 +48,9 @@ import { CreateActivityComponent } from './admin/about/admin-activities/create-a
 import { SchedulesComponent } from './admin/admin-appointment/schedules/schedules.component';
 import { ProfileComponent } from './common/profile/profile.component';
 import { CreateAppointmentComponent } from './common/create-appointment/create-appointment.component';
+import { AppointmentListComponent } from './user/appointment-list/appointment-list.component';
+import { AdminViewAnnouncementComponent } from './admin/announcement/admin-view-announcement/admin-view-announcement.component';
+import { AdminNewsAndEventsComponent } from './admin/announcement/admin-news-and-events/admin-news-and-events.component';
 
 export const routes: Routes = [
   {
@@ -55,7 +58,11 @@ export const routes: Routes = [
     redirectTo: '/landing-page',
     pathMatch: 'full',
   },
-
+  {
+    path: 'messages',
+    component: UserMessagesComponent,
+    canActivate: [authGuard],
+  },
   {
     path: 'landing-page',
     component: LandingPageComponent,
@@ -117,6 +124,10 @@ export const routes: Routes = [
       {
         path: 'profile',
         component: ProfileComponent,
+      },
+      {
+        path: 'appointments',
+        component: AppointmentListComponent,
       },
       {
         path: 'create-appointment',
@@ -222,16 +233,18 @@ export const routes: Routes = [
             path: 'announcements',
             component: AnnouncementComponent,
           },
+
           {
-            path: 'news',
-            component: NewsComponent,
+            path: 'announcements/:id',
+            component: AdminViewAnnouncementComponent,
           },
           {
-            path: 'events',
-            component: AdminEventsComponent,
+            path: 'news-and-events',
+            component: AdminNewsAndEventsComponent,
           },
+
           {
-            path: 'create-announcement',
+            path: 'create-content',
             component: CreateAnnouncementComponent,
           },
           {

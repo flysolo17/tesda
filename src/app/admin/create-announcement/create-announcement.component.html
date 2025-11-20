@@ -1,121 +1,152 @@
+<!-- Navbar -->
+<nav class="navbar navbar-dark bg-primary mb-3 shadow-sm">
+  <div class="d-flex text-white gap-3 align-items-center">
+    <button class="btn text-white" (click)="back()">
+      <i class="bi bi-arrow-left"></i>
+    </button>
+    <h5>
+      {{ announcement ? "Update " : "Create" }}
+      {{ type ? type : "News and events" }}
+    </h5>
+  </div>
+</nav>
 <div class="container p-3">
-  <div class="card card-outline">
-    <div class="card-header">
-      <h4 class="card-title">Create Announcement</h4>
-    </div>
+  <div class="card">
+    <div class="card-body">
+      <form [formGroup]="announcementForm" (submit)="submit()">
+        <div class="card-body">
+          <div class="row g-3">
+            <!-- Title (col-8) -->
+            <div class="col-md-8">
+              <div class="form-floating">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="title"
+                  placeholder="Title"
+                  formControlName="title"
+                  [class.is-invalid]="
+                    announcementForm.get('title')?.invalid &&
+                    announcementForm.get('title')?.touched
+                  "
+                />
+                <label for="title">Title</label>
+                <div class="invalid-feedback">Title is required.</div>
+              </div>
+            </div>
+            <!-- Type Field (col-4) -->
+            <div class="col-md-4">
+              <div class="form-floating">
+                <ng-container *ngIf="type === 'announcement'; else typeSelect">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="type"
+                    formControlName="type"
+                    [value]="type"
+                    readonly
+                  />
+                  <label for="type">Type</label>
+                </ng-container>
 
-    <form [formGroup]="announcementForm" (submit)="submit()">
-      <div class="card-body">
-        <div class="row g-3">
-          <!-- Title (col-8) -->
-          <div class="col-md-8">
-            <div class="form-floating">
+                <ng-template #typeSelect>
+                  <select
+                    class="form-select"
+                    id="type"
+                    formControlName="type"
+                    [class.is-invalid]="
+                      announcementForm.get('type')?.invalid &&
+                      announcementForm.get('type')?.touched
+                    "
+                  >
+                    <option value="news">News</option>
+                    <option value="events">Events</option>
+                  </select>
+                  <label for="type">Type</label>
+                  <div class="invalid-feedback">Type is required.</div>
+                </ng-template>
+              </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="col-12">
+              <div class="form-floating">
+                <textarea
+                  class="form-control"
+                  id="summary"
+                  placeholder="Summary"
+                  formControlName="summary"
+                  style="height: 100px"
+                  [class.is-invalid]="
+                    announcementForm.get('summary')?.invalid &&
+                    announcementForm.get('summary')?.touched
+                  "
+                ></textarea>
+                <label for="summary">Summary</label>
+                <div class="invalid-feedback">Summary is required.</div>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="col-12">
+              <div class="form-floating">
+                <textarea
+                  class="form-control"
+                  id="content"
+                  placeholder="Content"
+                  formControlName="content"
+                  style="height: 150px"
+                  [class.is-invalid]="
+                    announcementForm.get('content')?.invalid &&
+                    announcementForm.get('content')?.touched
+                  "
+                ></textarea>
+                <label for="content">Content</label>
+                <div class="invalid-feedback">Content is required.</div>
+              </div>
+            </div>
+
+            <!-- Source -->
+            <div class="col-12">
+              <div class="form-floating">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="source"
+                  placeholder="Source"
+                  formControlName="source"
+                />
+                <label for="source">Source (for news)</label>
+              </div>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="form-floating col-12">
               <input
-                type="text"
+                type="file"
                 class="form-control"
-                id="title"
-                placeholder="Title"
-                formControlName="title"
-                [class.is-invalid]="
-                  announcementForm.get('title')?.invalid &&
-                  announcementForm.get('title')?.touched
-                "
+                id="image"
+                (change)="onFileChange($event)"
+                [class.is-invalid]="!imageFile && loading"
+                accept="image/*"
               />
-              <label for="title">Title</label>
-              <div class="invalid-feedback">Title is required.</div>
+
+              <div class="invalid-feedback">Image is required.</div>
             </div>
-          </div>
-
-          <!-- Type (col-4) -->
-          <div class="col-md-4">
-            <div class="form-floating">
-              <select class="form-select" id="type" formControlName="type">
-                <option value="announcement">Announcement</option>
-                <option value="news">News</option>
-                <option value="event">Events</option>
-              </select>
-              <label for="type">Type</label>
-            </div>
-          </div>
-
-          <!-- Summary -->
-          <div class="col-12">
-            <div class="form-floating">
-              <textarea
-                class="form-control"
-                id="summary"
-                placeholder="Summary"
-                formControlName="summary"
-                style="height: 100px"
-                [class.is-invalid]="
-                  announcementForm.get('summary')?.invalid &&
-                  announcementForm.get('summary')?.touched
-                "
-              ></textarea>
-              <label for="summary">Summary</label>
-              <div class="invalid-feedback">Summary is required.</div>
-            </div>
-          </div>
-
-          <!-- Content -->
-          <div class="col-12">
-            <div class="form-floating">
-              <textarea
-                class="form-control"
-                id="content"
-                placeholder="Content"
-                formControlName="content"
-                style="height: 150px"
-                [class.is-invalid]="
-                  announcementForm.get('content')?.invalid &&
-                  announcementForm.get('content')?.touched
-                "
-              ></textarea>
-              <label for="content">Content</label>
-              <div class="invalid-feedback">Content is required.</div>
-            </div>
-          </div>
-
-          <!-- Source -->
-          <div class="col-12">
-            <div class="form-floating">
-              <input
-                type="text"
-                class="form-control"
-                id="source"
-                placeholder="Source"
-                formControlName="source"
-              />
-              <label for="source">Source (for news)</label>
-            </div>
-          </div>
-
-          <!-- Image Upload -->
-          <div class="form-floating col-12">
-            <input
-              type="file"
-              class="form-control"
-              id="image"
-              (change)="onFileChange($event)"
-              [class.is-invalid]="!imageFile && loading"
-              accept="image/*"
-            />
-
-            <div class="invalid-feedback">Image is required.</div>
           </div>
         </div>
-      </div>
 
-      <div class="card-footer text-end">
-        <button class="btn btn-light" type="button">Cancel</button>
-        <button
-          class="btn btn-primary"
-          type="submit"
-          [disabled]="loading || announcementForm.invalid"
-        >
-          Save
-        </button>
-      </div>
-    </form>
+        <div class="card-footer text-end">
+          <button
+            class="btn btn-primary"
+            style="min-width: 100px"
+            type="submit"
+            [disabled]="loading || announcementForm.invalid"
+          >
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

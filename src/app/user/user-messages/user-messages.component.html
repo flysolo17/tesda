@@ -1,6 +1,9 @@
 <ng-container *ngIf="convo$ | async as convo">
   <!-- Header -->
   <div class="bg-primary text-white d-flex align-items-center px-3 py-2">
+    <button class="btn btn-lg text-white" (click)="back()">
+      <i class="bi bi-arrow-left"></i>
+    </button>
     <img
       [src]="convo.user?.profile || 'https://github.com/mdo.png'"
       alt="User"

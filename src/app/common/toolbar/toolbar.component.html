@@ -134,7 +134,10 @@
             <li>
               <a
                 class="dropdown-item"
-                [routerLink]="['profile']"
+                [routerLink]="['appointments']"
+                [queryParams]="{
+                  id: user.id
+                }"
                 *ngIf="user.type === 'user'"
               >
                 <i class="fa-solid fa-gauge-high me-2 text-primary"></i>
@@ -144,6 +147,7 @@
             <li>
               <a
                 class="dropdown-item d-flex justify-content-between align-items-center"
+                [routerLink]="['/messages']"
               >
                 <span
                   ><i class="fa-solid fa-envelope me-2 text-secondary"></i>
@@ -155,6 +159,22 @@
                 >
                   {{ unseenMessagesCount }}
                 </span>
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item d-flex justify-content-between align-items-center"
+              >
+                <span
+                  ><i class="fa-solid fa-envelope me-2 text-secondary"></i>
+                  Notifications</span
+                >
+                <!-- <span
+                  *ngIf="unseenMessagesCount > 0"
+                  class="badge bg-danger rounded-pill"
+                >
+                  {{ unseenMessagesCount }}
+                </span> -->
               </a>
             </li>
             <li>

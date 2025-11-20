@@ -66,4 +66,24 @@ export class EmailService {
       publicKey: 'izSGyLd2KtohkatAI',
     });
   }
+
+  async rescheduled(appointment: Appointment) {
+    const templateParams = {
+      status: AppointmentStatus.CONFIRMED,
+      statusColor: '#0dcaf0',
+      id: appointment.id,
+      date: appointment.date,
+      time: appointment.time,
+      name: appointment.personalInformation.name,
+      message:
+        'Your appointment has been rescheduled. Please review the updated details below:',
+      purpose: appointment.serviceInformation.name,
+      email: appointment.personalInformation.email,
+      notes: appointment.notes ?? '',
+    };
+
+    await emailjs.send('service_06zldcb', 'template_ukxipdh', templateParams, {
+      publicKey: 'izSGyLd2KtohkatAI',
+    });
+  }
 }

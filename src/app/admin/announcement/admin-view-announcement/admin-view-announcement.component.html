@@ -1,0 +1,101 @@
+<!-- Navbar -->
+<nav class="navbar navbar-dark bg-primary mb-3 shadow-sm">
+  <div
+    class="container-fluid d-flex justify-content-between align-items-center"
+  >
+    <button class="btn text-white" (click)="back()">
+      <i class="bi bi-arrow-left"></i>
+    </button>
+
+    <div class="d-flex gap-2">
+      <button
+        class="btn btn-outline-light btn-sm"
+        (click)="create(announcement$?.id ?? '')"
+      >
+        <i class="bi bi-pencil-square"></i> Edit
+      </button>
+      <button class="btn btn-danger btn-sm" (click)="onDelete()">
+        <i class="bi bi-trash"></i> Delete
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container-fluid px-4">
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Loading...</p>
+  </div>
+
+  <!-- Not Found Alert -->
+  <div
+    *ngIf="!isLoading && announcement$ === null"
+    class="alert alert-warning text-center"
+  >
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    Data not found or may have been deleted.
+  </div>
+
+  <!-- Announcement Card -->
+  <!-- Announcement Card -->
+  <div *ngIf="announcement$" class="card shadow-sm border-0">
+    <div class="card-body">
+      <div class="row g-4 align-items-start">
+        <!-- Left: Image (50%) -->
+        <div class="col-md-6">
+          <img
+            [src]="announcement$.image"
+            class="img-fluid rounded w-100 h-auto"
+            alt="Announcement Image"
+            *ngIf="announcement$.image"
+          />
+        </div>
+
+        <!-- Right: Info (50%) -->
+        <div class="col-md-6 d-flex flex-column justify-content-between h-100">
+          <div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span
+                class="badge bg-info text-dark text-uppercase"
+                *ngIf="announcement$.type !== 'announcement'"
+              >
+                {{ announcement$.type }}
+              </span>
+              <small class="text-muted text-end">
+                <i class="bi bi-calendar-event"></i>
+                {{ announcement$.createdAt | date : "mediumDate" }}
+              </small>
+            </div>
+
+            <h4 class="fw-bold">{{ announcement$.title }}</h4>
+            <p
+              class="text-muted fs-6 mb-2 text-truncate"
+              style="max-width: 100%"
+            >
+              {{ announcement$.summary }}
+            </p>
+            <hr />
+            <p class="card-text">{{ announcement$.content }}</p>
+          </div>
+
+          <div class="text-end mt-3">
+            <small class="text-muted">
+              <i class="bi bi-link-45deg"></i> Source:
+              <a [href]="announcement$.source" target="_blank">{{
+                announcement$.source
+              }}</a>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer text-muted text-end">
+      Last updated: {{ announcement$.updatedAt | date : "short" }}
+    </div>
+  </div>
+</div>

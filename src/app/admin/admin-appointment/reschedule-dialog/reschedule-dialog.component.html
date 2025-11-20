@@ -1,0 +1,72 @@
+<div class="modal-header">
+  <h4 class="modal-title">Reschedule Appointment</h4>
+</div>
+<div class="modal-body">
+  <form [formGroup]="rescheduleForm" (submit)="submit()" class="row g-4">
+    <!-- Purpose (read-only) -->
+    <div class="col-12 form-floating">
+      <input
+        type="text"
+        class="form-control"
+        id="purpose"
+        [value]="appointment.serviceInformation.name"
+        readonly
+        disabled
+      />
+      <label for="purpose">Purpose</label>
+    </div>
+
+    <!-- Date -->
+    <div class="col-8 form-floating">
+      <input
+        type="date"
+        class="form-control"
+        id="date"
+        [min]="today"
+        formControlName="date"
+      />
+      <label for="date">New Appointment Date</label>
+    </div>
+
+    <!-- Schedule Select -->
+    <div class="col-4 form-floating">
+      <select
+        class="form-select"
+        id="selectedSchedule"
+        formControlName="selectedSchedule"
+      >
+        <option value="" disabled>Select a time slot</option>
+        <option *ngFor="let s of schedules$" [value]="s.id">
+          {{ s.time }} ({{ s.slots }} slot(s))
+        </option>
+      </select>
+      <label for="selectedSchedule">Available Time Slots</label>
+      <small class="text-muted">
+        {{ isGettingSchedules ? "Fetching schedules" : slots }}
+        slot(s) available
+      </small>
+    </div>
+
+    <!-- Notes -->
+    <div class="col-12 form-floating">
+      <textarea
+        class="form-control"
+        id="notes"
+        formControlName="notes"
+        style="height: 100px"
+      ></textarea>
+      <label for="notes">Additional Notes (optional)</label>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="col-12 text-end">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="isLoading || isGettingSchedules"
+      >
+        {{ isLoading ? "Rescheduling..." : "Confirm Reschedule" }}
+      </button>
+    </div>
+  </form>
+</div>

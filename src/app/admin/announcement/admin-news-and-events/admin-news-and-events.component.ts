@@ -1,21 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { Announcement } from '../../models/Announcement';
-import { AnnouncementService } from '../../services/announcement.service';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { combineLatest, map, Observable, of, startWith, switchMap } from 'rxjs';
-import { CommonModule } from '@angular/common';
-import Swal from 'sweetalert2';
+import { Component } from '@angular/core';
+import { Firestore, doc, collection } from '@angular/fire/firestore';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { collection, doc, Firestore } from '@angular/fire/firestore';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Observable, of, combineLatest, startWith, map } from 'rxjs';
+import Swal from 'sweetalert2';
+import { Announcement } from '../../../models/Announcement';
+import { AnnouncementService } from '../../../services/announcement.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-announcement',
+  selector: 'app-admin-news-and-events',
   standalone: true,
-  imports: [CommonModule, RouterLink, ReactiveFormsModule],
-  templateUrl: './announcement.component.html',
-  styleUrl: './announcement.component.scss',
+  imports: [ReactiveFormsModule, CommonModule, RouterModule],
+  templateUrl: './admin-news-and-events.component.html',
+  styleUrl: './admin-news-and-events.component.scss',
 })
-export class AnnouncementComponent implements OnInit {
+export class AdminNewsAndEventsComponent {
   searchControl = new FormControl('');
   announcements$: Observable<Announcement[]> = of([]);
 
@@ -27,8 +27,7 @@ export class AnnouncementComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const allAnnouncements$ =
-      this.announcementService.getAllByType('announcement');
+    const allAnnouncements$ = this.announcementService.getAllNewsAndEvents();
 
     this.announcements$ = combineLatest([
       allAnnouncements$,
@@ -89,7 +88,6 @@ export class AnnouncementComponent implements OnInit {
     this.router.navigate(['/administration/main/create-content'], {
       queryParams: {
         id: id,
-        type: 'announcement',
       },
     });
   }
