@@ -1,0 +1,48 @@
+<nav class="navbar navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand">Technical Vocational Institutions (TTI)s</a>
+    <form class="d-flex" role="search">
+      <input
+        class="form-control me-2"
+        type="search"
+        placeholder="Search"
+        aria-label="Search"
+      />
+    </form>
+  </div>
+</nav>
+
+<div class="container mt-3">
+  <table class="table table-striped table-hover">
+    <thead class="table-primary">
+      <tr>
+        <th>Name</th>
+        <th>Institution</th>
+        <th>Email</th>
+        <th>Contact</th>
+
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of contact$ | async">
+        <td>{{ c.name }}</td>
+        <td>{{ c.institution }}</td>
+        <td>{{ c.email }}</td>
+        <td>{{ c.contact }}</td>
+
+        <td>
+          <button
+            class="btn btn-sm btn-warning me-2"
+            (click)="editContact(c.id)"
+          >
+            Edit
+          </button>
+          <button class="btn btn-sm btn-danger" (click)="deleteContact(c.id)">
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

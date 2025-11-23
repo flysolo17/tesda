@@ -10,6 +10,7 @@ export interface User {
   age: number;
   createdAt: Date;
   updatedAt: Date;
+  fcmToken?: string | null;
 }
 
 export enum UserType {

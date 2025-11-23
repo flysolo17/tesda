@@ -4,6 +4,7 @@ import { from, map, Observable } from 'rxjs';
 import {
   collection,
   collectionData,
+  deleteDoc,
   doc,
   Firestore,
   getDoc,
@@ -112,5 +113,8 @@ export class FeedbackService {
     });
 
     return batch.commit();
+  }
+  delete(id: string) {
+    return deleteDoc(doc(this.firestore, this.FEEDBACK_COLLECTION, id));
   }
 }

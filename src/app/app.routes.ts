@@ -19,7 +19,6 @@ import { MessagingComponent } from './admin/messaging/messaging.component';
 import { adminGuard } from './guards/admin.guard';
 import { CreateAnnouncementComponent } from './admin/create-announcement/create-announcement.component';
 import { AnnouncementComponent } from './admin/announcement/announcement.component';
-import { NewsComponent } from './admin/news/news.component';
 
 import { UserDashboardComponent } from './user/user-dashboard/user-dashboard.component';
 import { UserMessagesComponent } from './user/user-messages/user-messages.component';
@@ -51,6 +50,12 @@ import { CreateAppointmentComponent } from './common/create-appointment/create-a
 import { AppointmentListComponent } from './user/appointment-list/appointment-list.component';
 import { AdminViewAnnouncementComponent } from './admin/announcement/admin-view-announcement/admin-view-announcement.component';
 import { AdminNewsAndEventsComponent } from './admin/announcement/admin-news-and-events/admin-news-and-events.component';
+import { ProvicialOfficeComponent } from './admin/contact/provicial-office/provicial-office.component';
+import { TesdaTrainingInstituteComponent } from './admin/contact/tesda-training-institute/tesda-training-institute.component';
+import { TechnicalVocationalInstitutionsComponent } from './admin/contact/technical-vocational-institutions/technical-vocational-institutions.component';
+import { AddContactComponent } from './admin/contact/add-contact/add-contact.component';
+import { ContactListComponent } from './user/contact-list/contact-list.component';
+import { UserNotificationComponent } from './user/user-notification/user-notification.component';
 
 export const routes: Routes = [
   {
@@ -61,6 +66,11 @@ export const routes: Routes = [
   {
     path: 'messages',
     component: UserMessagesComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'notifications',
+    component: UserNotificationComponent,
     canActivate: [authGuard],
   },
   {
@@ -126,6 +136,10 @@ export const routes: Routes = [
         component: ProfileComponent,
       },
       {
+        path: 'contacts',
+        component: ContactListComponent,
+      },
+      {
         path: 'appointments',
         component: AppointmentListComponent,
       },
@@ -172,7 +186,6 @@ export const routes: Routes = [
         path: 'main',
         canActivate: [adminGuard],
         component: NavigationComponent,
-
         children: [
           {
             path: '',
@@ -276,6 +289,22 @@ export const routes: Routes = [
           {
             path: 'profile',
             component: ProfileComponent,
+          },
+          {
+            path: 'provincial-office',
+            component: ProvicialOfficeComponent,
+          },
+          {
+            path: 'tesda-training-institutions',
+            component: TesdaTrainingInstituteComponent,
+          },
+          {
+            path: 'technical-vocational-institutions',
+            component: TechnicalVocationalInstitutionsComponent,
+          },
+          {
+            path: 'add-contact',
+            component: AddContactComponent,
           },
         ],
       },

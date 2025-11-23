@@ -4,6 +4,7 @@ import { User, UserType } from '../../models/Users';
 import { RouterLink, RouterModule } from '@angular/router';
 import { UnSeenMessages } from '../../services/messaging.service';
 import { dropdowns, verificationLinks } from './links';
+import { Notification } from '../../models/Notification';
 
 export interface ToolbarNavItem {
   label: string;
@@ -17,12 +18,11 @@ export interface ToolbarNavItem {
   styleUrl: './toolbar.component.scss',
 })
 export class ToolbarComponent {
-
-  dropdowns$ = dropdowns
+  dropdowns$ = dropdowns;
   verificationLinks$ = verificationLinks;
   /** Authenticated user (if any) */
   @Input({ required: true }) user: User | null = null;
-
+  @Input() notifications: Notification[] = [];
   /** Grouped unseen messages from backend */
   @Input({ required: false }) messages: UnSeenMessages[] = [];
 
@@ -54,5 +54,10 @@ export class ToolbarComponent {
   }
   navigate(type: UserType | null) {
     this.onNavigateToDashboard.emit(type);
+  }
+  get unseenNotifications(): number {
+    return this.notifications
+      ? this.notifications.filter((n) => !n.seen).length
+      : 0;
   }
 }

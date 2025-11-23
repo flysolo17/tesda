@@ -13,6 +13,7 @@ import {
   query,
   setDoc,
   where,
+  writeBatch,
 } from '@angular/fire/firestore';
 import {
   deleteObject,
@@ -22,39 +23,65 @@ import {
   uploadBytes,
 } from '@angular/fire/storage';
 import { Observable } from 'rxjs';
+import { NotificationService } from './notification.service';
+import {
+  AudienceType,
+  Notification,
+  NotificationType,
+} from '../models/Notification';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AnnouncementService {
   private readonly ANNOUNCEMENT_COLLECTION = 'announcemets';
-  constructor(private firestore: Firestore, private storage: Storage) {}
+  private readonly NOTIFICATION_COLLECTION = 'notifications';
+
+  constructor(
+    private firestore: Firestore,
+    private storage: Storage,
+    private notificationService: NotificationService
+  ) {}
 
   async create(announcement: Announcement, image: File): Promise<void> {
     try {
-      const collectionRef = collection(
+      // References
+      const announcementCollection = collection(
         this.firestore,
         this.ANNOUNCEMENT_COLLECTION
       );
-      const docRef = doc(collectionRef, announcement.id);
-      let imageUrl: string;
+      const announcementDoc = doc(announcementCollection, announcement.id);
 
+      // Upload image
       const imageRef = ref(
         this.storage,
-        `${this.ANNOUNCEMENT_COLLECTION}/${docRef.id}_${image.name}`
+        `${this.ANNOUNCEMENT_COLLECTION}/${announcementDoc.id}_${image.name}`
       );
       const uploadResult = await uploadBytes(imageRef, image);
-      imageUrl = await getDownloadURL(uploadResult.ref);
+      const imageUrl = await getDownloadURL(uploadResult.ref);
 
+      // Build announcement payload
+      const now = new Date();
       const payload: Announcement = {
         ...announcement,
-        id: docRef.id,
+        id: announcementDoc.id,
         image: imageUrl,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: now,
+        updatedAt: now,
       };
 
-      await setDoc(docRef, payload);
+      // Build notification payload
+      const notificationCollection = collection(
+        this.firestore,
+        this.NOTIFICATION_COLLECTION
+      );
+      const notificationDoc = doc(notificationCollection);
+
+      // Batch write for atomicity
+      const batch = writeBatch(this.firestore);
+      batch.set(announcementDoc, payload);
+
+      await batch.commit();
     } catch (error) {
       console.error('Error creating announcement:', error);
       throw error;

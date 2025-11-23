@@ -23,6 +23,9 @@ import Swal from 'sweetalert2';
 import { Survey } from '../../models/Survey';
 import { SurveyComponent } from '../../user/survey/survey.component';
 import { SurveyService } from '../../services/survey.service';
+import { NotificationService } from '../../services/notification.service';
+import { Notification, NotificationType } from '../../models/Notification';
+import { user } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-create-appointment',
@@ -48,6 +51,7 @@ export class CreateAppointmentComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private modalService: NgbModal,
     private surveyService: SurveyService,
+    private notificationService: NotificationService,
     private appointmentService: AppointmentService, // assumed service for saving appointments
     private router: Router // for navigation after submission
   ) {
@@ -148,11 +152,39 @@ export class CreateAppointmentComponent implements OnInit {
 
     const modalRef = this.modalService.open(AppointmentPreviewComponent);
     modalRef.componentInstance.appointment = appointment;
-    modalRef.result.then((data) => {
+    modalRef.result.then(async (data) => {
       if (data === true) {
+        await this.createNotifition(appointment);
         this.openSurvey();
       }
     });
+  }
+
+  async createNotifition(appointment: Appointment) {
+    const userNotification: Notification = {
+      id: '',
+      type: NotificationType.APPOINTMENT,
+      title: 'Appointment submitted',
+      body: `Your appointment for ${appointment.serviceInformation.name} on ${appointment.date} at ${appointment.time} has been successfully submitted.`,
+      recievers: [this.user$?.id ?? ''],
+      seen: [],
+      returnUrl: `/landing-page/appointments?id=${this.user$?.id}`,
+      createdAt: new Date(),
+    };
+    const adminNotification: Notification = {
+      id: '',
+      type: NotificationType.APPOINTMENT,
+      title: 'New Appointment Submitted',
+      body: `A new appointment has been submitted and is awaiting review.`,
+      recievers: ['admin'], // or an array of admin UIDs/roles
+      seen: [],
+      returnUrl: '/administration/main/appointments?status=PENDING',
+      createdAt: new Date(),
+    };
+    await this.notificationService.createCustomNotification(
+      userNotification,
+      adminNotification
+    );
   }
 
   openSurvey() {

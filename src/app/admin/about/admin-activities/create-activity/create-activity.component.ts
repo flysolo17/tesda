@@ -21,6 +21,12 @@ import { ToastrService } from '../../../../services/toastr.service';
 import { ActivityService } from '../../../../services/activity.service';
 import Swal from 'sweetalert2';
 import { ActivatedRoute } from '@angular/router';
+import { NotificationService } from '../../../../services/notification.service';
+import {
+  AudienceType,
+  Notification,
+  NotificationType,
+} from '../../../../models/Notification';
 
 @Component({
   selector: 'app-create-activity',
@@ -47,7 +53,8 @@ export class CreateActivityComponent implements OnInit {
     private fb: FormBuilder,
     private activityService: ActivityService,
     private location: Location,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private notificationService: NotificationService
   ) {
     this.activityForm = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(100)]],
@@ -154,6 +161,17 @@ export class CreateActivityComponent implements OnInit {
           updatedAt: now,
         };
         await this.create(activityPayload, this.selectedImage!);
+        const notification: Notification = {
+          id: '',
+          type: NotificationType.ACTIVITY,
+          title: 'New Activitity',
+          body: activityPayload.description,
+          recievers: [],
+          seen: [],
+          returnUrl: '/landing-page/home',
+          createdAt: new Date(),
+        };
+        await this.notificationService.create(notification);
         await Swal.fire({
           icon: 'success',
           title: 'Activity created',

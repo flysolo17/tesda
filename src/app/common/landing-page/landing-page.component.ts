@@ -25,6 +25,8 @@ import { FeedbackDialogComponent } from '../feedback-dialog/feedback-dialog.comp
 import { FeedbackService } from '../../services/feedback.service';
 import { ForgotPasswordDialogComponent } from '../forgot-password-dialog/forgot-password-dialog.component';
 import Swal from 'sweetalert2';
+import { NotificationService } from '../../services/notification.service';
+import { Notification } from '../../models/Notification';
 
 @Component({
   selector: 'app-landing-page',
@@ -35,31 +37,42 @@ import Swal from 'sweetalert2';
 })
 export class LandingPageComponent {
   title = 'tesda';
-  private modalService = inject(NgbModal);
 
+  private modalService = inject(NgbModal);
   private router = inject(Router);
   private authService = inject(AuthService);
   private messageService = inject(MessagingService);
   private feedbackService = inject(FeedbackService);
-  loading$ = false;
+  private notificationService = inject(NotificationService);
+
+  // Use signal or BehaviorSubject if you want reactive loading
+  loading = false;
 
   readonly user$ = this.authService.getCurrentUser();
 
   /** Unseen grouped messages per sender */
-  readonly unseenMessages$ = this.user$.pipe(
+  readonly unseenMessages$: Observable<UnSeenMessages[]> = this.user$.pipe(
     switchMap((user) =>
-      user?.id
-        ? this.messageService.getGroupedUnseenMessages(user.id)
-        : of([] as UnSeenMessages[])
+      user?.id ? this.messageService.getGroupedUnseenMessages(user.id) : of([])
     )
   );
 
-  register() {
-    const modalRef = this.modalService.open(RegisterDialogComponent);
+  readonly notifications$: Observable<Notification[]> = this.user$.pipe(
+    switchMap((user) =>
+      user?.id
+        ? this.notificationService.getAllUserNotification(user.id)
+        : of([])
+    )
+  );
+
+  register(): void {
+    this.modalService.open(RegisterDialogComponent);
   }
-  login() {
+
+  async login(): Promise<void> {
     const modalRef = this.modalService.open(LoginDialogComponent);
-    modalRef.result.then(async (uid) => {
+    try {
+      const uid = await modalRef.result;
       if (uid === 'register') {
         this.register();
       } else if (uid === 'forgotPassword') {
@@ -70,14 +83,17 @@ export class LandingPageComponent {
           this.openFeedbackDialog();
         }
       }
-    });
+    } catch {
+      // Modal dismissed
+    }
   }
 
-  openForgotPasswordDialog() {
+  openForgotPasswordDialog(): void {
     this.modalService.open(ForgotPasswordDialogComponent);
   }
-  logout(): void {
-    Swal.fire({
+
+  async logout(): Promise<void> {
+    const result = await Swal.fire({
       title: 'Are you sure?',
       text: 'You will be logged out of your account.',
       icon: 'warning',
@@ -86,43 +102,37 @@ export class LandingPageComponent {
       cancelButtonText: 'Cancel',
       confirmButtonColor: '#d33',
       cancelButtonColor: '#3085d6',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.loading$ = true;
-        this.authService
-          .logout()
-          .then(() => {
-            Swal.fire({
-              icon: 'success',
-              title: 'Logged out',
-              text: 'You have been successfully logged out.',
-              timer: 2000,
-              showConfirmButton: false,
-            });
-          })
-          .catch(() => {
-            Swal.fire({
-              icon: 'error',
-              title: 'Logout failed',
-              text: 'Something went wrong while logging out.',
-            });
-          })
-          .finally(() => {
-            this.loading$ = false;
-          });
-      }
     });
-  }
 
-  navigateToDashboard(type: UserType | null) {
-    if (type === UserType.ADMIN) {
-      this.router.navigate(['/administration/main']);
-    } else {
-      this.router.navigate(['/main']);
+    if (result.isConfirmed) {
+      this.loading = true;
+      try {
+        await this.authService.logout();
+        await Swal.fire({
+          icon: 'success',
+          title: 'Logged out',
+          text: 'You have been successfully logged out.',
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      } catch {
+        await Swal.fire({
+          icon: 'error',
+          title: 'Logout failed',
+          text: 'Something went wrong while logging out.',
+        });
+      } finally {
+        this.loading = false;
+      }
     }
   }
 
-  openFeedbackDialog() {
+  navigateToDashboard(type: UserType | null): void {
+    const path = type === UserType.ADMIN ? '/administration/main' : '/main';
+    this.router.navigate([path]);
+  }
+
+  openFeedbackDialog(): void {
     this.modalService.open(FeedbackDialogComponent, { size: 'lg' });
   }
 }

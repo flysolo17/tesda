@@ -6,6 +6,7 @@ import { getToken, Messaging, onMessage } from '@angular/fire/messaging';
 import { FcmService } from './services/fcm.service';
 import { Auth, authState, onAuthStateChanged } from '@angular/fire/auth';
 import { take } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-root',
@@ -18,68 +19,98 @@ export class AppComponent implements OnInit {
   title = 'tesda';
   private messaging = inject(Messaging);
 
-  constructor(private modalService: NgbModal, private auth: Auth) {}
+  constructor(private auth: Auth, private authService: AuthService) {}
 
   ngOnInit(): void {
     authState(this.auth)
       .pipe(take(1))
-      .subscribe((user) => {
+      .subscribe(async (user) => {
         if (!user) return;
 
-        this.registerServiceWorker()
-          .then((registration) => {
-            this.requestPermission(registration);
-            this.listenForMessages();
-          })
-          .catch((err) => {
-            console.error('Service worker registration failed:', err);
-          });
-
-        // TODO: Subscribe to user.id notifications from Firestore or backend
+        try {
+          const registration = await this.registerServiceWorker();
+          this.handleNotificationPermission(registration, user.uid);
+          this.listenForMessages();
+        } catch (err) {
+          console.error('Service worker registration failed:', err);
+        }
       });
   }
 
-  async registerServiceWorker(): Promise<ServiceWorkerRegistration> {
+  private async registerServiceWorker(): Promise<ServiceWorkerRegistration> {
     return await navigator.serviceWorker.register('/firebase-messaging-sw.js');
   }
 
-  requestPermission(registration: ServiceWorkerRegistration) {
+  private handleNotificationPermission(
+    registration: ServiceWorkerRegistration,
+    uid: string
+  ) {
     if (Notification.permission === 'granted') {
-      this.getFcmToken(registration);
+      this.getFcmToken(registration, uid);
     } else if (Notification.permission === 'default') {
-      Notification.requestPermission().then((permission) => {
-        if (permission === 'granted') {
-          this.getFcmToken(registration);
-        } else {
-          console.warn('Notification permission denied.');
+      // 👇 SweetAlert2 popup instead of plain alert
+      Swal.fire({
+        title: 'Enable Notifications',
+        text: 'Would you like to receive updates and reminders?',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Allow',
+        cancelButtonText: 'Not now',
+        confirmButtonColor: '#3b82f6',
+        cancelButtonColor: '#ef4444',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Notification.requestPermission().then((permission) => {
+            if (permission === 'granted') {
+              this.getFcmToken(registration, uid);
+              Swal.fire({
+                title: 'Notifications Enabled',
+                text: 'You will now receive updates and reminders.',
+                icon: 'success',
+                confirmButtonColor: '#22c55e',
+              });
+            } else {
+              Swal.fire({
+                title: 'Permission Denied',
+                text: 'You can enable notifications later in your browser settings.',
+                icon: 'warning',
+                confirmButtonColor: '#ef4444',
+              });
+            }
+          });
         }
       });
     } else {
-      console.warn(
-        'Notification permission was blocked. Please enable it in browser settings.'
-      );
+      Swal.fire({
+        title: 'Notifications Blocked',
+        text: 'Please enable notifications manually in your browser settings.',
+        icon: 'error',
+        confirmButtonColor: '#ef4444',
+      });
     }
   }
 
-  getFcmToken(registration: ServiceWorkerRegistration) {
+  private getFcmToken(registration: ServiceWorkerRegistration, uid: string) {
     getToken(this.messaging, {
       vapidKey:
         'BL4xbxA5D98lAgFZ5FXSFzkUsWoHr0PPFUX2p0Fwfeh6UZTAlzQ4Vf2XfRxhl2g0HK6TJrNOoX9hTFhNxHR9Ikg',
       serviceWorkerRegistration: registration,
     })
       .then((token) => {
+        this.authService.updateFCMToken(uid, token);
         console.log('Notification Token:', token);
-        // TODO: Save token to Firestore or backend for user.id
       })
       .catch((err) => {
         console.error('FCM token error:', err);
       });
   }
 
-  listenForMessages() {
+  private listenForMessages() {
     onMessage(this.messaging, (payload) => {
       console.log('Foreground message received:', payload);
-      // TODO: Trigger modal, toast, or SweetAlert here
+      alert(
+        `New notification: ${payload.notification?.title ?? 'Message received'}`
+      );
     });
   }
 }

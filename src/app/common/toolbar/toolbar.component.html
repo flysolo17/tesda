@@ -144,7 +144,7 @@
                 Appointments
               </a>
             </li>
-            <li>
+            <li *ngIf="user.type === 'user'">
               <a
                 class="dropdown-item d-flex justify-content-between align-items-center"
                 [routerLink]="['/messages']"
@@ -161,20 +161,21 @@
                 </span>
               </a>
             </li>
-            <li>
+            <li *ngIf="user.type === 'user'">
               <a
                 class="dropdown-item d-flex justify-content-between align-items-center"
+                [routerLink]="['/notifications']"
               >
                 <span
                   ><i class="fa-solid fa-envelope me-2 text-secondary"></i>
                   Notifications</span
                 >
-                <!-- <span
-                  *ngIf="unseenMessagesCount > 0"
+                <span
+                  *ngIf="unseenNotifications > 0"
                   class="badge bg-danger rounded-pill"
                 >
-                  {{ unseenMessagesCount }}
-                </span> -->
+                  {{ unseenNotifications }}
+                </span>
               </a>
             </li>
             <li>

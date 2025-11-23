@@ -66,7 +66,7 @@
       <div class="card dashboard-card bg-primary text-white shadow-sm">
         <div class="card-body">
           <p class="card-text mb-1">Total Services</p>
-          <h4 class="card-title fw-semibold">0</h4>
+          <h4 class="card-title fw-semibold">{{ services.length }}</h4>
         </div>
       </div>
     </div>
@@ -75,7 +75,7 @@
       <div class="card dashboard-card bg-success text-white shadow-sm">
         <div class="card-body">
           <p class="card-text mb-1">Completed Appointments</p>
-          <h4 class="card-title fw-semibold">0</h4>
+          <h4 class="card-title fw-semibold">{{ completedAppointments }}</h4>
         </div>
       </div>
     </div>
@@ -84,7 +84,7 @@
       <div class="card dashboard-card bg-warning text-white shadow-sm">
         <div class="card-body">
           <p class="card-text mb-1">Pending Requests</p>
-          <h4 class="card-title fw-semibold">0</h4>
+          <h4 class="card-title fw-semibold">{{ pendingAppointments }}</h4>
         </div>
       </div>
     </div>
@@ -93,7 +93,7 @@
       <div class="card dashboard-card bg-info text-white shadow-sm">
         <div class="card-body">
           <p class="card-text mb-1">Active Users</p>
-          <h4 class="card-title fw-semibold">0</h4>
+          <h4 class="card-title fw-semibold">{{ activeUsers }}</h4>
         </div>
       </div>
     </div>
@@ -130,19 +130,37 @@
     <div class="col-lg-4">
       <div class="card shadow-sm p-3 h-100">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <h6 class="fw-semibold mb-0">New Requests</h6>
-          <span class="badge bg-danger">{{ newRequests.length }}</span>
+          <h6 class="fw-semibold mb-0">
+            Ongoing Appointments
+            <span
+              class="badge bg-danger"
+              *ngIf="ongoingAppointments.length > 0"
+              >{{ ongoingAppointments.length }}</span
+            >
+          </h6>
+          <button class="btn text-primary" routerLink="appointments">
+            View all
+          </button>
         </div>
 
         <div
-          *ngFor="let req of newRequests"
+          *ngFor="let req of ongoingAppointments"
           class="request-card mb-2 p-2 border rounded d-flex justify-content-between align-items-center"
         >
           <div>
-            <p class="mb-1 text-primary fw-semibold">{{ req.title }}</p>
-            <small class="text-muted">From: {{ req.from }}</small>
+            <p class="mb-1 text-primary fw-semibold">
+              {{ req.serviceInformation.name }}
+            </p>
+            <small class="text-muted">
+              {{ req.personalInformation.name }}</small
+            >
           </div>
-          <button class="btn btn-outline-success btn-sm">View</button>
+        </div>
+        <div
+          class="d-flex align-items-center justify content-center p-3"
+          *ngIf="appointments.length === 0"
+        >
+          <span class="text-muted">No appointments</span>
         </div>
       </div>
     </div>

@@ -1,72 +1,23 @@
-.feedback-dashboard {
-  background-color: #f9fafb;
-  min-height: 100vh;
+.masonry {
+  column-count: 4; /* number of columns you want */
+  column-gap: 1rem;
+  padding: 1rem;
+}
 
-  .stat-card {
-    background: #fff;
-    transition: all 0.2s ease;
-    &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
-    }
-  }
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+}
 
-  .feedback-grid {
-    display: flex;
-    flex-wrap: wrap;
-  }
+.card {
+  width: 100%;
+  display: inline-block;
+}
 
-  .feedback-card {
-    background: #fff;
-    transition: all 0.3s ease;
-    border-left: 5px solid transparent;
-
-    &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-    }
-
-    p {
-      line-height: 1.4;
-    }
-  }
-
-  /* Sentiment badges */
-  .badge {
-    font-size: 0.8rem;
-  }
-
-  .badge-very-satisfied {
-    background-color: #16a34a;
-  }
-  .badge-satisfied {
-    background-color: #22c55e;
-  }
-  .badge-neutral {
-    background-color: #facc15;
-    color: #000;
-  }
-  .badge-dissatisfied {
-    background-color: #fb923c;
-  }
-  .badge-very-dissatisfied {
-    background-color: #ef4444;
-  }
-
-  /* Card borders based on sentiment for accent */
-  .feedback-card.border-very-satisfied {
-    border-left-color: #16a34a;
-  }
-  .feedback-card.border-satisfied {
-    border-left-color: #22c55e;
-  }
-  .feedback-card.border-neutral {
-    border-left-color: #facc15;
-  }
-  .feedback-card.border-dissatisfied {
-    border-left-color: #fb923c;
-  }
-  .feedback-card.border-very-dissatisfied {
-    border-left-color: #ef4444;
-  }
+.name-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block; /* ensures ellipsis works reliably */
+  max-width: 100%;
 }

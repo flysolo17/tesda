@@ -9,6 +9,7 @@ import { FeedbackService } from '../../services/feedback.service';
 import { CommonModule } from '@angular/common';
 import { map } from 'rxjs';
 import { Sentiment } from '../../models/Feedback';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-feedback',
@@ -97,5 +98,56 @@ export class AdminFeedbackComponent implements OnInit {
       default:
         return 'badge-secondary';
     }
+  }
+
+  sentimentToBootstrapColor(sentiment: Sentiment): string {
+    switch (sentiment) {
+      case Sentiment.VeryDissatisfied:
+        return 'danger'; // red
+      case Sentiment.Dissatisfied:
+        return 'warning'; // yellow/orange
+      case Sentiment.Neutral:
+        return 'secondary'; // gray
+      case Sentiment.Satisfied:
+        return 'info'; // light blue
+      case Sentiment.VerySatisfied:
+        return 'success'; // green
+      default:
+        return 'secondary';
+    }
+  }
+
+  delete(id: string) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'This feedback will be permanently deleted.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.feedbackService
+          .delete(id)
+          .then(() => {
+            Swal.fire({
+              title: 'Deleted!',
+              text: 'The feedback has been removed.',
+              icon: 'success',
+              timer: 1200,
+              showConfirmButton: false,
+            });
+          })
+          .catch((err) => {
+            Swal.fire({
+              title: 'Error',
+              text: 'Could not delete. Try again.',
+              icon: 'error',
+            });
+          });
+      }
+    });
   }
 }

@@ -5,10 +5,11 @@
   (onLogout)="logout()"
   [messages]="(unseenMessages$ | async) || []"
   (onNavigateToDashboard)="navigateToDashboard($event)"
+  [notifications]="(notifications$ | async) || []"
 ></app-toolbar>
 
 <div
-  *ngIf="loading$"
+  *ngIf="loading"
   class="progress"
   role="progressbar"
   aria-label="Loading"

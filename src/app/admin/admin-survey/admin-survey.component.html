@@ -4,34 +4,77 @@
     <a class="navbar-brand">Survey</a>
   </div>
 </nav>
-<!-- Feedback Cards Grid -->
-<div class="p-3">
-  <div class="row g-3 feedback-grid">
-    @for (fb of surveys$ | async; track $index) {
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-      <div class="card feedback-card border-0 shadow-sm rounded-4 h-100">
-        <div class="card-body">
-          <div class="card-header bg-white border-0">
-            <div class="d-flex align-items-center">
+
+<div class="container-fluid">
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead class="table-primary">
+        <tr>
+          <th style="width: 220px">Name</th>
+          <th style="width: 150px">Location</th>
+          <th style="width: 180px">Program Type</th>
+          <th style="width: 200px">Program</th>
+          <th>Comment</th>
+          <th style="width: 160px">Submitted</th>
+          <th style="width: 80px">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (item of surveys$ | async; track $index) {
+        <tr>
+          <!-- NAME + AVATAR -->
+          <td>
+            <div class="d-flex align-items-center gap-2">
               <img
-                [src]="fb.profile || '../../../assets/images/profile.png'"
-                alt="{{ fb.name }}"
-                class="rounded-circle me-3"
-                width="45"
-                height="45"
+                class="rounded-circle"
+                width="40"
+                height="40"
+                [src]="item.profile || '../../../assets/images/profile.webp'"
               />
-              <div>
-                <h6 class="card-title mb-0">{{ fb.name }}</h6>
-                <small class="card-subtitle text-muted">
-                  {{ fb.submittedAt | date : "mediumDate" }}
-                </small>
-              </div>
+              <div class="fw-semibold name-ellipsis">{{ item.name }}</div>
             </div>
-          </div>
-          <p class="mb-0 text-truncate-2 text-muted">{{ fb.comment }}</p>
-        </div>
-      </div>
-    </div>
-    }
+          </td>
+
+          <!-- LOCATION -->
+          <td class="text-muted">{{ item.location }}</td>
+
+          <!-- PROGRAM TYPE -->
+          <td>{{ item.programType }}</td>
+
+          <!-- PROGRAM -->
+          <td>{{ item.program }}</td>
+
+          <!-- COMMENT (ELLIPSIS) -->
+          <td class="comment-ellipsis">
+            {{ item.comment }}
+          </td>
+
+          <!-- DATE -->
+          <td class="text-muted">
+            {{ item.submittedAt | date : "short" }}
+          </td>
+
+          <!-- ACTIONS -->
+          <td>
+            <div class="d-flex gap-2">
+              <button
+                class="btn btn-sm btn-outline-success"
+                (click)="viewSurvey(item)"
+              >
+                <i class="bi bi-eye-fill"></i>
+              </button>
+              <button
+                class="btn btn-outline-danger btn-sm"
+                (click)="delete(item.id)"
+              >
+                Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
   </div>
 </div>

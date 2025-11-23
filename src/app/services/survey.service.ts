@@ -3,6 +3,7 @@ import { Survey, SurveyConverter } from '../models/Survey';
 import {
   collection,
   collectionData,
+  deleteDoc,
   doc,
   Firestore,
   getDocs,
@@ -47,5 +48,9 @@ export class SurveyService {
       )
     );
     return collectionData(q);
+  }
+
+  delete(id: string) {
+    return deleteDoc(doc(this.firestore, this.SURVEY_COLLECTION, id));
   }
 }

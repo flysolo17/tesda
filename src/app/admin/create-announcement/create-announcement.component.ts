@@ -12,6 +12,8 @@ import { ToastrService } from '../../services/toastr.service';
 import { AnnouncementService } from '../../services/announcement.service';
 import { ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
+import { Notification, NotificationType } from '../../models/Notification';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-create-announcement',
@@ -32,7 +34,8 @@ export class CreateAnnouncementComponent implements OnInit {
     private fb: FormBuilder,
     private announcementService: AnnouncementService,
     private activatedRoute: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private notificationService: NotificationService
   ) {
     this.announcementForm = this.fb.nonNullable.group({
       type: ['announcement', Validators.required],
@@ -144,7 +147,19 @@ export class CreateAnnouncementComponent implements OnInit {
     this.loading = true;
     this.announcementService
       .create(announcement, file)
-      .then(() => {
+      .then(async () => {
+        const notification: Notification = {
+          id: '',
+          type: NotificationType.ANNOUNCEMENTS,
+          title: `${announcement.title}`,
+          body: `${announcement.summary}`,
+          recievers: [],
+          seen: [],
+          returnUrl: '/landing-page',
+          createdAt: new Date(),
+        };
+        await this.notificationService.create(notification);
+
         Swal.fire('Created!', 'Announcement has been posted.', 'success');
         this.announcementForm.reset();
         this.imageFile = undefined;

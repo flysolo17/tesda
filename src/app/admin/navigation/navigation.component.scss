@@ -10,7 +10,7 @@
 .sidebar {
   height: 100dvh;
   overflow: hidden;
-  width: 260px;
+  width: 300px;
   background-color: white;
   border-right: 1px solid #dee2e6;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
@@ -81,4 +81,14 @@
   border-radius: 8px;
   padding: 8px 10px;
   z-index: 1100;
+}
+
+/* Label styling: max 1 line + ellipsis */
+.nav-label {
+  display: inline-block;
+  max-width: 200px; /* adjust as needed */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
 }

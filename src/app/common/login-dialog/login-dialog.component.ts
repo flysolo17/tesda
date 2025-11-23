@@ -67,8 +67,7 @@ export class LoginDialogComponent {
       })
       .catch((e) => {
         console.error('Login error:', e);
-        this.toastr.showError(e.message ?? 'Unknown Error');
-        this.toastr.showError(e['message'] ?? 'Unknown Error');
+
         this.loading$ = false;
       });
   }

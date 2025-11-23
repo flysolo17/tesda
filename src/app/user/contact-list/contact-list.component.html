@@ -1,0 +1,42 @@
+<div class="container-fluid p-3 d-flex flex-column align-items-center gap-3">
+  <div class="container px-3">
+    <h1 class="fw-bold text-primary text-center mb-4 text-uppercase">
+      {{ type }}
+    </h1>
+  </div>
+
+  @for (item of contacts$ | async; track $index) {
+  <div
+    class="card shadow-sm w-100 border-0"
+    style="max-width: 100%; width: 100%"
+  >
+    <div class="card-header">
+      <h4 class="card-title">{{ item.institution | uppercase }}</h4>
+    </div>
+    <div class="card-body">
+      <!-- Provider Info Grid -->
+      <div class="row mb-4">
+        <div class="col-12 col-md-4 mb-2">
+          <small class="text-uppercase text-muted d-block">Name</small>
+          <span>{{ item.name }}</span>
+        </div>
+        <div class="col-12 col-md-4 mb-2">
+          <small class="text-uppercase text-muted d-block">Email</small>
+          <span>{{ item.email || "—" }}</span>
+        </div>
+        <div class="col-12 col-md-4 mb-2">
+          <small class="text-uppercase text-muted d-block"
+            >Contact Number</small
+          >
+          <span>{{ item.contact || "—" }}</span>
+        </div>
+        <div class="col-12" *ngIf="item.description !== ''">
+          <div class="alert alert-info" role="alert">
+            <span>{{ item.description }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</div>

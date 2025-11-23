@@ -1,0 +1,99 @@
+<div class="container p-4">
+  <form [formGroup]="contactForm" (ngSubmit)="submit()">
+    <div class="card">
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-12">
+            <h4 class="card-title">
+              {{ contact ? "Edit Contact" : "Add Contact" }}
+            </h4>
+          </div>
+
+          <!-- Name -->
+          <div class="form-floating col-8">
+            <input
+              type="text"
+              id="name"
+              class="form-control"
+              formControlName="name"
+              placeholder="Name"
+            />
+            <label for="name">Person Name</label>
+          </div>
+
+          <!-- Type -->
+          <div class="form-floating col-4">
+            <select
+              id="type"
+              class="form-select"
+              formControlName="type"
+              placeholder="Type"
+            >
+              <option value="" disabled>Select type</option>
+              <option *ngFor="let t of types" [value]="t">{{ t }}</option>
+            </select>
+            <label for="type">Type</label>
+          </div>
+
+          <!-- Institution -->
+          <div class="form-floating col-12">
+            <input
+              type="text"
+              id="institution"
+              class="form-control"
+              formControlName="institution"
+              placeholder="Institution"
+            />
+            <label for="institution">Name of the Institution</label>
+          </div>
+
+          <!-- Description -->
+          <div class="form-floating col-12">
+            <textarea
+              id="description"
+              class="form-control"
+              formControlName="description"
+              placeholder="Description"
+              style="height: 100px"
+            ></textarea>
+            <label for="description">Description</label>
+          </div>
+
+          <!-- Contact -->
+          <div class="form-floating col-12">
+            <input
+              type="text"
+              id="contact"
+              class="form-control"
+              formControlName="contact"
+              placeholder="Contact"
+            />
+            <label for="contact">Contact</label>
+          </div>
+
+          <!-- Email -->
+          <div class="form-floating col-12">
+            <input
+              type="email"
+              id="email"
+              class="form-control"
+              formControlName="email"
+              placeholder="Email"
+            />
+            <label for="email">Email</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-3" align="end">
+      <button
+        style="min-width: 160px"
+        class="btn btn-primary"
+        type="submit"
+        [disabled]="isLoading || contactForm.invalid"
+      >
+        {{ isLoading ? "Loading..." : "Submit" }}
+      </button>
+    </div>
+  </form>
+</div>

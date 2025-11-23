@@ -1,0 +1,37 @@
+<div class="modal-header text-bg-success">
+  <div class="d-flex gap-2">
+    <img
+      *ngIf="survey.profile"
+      [src]="survey.profile"
+      alt="Profile"
+      class="img-fluid rounded-circle"
+      width="40"
+      height="40"
+    />
+    <h4 class="modal-title">{{ survey.name }}</h4>
+  </div>
+
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="activeModal.dismiss('Cross click')"
+  ></button>
+</div>
+<div class="modal-body">
+  <div class="d-flex gap-2 flex-wrap">
+    <span class="badge text-bg-primary">
+      <i class="bi bi-geo-alt-fill"></i>
+      {{ survey.location }}
+    </span>
+    <span class="badge text-bg-success">
+      <i class="bi bi-file-earmark-fill"></i>
+      {{ survey.program }}
+    </span>
+    <span class="badge text-bg-secondary">
+      {{ survey.programType }}
+    </span>
+  </div>
+  <p class="text-muted text-small mt-3">{{ survey.comment }}</p>
+  <span align="end">{{ survey.submittedAt | date : "short" }}</span>
+</div>

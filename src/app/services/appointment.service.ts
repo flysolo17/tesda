@@ -26,12 +26,15 @@ import {
   Appointment,
   AppointmentConverter,
   AppointmentStatus,
+  buildUserNotification,
 } from '../models/Appointment';
 
 import { map, Observable } from 'rxjs';
 import { generateRandomNumberWithDate } from '../utils/Constants';
 import { Services } from '../models/Services';
 import { EmailService } from './email.service';
+import { NotificationService } from './notification.service';
+import { Notification, NotificationType } from '../models/Notification';
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +43,8 @@ export class AppointmentService {
   private readonly APPOINTMENT_COLLECTION = 'appointments';
   constructor(
     private firestore: Firestore,
-    private emailService: EmailService
+    private emailService: EmailService,
+    private notificationService: NotificationService
   ) {}
   async hasPendingAppointment(uid: string): Promise<boolean> {
     const q = query(
@@ -114,18 +118,20 @@ export class AppointmentService {
     return collectionData(q);
   }
 
-  // UPDATE
-  update(appointment: Appointment) {
+  update(appointment: Appointment): Promise<void> {
     const docRef = doc(
       this.firestore,
       `${this.APPOINTMENT_COLLECTION}/${appointment.id}`
     );
+
     const data = {
       ...appointment,
       updatedAt: Timestamp.fromDate(new Date()),
     };
+
     return updateDoc(docRef, data);
   }
+
   create(appointment: Appointment) {
     const batch = writeBatch(this.firestore);
 
@@ -196,17 +202,25 @@ export class AppointmentService {
       status,
       updatedAt: Timestamp.fromDate(new Date()),
     });
+    const userNotification = buildUserNotification(appointment);
 
     // Send email notification after update
-    updatePromise.then(() => {
-      if (status === AppointmentStatus.CONFIRMED) {
-        this.emailService.confirmed(appointment);
-      } else if (status === AppointmentStatus.REJECTED) {
-        this.emailService.reject(appointment);
-      } else if (status === AppointmentStatus.CANCELLED) {
-        this.emailService.cancelled(appointment);
-      }
-    });
+    updatePromise
+      .then(() => {
+        if (status === AppointmentStatus.CONFIRMED) {
+          this.emailService.confirmed(appointment);
+        } else if (status === AppointmentStatus.REJECTED) {
+          this.emailService.reject(appointment);
+        } else if (status === AppointmentStatus.CANCELLED) {
+          this.emailService.cancelled(appointment);
+        }
+      })
+      .then(() => {
+        this.notificationService.createCustomNotification(
+          userNotification,
+          null
+        );
+      });
 
     return updatePromise;
   }
@@ -219,5 +233,17 @@ export class AppointmentService {
       orderBy('updatedAt', 'desc')
     );
     return collectionData(q);
+  }
+  getAllAppointments(): Promise<Appointment[]> {
+    const q = query(
+      collection(this.firestore, this.APPOINTMENT_COLLECTION).withConverter(
+        AppointmentConverter
+      ),
+      orderBy('date', 'asc')
+    );
+
+    return getDocs(q).then((snapshot) =>
+      snapshot.docs.map((doc) => doc.data())
+    );
   }
 }

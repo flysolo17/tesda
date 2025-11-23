@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   ActivatedRoute,
   Router,
@@ -15,6 +15,7 @@ import { AuthService } from '../../services/auth.service';
 import Swal from 'sweetalert2';
 import { delay } from 'rxjs';
 import { AppointmentStatus } from '../../models/Appointment';
+import { collection, doc, Firestore } from '@angular/fire/firestore';
 
 interface NavItems {
   label: string;
@@ -43,6 +44,7 @@ interface NavItems {
   styleUrl: './navigation.component.scss',
 })
 export class NavigationComponent {
+  firestore = inject(Firestore);
   navItems: NavItems[] = [
     { label: 'Dashboard', route: 'dashboard', icon: 'bi bi-box-fill' },
     {
@@ -95,16 +97,16 @@ export class NavigationComponent {
       icon: 'bi bi-info-circle-fill',
       more: [
         {
-          label: 'Careers',
+          label: `PD's Corner`,
           route: 'careers',
         },
         {
-          label: 'Activities',
-          route: 'activities',
+          label: `Organizational Chart`,
+          route: 'careers',
         },
         {
-          label: 'Organizational Structure',
-          route: 'organizational-structure',
+          label: 'Careers',
+          route: 'careers',
         },
       ],
     },
@@ -113,12 +115,37 @@ export class NavigationComponent {
       icon: 'bi bi-grid',
       more: [
         {
-          label: 'Services',
-          route: 'services',
-        },
-        {
           label: 'TVET Providers and Assessment Centers',
           route: 'providers',
+        },
+        {
+          label: 'Provincial Office and External Services',
+          route: 'services',
+        },
+      ],
+    },
+    {
+      label: 'Contacts',
+      icon: 'bi bi-person-rolodex',
+      more: [
+        {
+          label: 'Provincial Office',
+          route: 'provincial-office',
+        },
+        {
+          label: 'Tesda Training Institutions',
+          route: 'tesda-training-institutions',
+        },
+        {
+          label: 'Technical Vocational Institutions',
+          route: 'technical-vocational-institutions',
+        },
+        {
+          label: 'Add Contact',
+          route: 'add-contact',
+          queryParams: {
+            id: doc(collection(this.firestore, 'contacts')).id,
+          },
         },
       ],
     },
@@ -148,10 +175,15 @@ export class NavigationComponent {
       ],
     },
   ];
-
-  toggle(item: NavItems) {
-    if (item.more) item.open = !item.open;
+  isSidebarOpen = false;
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
   }
+
+  toggle(item: any) {
+    item.open = !item.open;
+  }
+
   users$ = this.authService.getCurrentUser();
   constructor(
     public activatedRoute: ActivatedRoute,

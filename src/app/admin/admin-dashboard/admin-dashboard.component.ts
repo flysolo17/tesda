@@ -6,20 +6,29 @@ import {
   VisitorPerMonth,
 } from '../../services/visitor-log.service';
 import { dA } from '@fullcalendar/core/internal-common';
+import { ProgramsService } from '../../services/programs.service';
+import { Services } from '../../models/Services';
+import { AppointmentService } from '../../services/appointment.service';
+import { Appointment, AppointmentStatus } from '../../models/Appointment';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [BaseChartDirective],
+  imports: [BaseChartDirective, CommonModule, RouterLink],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.scss',
 })
 export class AdminDashboardComponent implements OnInit {
   private visitorLogService = inject(VisitorLogService);
+  private appointmentService = inject(AppointmentService);
+  private programService = inject(ProgramsService);
   visitorPerMonth$: VisitorPerMonth[] = [];
-  // 1️⃣ Visitors Bar Chart
+  services: Services[] = [];
+  appointments: Appointment[] = [];
   visitorsChartData: ChartConfiguration<'bar'>['data'] = {
-    labels: [], // will be filled dynamically
+    labels: [],
     datasets: [
       {
         label: 'Visitors',
@@ -40,6 +49,13 @@ export class AdminDashboardComponent implements OnInit {
     this.visitorLogService.visitorPerMonth().then((data) => {
       this.visitorPerMonth$ = data;
       this.visitorsChartData = this.buildVisitorsChartData(data);
+    });
+    this.programService.getAllServices().then((data) => {
+      this.services = data;
+    });
+    this.appointmentService.getAllAppointments().then((data) => {
+      this.appointments = data;
+      this.servicesChartData = this.buildServicesChartData(data);
     });
   }
 
@@ -155,8 +171,80 @@ export class AdminDashboardComponent implements OnInit {
     scales: { x: { beginAtZero: true } },
   };
 
-  newRequests = [
-    { title: 'New Training request', from: 'test' },
-    { title: 'New Assessment request', from: 'test' },
-  ];
+  get completedAppointments(): number {
+    return this.appointments.filter(
+      (e) => e.status === AppointmentStatus.COMPLETED
+    ).length;
+  }
+  get pendingAppointments(): number {
+    return this.appointments.filter(
+      (e) => e.status === AppointmentStatus.PENDING
+    ).length;
+  }
+  get activeUsers(): number {
+    if (!this.visitorPerMonth$) {
+      return 0;
+    }
+
+    // Flatten all visitors and collect their uids
+    const allUids = this.visitorPerMonth$.flatMap((v) =>
+      v.visitors.map((visitor) => visitor.uid)
+    );
+
+    // Use a Set to ensure uniqueness
+    const uniqueUids = new Set(allUids);
+
+    return uniqueUids.size;
+  }
+
+  private buildServicesChartData(
+    appointments: Appointment[]
+  ): ChartConfiguration<'pie'>['data'] {
+    // Count appointments per service name
+    const serviceCountMap = new Map<string, number>();
+
+    appointments.forEach((app) => {
+      const serviceName = app.serviceInformation?.name ?? 'Unknown';
+      serviceCountMap.set(
+        serviceName,
+        (serviceCountMap.get(serviceName) ?? 0) + 1
+      );
+    });
+
+    // Extract labels and values
+    const labels = Array.from(serviceCountMap.keys());
+    const values = Array.from(serviceCountMap.values());
+
+    // Generate colors dynamically (fallback palette)
+    const colors = [
+      '#8b5cf6',
+      '#fbbf24',
+      '#ef4444',
+      '#3b82f6',
+      '#22c55e',
+      '#e11d48',
+      '#14b8a6',
+    ];
+    const backgroundColors = labels.map((_, i) => colors[i % colors.length]);
+
+    return {
+      labels,
+      datasets: [
+        {
+          data: values,
+          backgroundColor: backgroundColors,
+        },
+      ],
+    };
+  }
+  get ongoingAppointments(): Appointment[] {
+    return this.appointments
+
+      .filter(
+        (e) =>
+          e.status === AppointmentStatus.PENDING ||
+          e.status === AppointmentStatus.CONFIRMED
+      )
+      .slice(0, 2);
+  }
 }

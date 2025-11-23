@@ -12,6 +12,7 @@ import { CreateActivityComponent } from './create-activity/create-activity.compo
 import { Router, RouterLink } from '@angular/router';
 import { collection, doc, Firestore } from '@angular/fire/firestore';
 import Swal from 'sweetalert2';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-admin-activities',
@@ -25,7 +26,8 @@ export class AdminActivitiesComponent {
   constructor(
     private router: Router,
     private activityService: ActivityService,
-    private firestore: Firestore
+    private firestore: Firestore,
+    private notificationService: NotificationService
   ) {}
 
   create(id: string | null = null) {

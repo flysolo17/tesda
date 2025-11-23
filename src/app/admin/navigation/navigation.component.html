@@ -14,7 +14,6 @@
     <nav class="flex-grow-1">
       <ul class="nav flex-column">
         <li *ngFor="let item of navItems" class="nav-item mb-1">
-          <!-- Simple link -->
           <a
             *ngIf="!item.more"
             class="nav-link text-dark d-flex align-items-center px-3 py-2 rounded hover-link"
@@ -22,7 +21,7 @@
             routerLinkActive="active-link"
           >
             <i [class]="item.icon + ' me-2 fs-5'"></i>
-            {{ item.label }}
+            <span class="nav-label">{{ item.label }}</span>
           </a>
 
           <!-- Collapsible group -->
@@ -32,7 +31,7 @@
               (click)="toggle(item)"
             >
               <i [class]="item.icon + ' me-2 fs-5'"></i>
-              {{ item.label }}
+              <span class="nav-label">{{ item.label }}</span>
               <i
                 class="ms-auto bi"
                 [class.bi-chevron-down]="!item.open"
@@ -48,7 +47,7 @@
                     routerLinkActive="active-link-sub"
                     class="nav-link text-muted d-block py-1 ps-2 hover-link-sub"
                   >
-                    {{ sub.label }}
+                    <span class="nav-label">{{ sub.label }}</span>
                   </a>
                 </li>
               </ul>

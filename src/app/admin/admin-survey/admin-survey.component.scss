@@ -1,8 +1,14 @@
-.text-truncate-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2; /* max lines */
-  -webkit-box-orient: vertical;
+.name-ellipsis {
+  white-space: nowrap;
   overflow: hidden;
-  min-height: calc(1em * 2); /* min lines */
+  text-overflow: ellipsis;
+  display: block;
+  max-width: 140px;
+}
+
+.comment-ellipsis {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
   text-overflow: ellipsis;
 }

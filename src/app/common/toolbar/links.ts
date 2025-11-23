@@ -1,3 +1,4 @@
+import { ContactType } from '../../models/Contacts';
 import { ProviderType } from '../../models/Provider';
 
 // Define the structure for a single menu item
@@ -67,21 +68,24 @@ export const dropdowns: Dropdowns = {
       label: 'REGIONAL OFFICE',
     },
     {
-      url: '/landing-page/contacts/occidental-mindoro-tti',
-      label: 'OCCIDENTAL MINDORO TESDA TRAINING INSTITUTE',
-    },
-    {
-      url: '/landing-page/provider',
-      label: 'TTIS',
+      url: '/landing-page/contacts',
+      label: 'Provicial Office',
       queryParams: {
-        type: ProviderType.TTI,
+        type: ContactType.PROVINCIAL_OFFICE,
       },
     },
     {
-      url: '/landing-page/provider',
-      label: 'TVIS',
+      url: '/landing-page/contacts',
+      label: 'Tesda Training Institutions (TTI)s',
       queryParams: {
-        type: ProviderType.TVI,
+        type: ContactType.TESDA_TRAINING_INSTITUTIONS,
+      },
+    },
+    {
+      url: '/landing-page/contacts',
+      label: 'Technical Vocational Institutions (TVI)s',
+      queryParams: {
+        type: ContactType.TECHNICAL_VOCATIONAL_INSTITUTIONS,
       },
     },
   ],

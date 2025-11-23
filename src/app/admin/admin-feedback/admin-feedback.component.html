@@ -1,61 +1,52 @@
-<div class="container-fluid py-4 feedback-dashboard">
-  <!-- Quick Stats -->
-  <div class="row g-3 mb-4 text-center">
-    <div class="col-md-3 col-sm-6" *ngFor="let stat of stats">
-      <div class="card stat-card border-0 shadow-sm rounded-4">
-        <div class="card-body">
-          <h6 class="text-muted mb-1">{{ stat.label }}</h6>
-          <h3 class="fw-bold mb-0">{{ stat.value }}</h3>
-        </div>
-      </div>
-    </div>
+<nav class="navbar bg-primary navbar-dark">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">Navbar</span>
   </div>
+</nav>
+<div class="container-fluid">
+  <div class="masonry">
+    @for (item of feedbacks$ | async; track $index) {
+    <div class="masonry-item">
+      <div class="card">
+        <div class="card-header d-flex gap-2 align-items-center">
+          <img
+            class="card-avatar rounded-circle"
+            width="40"
+            height="40"
+            [src]="item.profile || '../../../assets/images/profile.webp'"
+          />
+          <div>
+            <h5 class="card-title m-1 name-ellipsis">{{ item.name }}</h5>
 
-  <!-- Feedback Cards Grid -->
-  <div class="row g-3 feedback-grid">
-    <div
-      class="col-12 col-sm-6 col-md-4 col-lg-3"
-      *ngFor="let fb of feedbacks$ | async"
-    >
-      <div class="card feedback-card border-0 shadow-sm rounded-4 h-100">
-        <div class="card-header bg-white border-0">
-          <div class="d-flex align-items-center">
-            <img
-              [src]="fb.profile || '../../../assets/images/profile.png'"
-              alt="{{ fb.name }}"
-              class="rounded-circle me-3"
-              width="45"
-              height="45"
-            />
-            <div>
-              <h6 class="card-title mb-0">{{ fb.name }}</h6>
-              <small class="card-subtitle text-muted">
-                {{ fb.submittedAt | date : "mediumDate" }}
-              </small>
-            </div>
+            <span class="text-small">{{
+              item.submittedAt | date : "short"
+            }}</span>
           </div>
         </div>
 
         <div class="card-body">
-          <div class="d-flex gap-2 mb-2">
-            <span
-              class="badge sentiment-badge text-uppercase"
-              [ngClass]="getSentimentClass(fb.sentiment)"
-            >
-              {{ fb.sentiment }}
-            </span>
+          <span
+            class="badge text-bg-{{
+              sentimentToBootstrapColor(item.sentiment)
+            }} mb-3"
+          >
+            {{ item.sentiment }}
+          </span>
+          <p class="text-muted">
+            {{ item.comment === "" ? "No Comment" : item.comment }}
+          </p>
+        </div>
 
-            <span
-              *ngIf="fb.allowFollowUp"
-              class="badge followup-badge bg-success text-white"
-            >
-              Follow-up allowed
-            </span>
-          </div>
-
-          <p class="mb-0">{{ fb.comment }}</p>
+        <div class="card-footer d-flex align-items-center justify-content-end">
+          <button
+            class="btn btn-outline-danger btn-sm"
+            (click)="delete(item.id)"
+          >
+            Delete
+          </button>
         </div>
       </div>
     </div>
+    }
   </div>
 </div>

@@ -53,6 +53,12 @@ export class AuthService {
     private storage: Storage
   ) {}
 
+  updateFCMToken(id: string, token: string | null) {
+    return updateDoc(doc(this.firestore, this.USER_COLLECTION, id), {
+      fcmToken: token,
+    });
+  }
+
   async uploadProfile(id: string, profile: File): Promise<void> {
     try {
       // Create a unique path for the profile image
@@ -111,12 +117,16 @@ export class AuthService {
       userData.id
     );
 
+    // Save user document
     await setDoc(userRef, userData);
 
     const returnUrl = 'https://tesda-system.web.app/';
-    await sendEmailVerification(cred.user, { url: returnUrl });
 
-    await signOut(this.auth);
+    // Run verification email and signOut in parallel
+    await Promise.all([
+      sendEmailVerification(cred.user, { url: returnUrl }),
+      signOut(this.auth),
+    ]);
 
     return userData;
   }
@@ -138,8 +148,11 @@ export class AuthService {
       );
 
       if (!result.user.emailVerified) {
-        await sendEmailVerification(result.user);
-        await signOut(this.auth);
+        // Run sendEmailVerification and signOut in parallel
+        await Promise.all([
+          sendEmailVerification(result.user),
+          signOut(this.auth),
+        ]);
 
         await Swal.fire({
           icon: 'warning',
@@ -153,11 +166,11 @@ export class AuthService {
 
       return this.getOrThrowUserFromFirestore(result.user.uid);
     } catch (error) {
+      signOut(this.auth);
       console.error('Login failed:', error);
       throw error;
     }
   }
-
   // --- HELPER: Fetch Firestore user ---
   private async getOrThrowUserFromFirestore(uid: string): Promise<User> {
     const userDocRef = doc(
@@ -206,10 +219,14 @@ export class AuthService {
 
   // --- LOGOUT ---
   async logout(): Promise<void> {
-    await signOut(this.auth);
+    try {
+      await signOut(this.auth);
+      console.log('User signed out successfully');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   }
 
-  // --- OBSERVABLE USER STREAM ---
   getCurrentUser(): Observable<User | null> {
     return authState(this.auth).pipe(
       switchMap((firebaseUser) => {
