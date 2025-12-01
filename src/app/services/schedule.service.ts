@@ -52,6 +52,13 @@ export class ScheduleService {
       snapshot.docs.map((doc) => doc.data())
     );
   }
+  deleteSchedules(schedules: Schedule[]) {
+    const batch = writeBatch(this.firestore);
+    schedules.forEach((e) => {
+      batch.delete(doc(this.firestore, this.SCHEDULE_COLLECTION, e.id));
+    });
+    return batch.commit();
+  }
   getAllScheduleWithServices(): Observable<ScheduleWithService[]> {
     const q = query(
       collection(this.firestore, this.SCHEDULE_COLLECTION).withConverter(

@@ -15,6 +15,7 @@ import { map, Observable, shareReplay, take } from 'rxjs';
 import { Schedule } from '../../../models/Schedule';
 import Swal from 'sweetalert2';
 import { Services } from '../../../models/Services';
+import { ToastrService } from '../../../services/toastr.service';
 
 export interface SchedulesPerService {
   service: Services;
@@ -95,7 +96,8 @@ export class SchedulesComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private scheduleService: ScheduleService
+    private scheduleService: ScheduleService,
+    private toastr: ToastrService
   ) {}
   ngOnInit(): void {
     this.schedules$.pipe(take(1)).subscribe((items) => {

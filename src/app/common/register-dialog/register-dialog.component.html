@@ -1,190 +1,205 @@
-<div class="modal-header">
-  <h4 class="modal-title">Register</h4>
-  <button
-    type="button"
-    class="btn-close"
-    aria-label="Close"
-    (click)="activeModal.dismiss('Cross click')"
-  ></button>
-</div>
-
-<div
-  *ngIf="loading$"
-  class="progress"
-  role="progressbar"
-  aria-label="Loading"
-  style="height: 3px"
->
-  <div class="progress-bar progress-bar-animated" style="width: 100%"></div>
-</div>
-<div class="modal-body tesda-modal-body">
-  <div class="text-center mb-3">
-    <img
-      src="../../../assets/images/logo.png"
-      alt="TESDA Logo"
-      class="tesda-logo mb-2"
-      height="80"
-    />
-    <h5 class="fw-bold text-blue">TESDA Occidental Mindoro</h5>
-    <p class="text-muted mb-0">Create your account</p>
+<form [formGroup]="userForm" (ngSubmit)="submit()">
+  <div class="modal-header">
+    <h4 class="modal-title">Register</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="activeModal.dismiss('Cross click')"
+    ></button>
   </div>
 
-  <form class="row g-3" [formGroup]="userForm" (submit)="submit()">
-    <!-- Name -->
-    <div class="form-floating col-12">
-      <input
-        type="text"
-        class="form-control"
-        id="name"
-        formControlName="name"
-        placeholder="Juan Dela Cruz"
+  <!-- Progress bar -->
+  <div
+    *ngIf="loading$"
+    class="progress"
+    role="progressbar"
+    aria-label="Loading"
+  >
+    <div class="progress-bar progress-bar-animated" style="width: 100%"></div>
+  </div>
+
+  <!-- Scrollable body -->
+  <div class="modal-body tesda-modal-body">
+    <div class="text-center mb-3">
+      <img
+        src="../../../assets/images/logo.png"
+        alt="TESDA Logo"
+        class="tesda-logo mb-2"
+        height="80"
       />
-      <label for="name">Fullname</label>
-      <div
-        *ngIf="userForm.get('name')?.touched && userForm.get('name')?.invalid"
-        class="text-danger small"
-      >
-        <div *ngIf="userForm.get('name')?.errors?.['required']">
-          Name is required.
-        </div>
-        <div *ngIf="userForm.get('name')?.errors?.['minlength']">
-          Minimum 3 characters.
-        </div>
-        <div *ngIf="userForm.get('name')?.errors?.['maxlength']">
-          Maximum 59 characters.
-        </div>
-      </div>
+      <h5 class="fw-bold text-blue">TESDA Occidental Mindoro</h5>
+      <p class="text-muted mb-0">Create your account</p>
     </div>
-
-    <!-- Gender -->
-    <div class="form-floating col-6">
-      <select
-        class="form-select"
-        id="gender"
-        formControlName="gender"
-        aria-label="Select Gender"
-      >
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-      </select>
-      <label for="gender">Gender</label>
-      <div
-        *ngIf="
-          userForm.get('gender')?.touched && userForm.get('gender')?.invalid
-        "
-        class="text-danger small"
-      >
-        Gender is required.
-      </div>
-    </div>
-
-    <!-- Age -->
-    <div class="form-floating col-6">
-      <input
-        type="number"
-        class="form-control"
-        id="age"
-        formControlName="age"
-        placeholder="18"
-      />
-      <label for="age">Age</label>
-      <div
-        *ngIf="userForm.get('age')?.touched && userForm.get('age')?.invalid"
-        class="text-danger small"
-      >
-        Age is required.
-      </div>
-    </div>
-
-    <!-- Email -->
-    <div class="form-floating col-12">
-      <input
-        type="email"
-        class="form-control"
-        id="email"
-        formControlName="email"
-        placeholder="name@example.com"
-      />
-      <label for="email">Email address</label>
-      <div
-        *ngIf="userForm.get('email')?.touched && userForm.get('email')?.invalid"
-        class="text-danger small"
-      >
-        <div *ngIf="userForm.get('email')?.errors?.['required']">
-          Email is required.
-        </div>
-        <div *ngIf="userForm.get('email')?.errors?.['email']">
-          Invalid email format.
-        </div>
-      </div>
-    </div>
-
-    <!-- Password -->
-    <div class="form-floating col-12">
-      <input
-        type="password"
-        class="form-control"
-        id="password"
-        formControlName="password"
-        placeholder="Password"
-      />
-      <label for="password">Password</label>
-      <div
-        *ngIf="
-          userForm.get('password')?.touched && userForm.get('password')?.invalid
-        "
-        class="text-danger small"
-      >
-        <div *ngIf="userForm.get('password')?.errors?.['required']">
-          Password is required.
-        </div>
-        <div *ngIf="userForm.get('password')?.errors?.['minlength']">
-          Minimum 8 characters.
-        </div>
-      </div>
-    </div>
-
-    <!-- Confirm Password -->
-    <div class="form-floating col-12">
-      <input
-        type="password"
-        class="form-control"
-        id="confirmPassword"
-        formControlName="confirmPassword"
-        placeholder="Confirm Password"
-      />
-      <label for="confirmPassword">Confirm Password</label>
-      <div
-        *ngIf="userForm.get('confirmPassword')?.touched && userForm.errors?.['passwordMismatch']"
-        class="text-danger small"
-      >
-        Passwords do not match.
-      </div>
-    </div>
-
-    <!-- Actions -->
-    <div class="modal-footer flex-column gap-2">
-      <button
-        class="btn btn-primary btn-lg col-12"
-        type="submit"
-        [disabled]="loading$ || userForm.invalid"
-      >
-        Register
-      </button>
-      <button
-        [disabled]="true"
-        class="btn btn-outline-secondary btn-lg col-12"
-        type="button"
-        (click)="registerWithGoogle()"
-      >
-        <img
-          src="../../../assets/images/google-icon.png"
-          alt="Google"
-          width="20"
-          height="20"
+    <div class="row g-3">
+      <!-- Name -->
+      <div class="form-floating col-12">
+        <input
+          type="text"
+          class="form-control"
+          id="name"
+          formControlName="name"
+          placeholder="Juan Dela Cruz"
         />
-        Continue with Google
-      </button>
+        <label for="name">Fullname</label>
+        <div
+          *ngIf="userForm.get('name')?.touched && userForm.get('name')?.invalid"
+          class="text-danger small"
+        >
+          <div *ngIf="userForm.get('name')?.errors?.['required']">
+            Name is required.
+          </div>
+          <div *ngIf="userForm.get('name')?.errors?.['minlength']">
+            Minimum 3 characters.
+          </div>
+          <div *ngIf="userForm.get('name')?.errors?.['maxlength']">
+            Maximum 59 characters.
+          </div>
+        </div>
+      </div>
+
+      <!-- Gender -->
+      <div class="form-floating col-6">
+        <select class="form-select" id="gender" formControlName="gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+        <label for="gender">Gender</label>
+        <div
+          *ngIf="
+            userForm.get('gender')?.touched && userForm.get('gender')?.invalid
+          "
+          class="text-danger small"
+        >
+          Gender is required.
+        </div>
+      </div>
+
+      <!-- Age -->
+      <div class="form-floating col-6">
+        <input
+          type="number"
+          class="form-control"
+          id="age"
+          formControlName="age"
+          placeholder="18"
+        />
+        <label for="age">Age</label>
+        <div
+          *ngIf="userForm.get('age')?.touched && userForm.get('age')?.invalid"
+          class="text-danger small"
+        >
+          Age is required.
+        </div>
+      </div>
+
+      <!-- Municipality -->
+      <div class="col-12 form-floating">
+        <select
+          id="municipality"
+          class="form-select"
+          formControlName="municipality"
+        >
+          <option [value]="null">Select Municipality</option>
+          @for (item of municipalities$ | async; track $index) {
+          <option [value]="item">{{ item }}</option>
+          }
+        </select>
+        <label for="municipality">Municipality</label>
+      </div>
+
+      <!-- Email -->
+      <div class="form-floating col-12">
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          formControlName="email"
+          placeholder="name@example.com"
+        />
+        <label for="email">Email address</label>
+        <div
+          *ngIf="
+            userForm.get('email')?.touched && userForm.get('email')?.invalid
+          "
+          class="text-danger small"
+        >
+          <div *ngIf="userForm.get('email')?.errors?.['required']">
+            Email is required.
+          </div>
+          <div *ngIf="userForm.get('email')?.errors?.['email']">
+            Invalid email format.
+          </div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-floating col-12">
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          formControlName="password"
+          placeholder="Password"
+        />
+        <label for="password">Password</label>
+        <div
+          *ngIf="
+            userForm.get('password')?.touched &&
+            userForm.get('password')?.invalid
+          "
+          class="text-danger small"
+        >
+          <div *ngIf="userForm.get('password')?.errors?.['required']">
+            Password is required.
+          </div>
+          <div *ngIf="userForm.get('password')?.errors?.['minlength']">
+            Minimum 8 characters.
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-floating col-12">
+        <input
+          type="password"
+          class="form-control"
+          id="confirmPassword"
+          formControlName="confirmPassword"
+          placeholder="Confirm Password"
+        />
+        <label for="confirmPassword">Confirm Password</label>
+        <div
+          *ngIf="userForm.get('confirmPassword')?.touched && userForm.errors?.['passwordMismatch']"
+          class="text-danger small"
+        >
+          Passwords do not match.
+        </div>
+      </div>
+
+      <!-- Privacy Terms -->
+      <div class="privacy-terms col-12">
+        <label>
+          <input
+            type="checkbox"
+            [formControl]="privacyAccepted"
+            name="privacyTerms"
+          />
+          By registering, I agree to the
+          <a href="/privacy-policy" target="_blank">Privacy Policy</a>
+          and <a href="/terms-of-service" target="_blank">Terms of Service</a>
+        </label>
+      </div>
     </div>
-  </form>
-</div>
+  </div>
+  <!-- Footer stays fixed -->
+  <div class="modal-footer flex-column gap-2">
+    <button
+      class="btn btn-primary btn-lg col-12"
+      type="submit"
+      [disabled]="loading$ || userForm.invalid || !privacyAccepted.value"
+    >
+      Register
+    </button>
+  </div>
+</form>

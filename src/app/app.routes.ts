@@ -68,11 +68,7 @@ export const routes: Routes = [
     component: UserMessagesComponent,
     canActivate: [authGuard],
   },
-  {
-    path: 'notifications',
-    component: UserNotificationComponent,
-    canActivate: [authGuard],
-  },
+
   {
     path: 'landing-page',
     component: LandingPageComponent,
@@ -84,6 +80,11 @@ export const routes: Routes = [
       {
         path: 'services',
         component: ServicesListComponent,
+      },
+      {
+        path: 'notifications',
+        component: UserNotificationComponent,
+        canActivate: [authGuard],
       },
       {
         path: 'announcements',

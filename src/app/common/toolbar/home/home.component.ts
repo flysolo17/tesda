@@ -1,12 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BannerService } from '../../../services/banner.service';
 import { CommonModule } from '@angular/common';
 import { AnnouncementListComponent } from '../announcement-list/announcement-list.component';
 import { CalendarComponent } from '../../calendar/calendar.component';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { RouterLink } from '@angular/router';
 import { FooterComponent } from '../../footer/footer.component';
 import { NewsAndEventsComponent } from '../../../user/news-and-events/news-and-events.component';
+import { User } from '../../../models/Users';
+import { AuthService } from '../../../services/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-home',
@@ -18,11 +21,12 @@ import { NewsAndEventsComponent } from '../../../user/news-and-events/news-and-e
     RouterLink,
     FooterComponent,
     NewsAndEventsComponent,
+    RouterModule,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   programs = [
     {
       title: 'TVET Programs',
@@ -41,13 +45,29 @@ export class HomeComponent {
   ];
 
   banners$ = this.bannerService.getAll();
-  user: any = null; // Add this if you want to track login state
+  users$: User | null = null;
+  constructor(
+    private bannerService: BannerService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
+  ngOnInit(): void {
+    this.authService.getCurrentUser().subscribe((data) => {
+      this.users$ = data;
+    });
+  }
 
-  constructor(private bannerService: BannerService, private router: Router) {}
-
-  // Add this method to handle the register button
-  registerClicked() {
-    // Navigate to the register page
-    this.router.navigate(['/register']);
+  book() {
+    if (this.users$ === null) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Login required',
+        text: 'Please log in before booking.',
+      });
+      return;
+    }
+    this.router.navigate(['/landing-page/create-appointment'], {
+      queryParams: { id: this.users$.id },
+    });
   }
 }

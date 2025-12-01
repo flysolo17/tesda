@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
+  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -12,6 +13,8 @@ import {
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
 import Swal from 'sweetalert2';
+import { of } from 'rxjs';
+import { Municipality } from '../../models/Users';
 
 @Component({
   selector: 'app-register-dialog',
@@ -23,8 +26,9 @@ import Swal from 'sweetalert2';
 export class RegisterDialogComponent {
   activeModal = inject(NgbActiveModal);
   loading$ = false;
+  privacyAccepted = new FormControl(false);
   userForm: FormGroup;
-
+  municipalities$ = of(Object.values(Municipality));
   constructor(private fb: FormBuilder, private authService: AuthService) {
     this.userForm = fb.nonNullable.group(
       {
@@ -39,6 +43,7 @@ export class RegisterDialogComponent {
         email: ['', [Validators.email, Validators.required]],
         gender: ['', [Validators.required]],
         age: [18, Validators.required],
+        municipality: [null, Validators.required],
         password: ['', [Validators.required, Validators.minLength(8)]],
         confirmPassword: [''],
       },
@@ -57,11 +62,19 @@ export class RegisterDialogComponent {
       return;
     }
 
-    const { name, email, age, gender, password } = this.userForm.value;
+    const { name, email, age, gender, password, municipality } =
+      this.userForm.value;
     this.loading$ = true;
 
     this.authService
-      .registerWithEmailAndPassword(name, age, gender, email, password)
+      .registerWithEmailAndPassword(
+        name,
+        age,
+        gender,
+        email,
+        password,
+        municipality
+      )
       .then(() => {
         this.loading$ = false;
 
@@ -85,33 +98,6 @@ export class RegisterDialogComponent {
           icon: 'error',
           title: 'Registration Failed',
           text: e['message'] ?? 'An unknown error occurred. Please try again.',
-          confirmButtonColor: '#d33',
-        });
-      });
-  }
-
-  // REGISTER WITH GOOGLE
-  registerWithGoogle() {
-    this.loading$ = true;
-    this.authService
-      .registerWithGoogle()
-      .then(() => {
-        this.loading$ = false;
-        Swal.fire({
-          icon: 'success',
-          title: 'Registered Successfully!',
-          text: 'Your account has been created via Google.',
-          showConfirmButton: false,
-          timer: 2000,
-        });
-        this.activeModal.close();
-      })
-      .catch((e) => {
-        this.loading$ = false;
-        Swal.fire({
-          icon: 'error',
-          title: 'Registration Failed',
-          text: e['message'] ?? 'Something went wrong. Please try again.',
           confirmButtonColor: '#d33',
         });
       });

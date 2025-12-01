@@ -1,10 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
 .tesda-modal-body {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   padding: 2rem;
   background-color: #ffffff;
   border-radius: 12px;
+  max-height: 60vh; /* Limit height */
+  overflow-y: auto; /* Scroll only body */
 }
 
 .tesda-logo {
@@ -14,7 +16,7 @@
 }
 
 .tesda-modal-body h5 {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   color: #004aad;
   letter-spacing: 0.5px;
 }
@@ -22,11 +24,18 @@
 .modal-footer {
   border-top: none;
   background: transparent;
+  position: sticky; /* Keep footer visible */
+  bottom: 0;
+}
+
+.progress {
+  height: 3px;
 }
 
 @media (max-width: 576px) {
   .tesda-modal-body {
     padding: 1rem;
+    max-height: 70vh; /* taller on mobile */
   }
   .tesda-logo {
     height: 60px;

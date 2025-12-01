@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import {
+  and,
   arrayUnion,
   collection,
   collectionData,
   doc,
   Firestore,
   getDocs,
+  limit,
   or,
   orderBy,
   query,
@@ -18,7 +20,7 @@ import {
   Notification,
   NotificationConverter,
 } from '../models/Notification';
-import { Observable } from 'rxjs';
+import { catchError, from, map, Observable, of } from 'rxjs';
 import { Auth } from '@angular/fire/auth';
 
 @Injectable({
@@ -83,19 +85,36 @@ export class NotificationService {
   getAllUserNotification(id: string): Observable<Notification[]> {
     const q = query(
       this.collectionRef,
-      where('receivers', 'array-contains', id),
+      where('recievers', 'array-contains', id),
       orderBy('createdAt', 'desc')
     );
 
     return collectionData(q, { idField: 'id' }) as Observable<Notification[]>;
   }
 
+  getTenNewNotifications(id: string, admin: boolean = false) {
+    const targets = admin ? [id, 'admin'] : [id];
+    const q = query(
+      this.collectionRef,
+      where('recievers', 'array-contains-any', targets),
+      orderBy('createdAt', 'desc'),
+      limit(10)
+    );
+    return collectionData(q);
+  }
+
   getAllAdminNotification(id: string): Observable<Notification[]> {
     const q = query(
       this.collectionRef,
-      where('receivers', 'array-contains', [id, 'admin']),
+      where('recievers', 'array-contains-any', [id, 'admin']),
       orderBy('createdAt', 'desc')
     );
-    return collectionData(q, { idField: 'id' }) as Observable<Notification[]>;
+
+    return collectionData(q, { idField: 'id' }).pipe(
+      catchError((err) => {
+        console.error('Firestore query error (likely missing index):', err);
+        return of([]);
+      })
+    ) as Observable<Notification[]>;
   }
 }

@@ -56,7 +56,7 @@
             <td>{{ service.title }}</td>
             <td>{{ service.type }}</td>
             <td>{{ service.qualification }}</td>
-            <td>{{ service.qualification }}</td>
+            <td>{{ service.description }}</td>
             <td>{{ service.updatedAt | date : "short" }}</td>
           </tr>
           <tr *ngIf="services.length === 0 && !isLoading">

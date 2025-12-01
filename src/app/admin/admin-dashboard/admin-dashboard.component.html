@@ -1,196 +1,339 @@
-<!-- Google Fonts -->
-<link
-  href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Roboto:wght@400;500;700&display=swap"
-  rel="stylesheet"
-/>
-
-<div
-  class="d-flex justify-content-between align-items-center mb-4 dashboard-header"
->
-  <h3 class="fw-semibold mb-0">Admin Dashboard</h3>
-
-  <div class="d-flex align-items-center gap-3">
-    <!-- Notification Bell -->
-    <div class="position-relative">
-      <button class="btn btn-outline-secondary position-relative" id="notifBtn">
-        <i class="bi bi-bell fs-5"></i>
-        <span
-          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-        >
-          3
-        </span>
-      </button>
+<nav class="navbar bg-white text-dark">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">Dashboard Analytics</span>
+    <div class="d-flex gap-2 align-items-center">
       <!-- Notification Dropdown -->
-      <div
-        class="dropdown-menu dropdown-menu-end shadow-sm mt-2"
-        id="notifDropdown"
-      >
-        <h6 class="dropdown-header fw-semibold">Notifications</h6>
-        <a class="dropdown-item" href="#">New booking request</a>
-        <a class="dropdown-item" href="#">System update available</a>
-        <a class="dropdown-item text-muted" href="#">View all</a>
-      </div>
-    </div>
+      <div class="btn-group dropstart">
+        <button
+          type="button"
+          class="btn position-relative"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="bi bi-bell-fill"></i>
+          <span
+            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+            *ngIf="unseenNotification > 0"
+          >
+            {{ unseenNotification }}
+          </span>
+        </button>
 
-    <!-- Profile Dropdown -->
-    <div class="dropdown">
-      <button
-        class="btn btn-outline-secondary d-flex align-items-center gap-2"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        <img
-          src="../../../assets/images/logo.png"
-          alt="Profile"
-          class="rounded-circle"
-          width="32"
-          height="32"
-        />
-        <span class="fw-semibold">Admin</span>
-        <i class="bi bi-caret-down-fill"></i>
-      </button>
-      <ul class="dropdown-menu dropdown-menu-end shadow-sm mt-2">
-        <li><a class="dropdown-item" href="#">Profile</a></li>
-        <li><a class="dropdown-item" href="#">Settings</a></li>
-        <li><hr class="dropdown-divider" /></li>
-        <li><a class="dropdown-item text-danger" href="#">Logout</a></li>
-      </ul>
+        <div class="dropdown-menu notification-menu shadow">
+          <h6 class="dropdown-header">Notifications</h6>
+          <ul
+            class="list-group list-group-flush"
+            style="height: 400px; overflow-y: auto"
+          >
+            @for (item of notifications; track $index) {
+            <li class="list-group-item">
+              <div class="ms-2 me-auto">
+                <div class="fw-bold">{{ item.title }}</div>
+                {{ item.body }}
+              </div>
+            </li>
+            }
+          </ul>
+          <div class="divider"></div>
+          <div class="d-flex align-items-center justify-content-between p-3">
+            <button class="btn btn-sm text-primary">See all</button>
+            <button class="btn btn-sm text-primary">Mark all read</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile -->
+      <img
+        [src]="users$?.profile ?? '../../../assets/images/profile.webp'"
+        [alt]="users$?.name"
+        width="40"
+        height="40"
+        class="rounded-circle"
+      />
+    </div>
+  </div>
+</nav>
+
+<!-- Loading Spinner -->
+<div
+  class="d-flex align-items-center justify-content-center p-3"
+  *ngIf="isLoading"
+>
+  <div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<!-- Dashboard Cards -->
+<div class="card m-3">
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-12">
+        <h5 class="text-primary">USER DATA</h5>
+      </div>
+
+      <!-- Example Stat Cards -->
+      <div class="col-6">
+        <div class="alert alert-primary" role="alert">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex flex-column flex-grow-1">
+              <h3 class="fw-bold">{{ users.length }}</h3>
+              <span class="text-muted fw-semibold">USERS</span>
+            </div>
+            <i class="bi bi-people-fill text-muted" style="font-size: 48px"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <div class="alert alert-warning" role="alert">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex flex-column flex-grow-1">
+              <h3 class="fw-bold">{{ appointments.length }}</h3>
+              <span class="text-muted fw-semibold">APPOINTMENTS</span>
+            </div>
+            <i
+              class="bi bi-calendar-event-fill text-muted"
+              style="font-size: 48px"
+            ></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Age Distribution Pie Chart -->
+      <div class="col-6">
+        <div class="card" style="height: 400px">
+          <div class="card-body">
+            <h6 class="text-primary">Age Distribution</h6>
+            <canvas
+              baseChart
+              style="width: 100%; height: 300px"
+              [data]="ageChartData"
+              [labels]="ageChartLabels"
+              [options]="ageChartOptions"
+              [type]="'pie'"
+            >
+            </canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Municipalities Bar Chart -->
+      <div class="col-6">
+        <div class="card" style="height: 400px">
+          <div class="card-body">
+            <h6 class="text-primary">Municipalities</h6>
+            <canvas
+              style="width: 100%; height: 300px"
+              baseChart
+              [data]="muniChartData"
+              [options]="muniChartOptions"
+              [type]="'bar'"
+            >
+            </canvas>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="container-fluid py-4 admin-dashboard">
-  <!-- === Stats Cards Row === -->
-  <div class="row g-4 mb-3">
-    <div class="col-sm-6 col-lg-3">
-      <div class="card dashboard-card bg-primary text-white shadow-sm">
-        <div class="card-body">
-          <p class="card-text mb-1">Total Services</p>
-          <h4 class="card-title fw-semibold">{{ services.length }}</h4>
-        </div>
+<div class="card m-3">
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-12">
+        <h5 class="text-primary">ENGAGEMENTS</h5>
       </div>
-    </div>
 
-    <div class="col-sm-6 col-lg-3">
-      <div class="card dashboard-card bg-success text-white shadow-sm">
-        <div class="card-body">
-          <p class="card-text mb-1">Completed Appointments</p>
-          <h4 class="card-title fw-semibold">{{ completedAppointments }}</h4>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-sm-6 col-lg-3">
-      <div class="card dashboard-card bg-warning text-white shadow-sm">
-        <div class="card-body">
-          <p class="card-text mb-1">Pending Requests</p>
-          <h4 class="card-title fw-semibold">{{ pendingAppointments }}</h4>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-sm-6 col-lg-3">
-      <div class="card dashboard-card bg-info text-white shadow-sm">
-        <div class="card-body">
-          <p class="card-text mb-1">Active Users</p>
-          <h4 class="card-title fw-semibold">{{ activeUsers }}</h4>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- === Charts Row 1 === -->
-  <div class="row g-4 mb-3">
-    <div class="col-lg-4">
-      <div class="card shadow-sm p-3 h-100">
-        <h6 class="fw-semibold mb-3">Visitors Overview</h6>
-        <canvas
-          baseChart
-          [data]="visitorsChartData"
-          [type]="'bar'"
-          [options]="visitorsChartOptions"
-        >
-        </canvas>
-      </div>
-    </div>
-
-    <div class="col-lg-4">
-      <div class="card shadow-sm p-3 h-100">
-        <h6 class="fw-semibold mb-3">Feedback Trends</h6>
-        <canvas
-          baseChart
-          [data]="feedbackChartData"
-          [type]="feedbackChartType"
-          [options]="feedbackChartOptions"
-        >
-        </canvas>
-      </div>
-    </div>
-
-    <div class="col-lg-4">
-      <div class="card shadow-sm p-3 h-100">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h6 class="fw-semibold mb-0">
-            Ongoing Appointments
-            <span
-              class="badge bg-danger"
-              *ngIf="ongoingAppointments.length > 0"
-              >{{ ongoingAppointments.length }}</span
-            >
-          </h6>
-          <button class="btn text-primary" routerLink="appointments">
-            View all
-          </button>
-        </div>
-
-        <div
-          *ngFor="let req of ongoingAppointments"
-          class="request-card mb-2 p-2 border rounded d-flex justify-content-between align-items-center"
-        >
-          <div>
-            <p class="mb-1 text-primary fw-semibold">
-              {{ req.serviceInformation.name }}
-            </p>
-            <small class="text-muted">
-              {{ req.personalInformation.name }}</small
-            >
+      <!-- TOTAL SERVICES -->
+      <div class="col-3">
+        <div class="alert alert-primary" role="alert">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex flex-column flex-grow-1">
+              <h3 class="fw-bold">{{ services.length }}</h3>
+              <span class="text-muted fw-semibold">TOTAL SERVICES</span>
+            </div>
+            <i
+              class="bi bi-briefcase-fill text-muted"
+              style="font-size: 24px"
+            ></i>
           </div>
         </div>
-        <div
-          class="d-flex align-items-center justify content-center p-3"
-          *ngIf="appointments.length === 0"
-        >
-          <span class="text-muted">No appointments</span>
+      </div>
+
+      <!-- VISITORS TODAY -->
+      <div class="col-3">
+        <div class="alert alert-warning" role="alert">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex flex-column flex-grow-1">
+              <h3 class="fw-bold">{{ visitorPerMonth$.length }}</h3>
+              <span class="text-muted fw-semibold">VISITORS TODAY</span>
+            </div>
+            <i
+              class="bi bi-person-walking text-muted"
+              style="font-size: 24px"
+            ></i>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- === Charts Row 2 === -->
-  <div class="row g-4">
-    <div class="col-md-6">
-      <div class="card shadow-sm p-3 h-100">
-        <h6 class="fw-semibold mb-3">Service Distribution</h6>
-        <canvas
-          baseChart
-          [data]="servicesChartData"
-          [type]="servicesChartType"
-          [options]="servicesChartOptions"
-        >
-        </canvas>
+      <!-- PENDING APPOINTMENTS -->
+      <div class="col-3">
+        <div class="alert alert-danger" role="alert">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex flex-column flex-grow-1">
+              <h3 class="fw-bold">{{ pendingAppointments }}</h3>
+              <span class="text-muted fw-semibold">PENDING APPOINTMENTS</span>
+            </div>
+            <i
+              class="bi bi-calendar-minus-fill text-muted"
+              style="font-size: 24px"
+            ></i>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="col-md-6">
-      <div class="card shadow-sm p-3 h-100">
-        <h6 class="fw-semibold mb-3">Activity Statistics</h6>
-        <canvas
-          baseChart
-          [data]="activitiesChartData"
-          [type]="activitiesChartType"
-          [options]="activitiesChartOptions"
-        >
-        </canvas>
+      <!-- COMPLETED APPOINTMENTS -->
+      <div class="col-3">
+        <div class="alert alert-success" role="alert">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex flex-column flex-grow-1">
+              <h3 class="fw-bold">{{ completedAppointments }}</h3>
+              <span class="text-muted fw-semibold">COMPLETED APPOINTMENTS</span>
+            </div>
+            <i
+              class="bi bi-calendar-check-fill text-muted"
+              style="font-size: 24px"
+            ></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="card" style="height: 400px">
+          <div class="card-body d-flex flex-column">
+            <h6 class="text-primary mb-3">Service Distribution</h6>
+
+            <!-- PIE CHART -->
+            <div class="flex-grow-1 chart-container">
+              <canvas
+                baseChart
+                style="width: 100%; height: 300px"
+                [data]="serviceChartData"
+                [type]="'pie'"
+                [options]="serviceChartOptions"
+              ></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="card" style="height: 400px">
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h6 class="text-primary">Visitor Overview</h6>
+
+              <!-- TABS -->
+              <ul
+                class="nav nav-tabs small"
+                role="tablist"
+                style="border-bottom: none"
+              >
+                <li class="nav-item">
+                  <a
+                    class="nav-link active"
+                    data-bs-toggle="tab"
+                    href="#weeklyVisitors"
+                    role="tab"
+                  >
+                    Weekly
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    data-bs-toggle="tab"
+                    href="#monthlyVisitors"
+                    role="tab"
+                  >
+                    Monthly
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- TAB CONTENT FOR CHARTS -->
+            <div class="tab-content flex-grow-1 chart-container">
+              <!-- WEEKLY VISITORS -->
+              <div
+                class="tab-pane fade show active h-100"
+                id="weeklyVisitors"
+                role="tabpanel"
+              >
+                <canvas
+                  baseChart
+                  [data]="weeklyVisitorData"
+                  [type]="'bar'"
+                  style="width: 100%; height: 300px"
+                  [options]="weeklyVisitorOptions"
+                ></canvas>
+              </div>
+
+              <!-- MONTHLY VISITORS -->
+              <div
+                class="tab-pane fade h-100"
+                id="monthlyVisitors"
+                role="tabpanel"
+              >
+                <canvas
+                  baseChart
+                  [data]="monthlyVisitorData"
+                  [type]="'bar'"
+                  style="width: 100%; height: 300px"
+                  [options]="monthlyVisitorOptions"
+                ></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="card" style="height: 400px">
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex align-items-center justify-content-between">
+              <h6 class="text-primary">Upcomming Appointments</h6>
+              <button class="btn text-primary">View All</button>
+            </div>
+            <ul class="list-group list-group-flush">
+              @if (confirmedAppointments.length === 0) {
+              <li class="list-group-item text-center text-muted">
+                No upcoming appointments
+              </li>
+              }
+              <li
+                class="list-group-item"
+                *ngFor="let item of confirmedAppointments; let i = index"
+              >
+                <div class="d-flex gap-1">
+                  <img
+                    src="../../../assets/images/profile.webp"
+                    width="40"
+                    height="40"
+                    class="rounded-circle"
+                    alt="Profile"
+                  />
+                  <div>
+                    <h6>{{ item.serviceInformation.name }}</h6>
+                    <span class="text-muted">
+                      {{ item.date }} at {{ item.time }}
+                    </span>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   </div>

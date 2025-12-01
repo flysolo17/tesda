@@ -48,35 +48,21 @@ export class AppComponent implements OnInit {
     if (Notification.permission === 'granted') {
       this.getFcmToken(registration, uid);
     } else if (Notification.permission === 'default') {
-      // 👇 SweetAlert2 popup instead of plain alert
-      Swal.fire({
-        title: 'Enable Notifications',
-        text: 'Would you like to receive updates and reminders?',
-        icon: 'info',
-        showCancelButton: true,
-        confirmButtonText: 'Allow',
-        cancelButtonText: 'Not now',
-        confirmButtonColor: '#3b82f6',
-        cancelButtonColor: '#ef4444',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          Notification.requestPermission().then((permission) => {
-            if (permission === 'granted') {
-              this.getFcmToken(registration, uid);
-              Swal.fire({
-                title: 'Notifications Enabled',
-                text: 'You will now receive updates and reminders.',
-                icon: 'success',
-                confirmButtonColor: '#22c55e',
-              });
-            } else {
-              Swal.fire({
-                title: 'Permission Denied',
-                text: 'You can enable notifications later in your browser settings.',
-                icon: 'warning',
-                confirmButtonColor: '#ef4444',
-              });
-            }
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          this.getFcmToken(registration, uid);
+          Swal.fire({
+            title: 'Notifications Enabled',
+            text: 'You will now receive updates and reminders.',
+            icon: 'success',
+            confirmButtonColor: '#22c55e',
+          });
+        } else {
+          Swal.fire({
+            title: 'Permission Denied',
+            text: 'You can enable notifications later in your browser settings.',
+            icon: 'warning',
+            confirmButtonColor: '#ef4444',
           });
         }
       });
@@ -108,9 +94,14 @@ export class AppComponent implements OnInit {
   private listenForMessages() {
     onMessage(this.messaging, (payload) => {
       console.log('Foreground message received:', payload);
-      alert(
-        `New notification: ${payload.notification?.title ?? 'Message received'}`
-      );
+
+      if (Notification.permission === 'granted') {
+        new Notification(payload.notification?.title || 'New Message', {
+          body: payload.notification?.body || '',
+          icon: payload.data?.['senderProfile'] ?? '/assets/images/logo.png',
+          data: payload.data,
+        });
+      }
     });
   }
 }

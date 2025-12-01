@@ -28,11 +28,12 @@ import {
   setDoc,
   updateDoc,
   where,
+  writeBatch,
 } from '@angular/fire/firestore';
 import { map, Observable, of, switchMap } from 'rxjs';
-import { User, UserConverter, UserType } from '../models/Users';
+import { Municipality, User, UserConverter, UserType } from '../models/Users';
 import { Router } from '@angular/router';
-import { em } from '@fullcalendar/core/internal-common';
+import { C, em } from '@fullcalendar/core/internal-common';
 import Swal from 'sweetalert2';
 import {
   getDownloadURL,
@@ -90,7 +91,8 @@ export class AuthService {
     age: number,
     gender: string,
     email: string,
-    password: string
+    password: string,
+    municipality: Municipality
   ): Promise<User> {
     const cred = await createUserWithEmailAndPassword(
       this.auth,
@@ -108,6 +110,7 @@ export class AuthService {
       createdAt: new Date(),
       updatedAt: new Date(),
       type: UserType.USER,
+      municipality: municipality,
     };
 
     const userRef = doc(
@@ -187,34 +190,6 @@ export class AuthService {
     }
 
     return userSnapshot.data()!;
-  }
-  async registerWithGoogle(): Promise<User> {
-    const cred = await signInWithPopup(this.auth, new GoogleAuthProvider());
-    const uid = cred.user.uid;
-    const email = cred.user.email || '';
-
-    const userRef = doc(
-      collection(this.firestore, this.USER_COLLECTION).withConverter(
-        UserConverter
-      ),
-      uid
-    );
-    const snap = await getDoc(userRef);
-
-    if (snap.exists()) {
-      return snap.data()!;
-    }
-    const user: User = {
-      id: '',
-      type: UserType.ADMIN,
-      name: '',
-      email: '',
-      gender: '',
-      age: 0,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    return user;
   }
 
   // --- LOGOUT ---
@@ -336,5 +311,28 @@ export class AuthService {
   forgotPassword(email: string) {
     const returnUrl = 'https://tesda-system.web.app/';
     return sendPasswordResetEmail(this.auth, email, { url: returnUrl });
+  }
+  async updateMunicipality() {
+    // Get all users
+    const usersSnap = await getDocs(
+      collection(this.firestore, this.USER_COLLECTION).withConverter(
+        UserConverter
+      )
+    );
+
+    const municipalities = Object.values(Municipality);
+    const batch = writeBatch(this.firestore);
+
+    usersSnap.forEach((userDoc) => {
+      const randomMunicipality =
+        municipalities[Math.floor(Math.random() * municipalities.length)];
+
+      batch.update(userDoc.ref, {
+        municipality: randomMunicipality,
+      });
+    });
+
+    await batch.commit();
+    console.log('Municipality field updated for all users.');
   }
 }

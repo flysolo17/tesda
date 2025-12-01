@@ -5,7 +5,6 @@ export interface Notification {
   type: NotificationType;
   title: string;
   body: string;
-
   recievers: string[];
   seen: string[];
   returnUrl: string;

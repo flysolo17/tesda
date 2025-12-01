@@ -8,9 +8,24 @@ export interface User {
   email: string;
   gender: string;
   age: number;
+  municipality: Municipality;
   createdAt: Date;
   updatedAt: Date;
   fcmToken?: string | null;
+}
+
+export enum Municipality {
+  AbraDeIlog = 'Abra de Ilog',
+  Mamburao = 'Mamburao', // provincial capital
+  Paluan = 'Paluan',
+  StaCruz = 'Santa Cruz',
+  Sablayan = 'Sablayan',
+  Calintaan = 'Calintaan',
+  Rizal = 'Rizal',
+  SanJose = 'San Jose',
+  Looc = 'Looc',
+  Lubang = 'Lubang',
+  Tilik = 'Tilik',
 }
 
 export enum UserType {
