@@ -14,6 +14,9 @@ import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ForgotPasswordDialogComponent } from '../../common/forgot-password-dialog/forgot-password-dialog.component';
+import { dA } from '@fullcalendar/core/internal-common';
+import { signOut } from '@angular/fire/auth';
+import { PhoneVerificationComponent } from './phone-verification/phone-verification.component';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -65,8 +68,13 @@ export class LoginComponent implements OnInit {
       .loginWithEmailAndPassword(email, password)
       .then((data) => {
         if (data.type === UserType.ADMIN) {
-          Swal.fire('Success', 'Successfully Login!', 'success');
-          this.router.navigate(['/administration/main']);
+          if (data.phone) {
+            const modalRef = this.modalService.open(PhoneVerificationComponent);
+            modalRef.componentInstance.defaultPhone = data.phone;
+          } else {
+            Swal.fire('Success', 'Successfully Login!', 'success');
+            this.router.navigate(['/administration/main']);
+          }
         } else {
           Swal.fire('Error', 'Invalid User', 'error');
           this.authService.logout();

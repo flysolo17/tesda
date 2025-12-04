@@ -13,8 +13,8 @@ export const adminGuard: CanActivateFn = (route, state) => {
     take(1),
     map((user) => {
       if (user?.type === UserType.ADMIN) return true;
-      toastr.showError('This user is not allowed to access admin!');
-      return router.createUrlTree(['/login'], {
+      console.log(user);
+      return router.createUrlTree(['/landing-page'], {
         queryParams: { returnUrl: state.url },
       });
     })

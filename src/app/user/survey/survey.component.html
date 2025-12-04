@@ -17,7 +17,7 @@
 
     <div class="row g-3">
       <!-- Program Type -->
-      <div class="col-md-6">
+      <div class="col-md-12">
         <label for="programType" class="form-label">Program Type</label>
         <select
           id="programType"
@@ -36,26 +36,25 @@
       </div>
 
       <!-- Program -->
-      <div class="col-md-6">
+      <div class="col-md-12">
         <label for="program" class="form-label">Program</label>
-        <select
+        <input
           id="program"
-          class="form-select"
+          class="form-control"
           formControlName="program"
+          list="programList"
           [ngClass]="{
             'is-invalid':
               surveyForm.get('program')?.invalid &&
               surveyForm.get('program')?.touched
           }"
-        >
-          <option value="" disabled selected>Select a program</option>
-          <option *ngFor="let program of programs$" [value]="program">
-            {{ program }}
-          </option>
-        </select>
+          placeholder="Type to search program"
+        />
+        <datalist id="programList">
+          <option *ngFor="let program of programs$" [value]="program"></option>
+        </datalist>
         <div class="invalid-feedback">Program is required.</div>
       </div>
-
       <!-- Location -->
       <div class="col-12">
         <label for="location" class="form-label">Location</label>

@@ -40,7 +40,9 @@
           }
         </ul>
         <div class="scrollable-table-wrapper">
-          <table class="table table-hover table-borderless mb-0">
+          <table
+            class="table table-responsive table-hover table-borderless mb-0"
+          >
             <thead class="table-light sticky-top">
               <tr>
                 <th scope="col">Personal Info</th>
@@ -79,14 +81,12 @@
                       <i class="bi bi-x-lg"></i>
                     </button>
                     <button class="btn btn-success" (click)="complete(item)">
-                      <i class="bi bi-check-lg"></i>
-                      Complete
+                      <i class="bi bi-check-lg"></i> Complete
                     </button>
                     } @if (item.status == 'REJECTED' || item.status ==
-                    'CANCELLED'){
+                    'CANCELLED') {
                     <button class="btn btn-success" (click)="reschedule(item)">
-                      <i class="bi bi-calendar-event-fill"></i>
-                      Reschedule
+                      <i class="bi bi-calendar-event-fill"></i> Reschedule
                     </button>
                     }
                   </div>

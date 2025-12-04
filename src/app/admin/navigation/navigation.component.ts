@@ -50,20 +50,7 @@ export class NavigationComponent {
     {
       label: 'Appointments',
       icon: 'bi bi-calendar-check-fill',
-
-      more: [
-        {
-          label: 'Appointments',
-          route: 'appointments',
-          queryParams: {
-            status: AppointmentStatus.PENDING,
-          },
-        },
-        {
-          label: 'Schedules',
-          route: 'schedules',
-        },
-      ],
+      route: 'appointments',
     },
     {
       label: 'Messages',

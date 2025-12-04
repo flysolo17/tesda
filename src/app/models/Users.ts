@@ -11,6 +11,7 @@ export interface User {
   municipality: Municipality;
   createdAt: Date;
   updatedAt: Date;
+  phone?: string | null;
   fcmToken?: string | null;
 }
 

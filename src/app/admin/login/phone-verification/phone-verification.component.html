@@ -1,0 +1,49 @@
+<div class="modal-header">
+  <h4 class="modal-title">Phone Verification</h4>
+</div>
+
+<div class="modal-body">
+  <!-- Phone input with +63 prefix -->
+  <div class="input-group mb-3">
+    <span class="input-group-text">+63</span>
+    <div class="form-floating flex-grow-1">
+      <input
+        type="text"
+        class="form-control"
+        id="phoneInput"
+        [(ngModel)]="phone"
+        [readOnly]="defaultPhone"
+        placeholder="9123456789"
+      />
+      <label for="phoneInput">Phone Number</label>
+    </div>
+  </div>
+
+  <!-- reCAPTCHA container -->
+  <div id="recaptcha-container" class="mb-3 w-100"></div>
+
+  <!-- Send/Resend button -->
+  <button
+    class="btn btn-primary w-100"
+    [disabled]="counter() > 0"
+    (click)="sendCode()"
+  >
+    {{ counter() > 0 ? "Resend OTP (" + counter() + "s)" : "Send OTP" }}
+  </button>
+
+  <!-- OTP input -->
+  <div class="form-floating mb-3 mt-3">
+    <input
+      type="text"
+      class="form-control"
+      id="otpInput"
+      maxlength="6"
+      [(ngModel)]="otp"
+      placeholder="123456"
+    />
+    <label for="otpInput">Enter OTP</label>
+  </div>
+
+  <!-- Verify button -->
+  <button class="btn btn-success w-100" (click)="verifyCode()">Verify</button>
+</div>

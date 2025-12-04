@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  ScheduleService,
-  SchedulesPerDay,
-} from '../../services/schedule.service';
+
 import { AppointmentService } from '../../services/appointment.service';
 import {
   BehaviorSubject,
@@ -20,7 +17,6 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { ChartData, ChartOptions } from 'chart.js';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Schedule } from '../../models/Schedule';
 import { NgbModal, NgbNav, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { CalendarOptions } from '@fullcalendar/core';
 import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';

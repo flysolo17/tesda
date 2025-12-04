@@ -44,7 +44,7 @@ import { AdminSurveyComponent } from './admin/admin-survey/admin-survey.componen
 import { exitPageGuard } from './admin/admin-services/exit-page.guard';
 import { CreatePostingComponent } from './admin/admin-philgeps-posting/create-posting/create-posting.component';
 import { CreateActivityComponent } from './admin/about/admin-activities/create-activity/create-activity.component';
-import { SchedulesComponent } from './admin/admin-appointment/schedules/schedules.component';
+
 import { ProfileComponent } from './common/profile/profile.component';
 import { CreateAppointmentComponent } from './common/create-appointment/create-appointment.component';
 import { AppointmentListComponent } from './user/appointment-list/appointment-list.component';
@@ -204,10 +204,7 @@ export const routes: Routes = [
             path: 'appointments',
             component: AdminAppointmentComponent,
           },
-          {
-            path: 'schedules',
-            component: SchedulesComponent,
-          },
+
           {
             path: 'messages',
             component: MessagingComponent,
