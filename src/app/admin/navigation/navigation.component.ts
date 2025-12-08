@@ -62,6 +62,10 @@ export class NavigationComponent {
       icon: 'bi bi-house-fill',
       more: [
         {
+          label: `Stories`,
+          route: 'stories',
+        },
+        {
           label: 'Manage Banners',
           route: 'banners',
         },

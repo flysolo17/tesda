@@ -1,0 +1,49 @@
+<div class="d-flex align-items-center justify-content-center p-3">
+  <h2
+    class="fw-bold mb-5"
+    style="font-size: 2.5rem; letter-spacing: -0.5px; line-height: 1.2"
+  >
+    <span
+      style="
+        background: linear-gradient(to right, #0d6efd, #198754, #ffc107);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+      "
+    >
+      Our Story
+    </span>
+  </h2>
+</div>
+<div class="story-carousel-container">
+  <!-- LEFT ARROW -->
+  <button class="nav-btn left" (click)="prev()">
+    <i class="bi bi-arrow-left"></i>
+  </button>
+
+  <!-- MAIN CONTENT -->
+  <div class="story-content" [ngClass]="animationClass">
+    <!-- VIDEO / IMAGE -->
+    <div class="story-media">
+      <video
+        *ngIf="activeStory?.videoUrl"
+        [src]="activeStory.videoUrl"
+        class="media-box"
+        controls
+      ></video>
+
+      <div *ngIf="!activeStory?.videoUrl" class="media-placeholder"></div>
+    </div>
+
+    <!-- TEXT -->
+    <div class="story-text">
+      <h2>{{ activeStory?.title }}</h2>
+      <p class="description">{{ activeStory?.description }}</p>
+    </div>
+  </div>
+
+  <!-- RIGHT ARROW -->
+  <button class="nav-btn right" (click)="next()">
+    <i class="bi bi-arrow-right"></i>
+  </button>
+</div>

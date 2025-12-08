@@ -17,8 +17,9 @@ import { take } from 'rxjs';
 export class UserMessagesComponent implements OnInit {
   private state = inject(MainStateService);
   private messageService = inject(MessagingService);
-  private location = inject(Location);
   private toastr = inject(ToastrService);
+  private location = inject(Location);
+
   readonly convo$ = this.state.conversation$;
 
   messageText = new FormControl('');

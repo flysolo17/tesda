@@ -1,0 +1,35 @@
+<div class="container py-4">
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2">Loading notification...</p>
+  </div>
+
+  <div *ngIf="!loading && notification; else notFound">
+    <div class="card shadow-sm">
+      <div
+        class="card-header bg-light d-flex justify-content-between align-items-center"
+      >
+        <h5 class="mb-0">{{ notification.title }}</h5>
+        <small class="text-muted">
+          {{ notification.createdAt | date : "short" }}
+        </small>
+      </div>
+      <div class="card-body">
+        <p class="card-text">{{ notification.body }}</p>
+      </div>
+      <div class="card-footer d-flex justify-content-between">
+        <button class="btn btn-secondary" (click)="back()">Back</button>
+        <button class="btn btn-danger" (click)="deleteNotification()">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #notFound>
+    <div class="alert alert-warning text-center">Notification not found.</div>
+    <div class="text-center mt-3">
+      <button class="btn btn-secondary" (click)="back()">Back</button>
+    </div>
+  </ng-template>
+</div>

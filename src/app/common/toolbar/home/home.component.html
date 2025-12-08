@@ -135,75 +135,86 @@
   </div>
 </section>
 <!-- Programs & Services Section -->
-<section class="py-5 bg-light">
-  <div class="container">
-    <h2
-      class="fw-bold mb-5 text-center"
-      style="font-size: 2.5rem; letter-spacing: -0.5px; line-height: 1.2"
-    >
-      <span
-        style="
-          background: linear-gradient(to right, #0d6efd, #198754, #ffc107);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          display: inline-block;
-        "
-      >
-        Programs &amp; Services
-      </span>
-    </h2>
 
+<!-- Floating Map & Chat Buttons -->
+<div class="floating-btn d-flex flex-column gap-2">
+  <button
+    class="btn btn-primary rounded-circle shadow"
+    style="width: 50px; height: 50px"
+    onclick="document.getElementById('mapBox').classList.toggle('popup-open')"
+  >
+    📍
+  </button>
+
+  <button
+    class="btn btn-success rounded-circle shadow"
+    style="width: 55px; height: 55px"
+    (click)="openChatBox()"
+  >
+    💬
+  </button>
+</div>
+
+<!-- Mini Floating Map -->
+<div id="mapBox" class="map-box">
+  <iframe
+    src="https://www.google.com/maps?q=ROMTTAC%20Compound%20Rizal%20Occidental%20Mindoro&z=17&output=embed"
+    width="100%"
+    height="200"
+    style="border: 0"
+  ></iframe>
+  <div class="p-2 text-center fw-semibold" style="font-size: 13px">
+    📌 ROMTTAC Compound, Sto. Niño, Rizal, Occidental Mindoro
+  </div>
+</div>
+
+<!-- Floating Live Chat -->
+<div id="chatBox" class="chat-box" *ngIf="convo$ | async as convo">
+  <div class="chat-header d-flex justify-content-between align-items-center">
+    {{ convo.user?.name || "Admin" }}
+    <button
+      class="btn btn-sm btn-light"
+      onclick="document.getElementById('chatBox').classList.remove('popup-open')"
+    >
+      <i class="bi bi-x"></i>
+    </button>
+  </div>
+
+  <div id="chat-messages">
     <div
-      class="d-flex flex-wrap align-items-center justify-content-center gap-4"
+      *ngFor="let msg of convo.messages.reverse()"
+      class="d-flex mb-2"
+      [ngClass]="{
+        'justify-content-end': msg.senderId === convo.me?.id,
+        'justify-content-start': msg.senderId !== convo.me?.id
+      }"
     >
-      <!-- Cards centered -->
-      <div class="d-flex flex-wrap justify-content-center gap-4 flex-grow-1">
-        <div
-          class="col-md-4"
-          *ngFor="let item of programs; let i = index"
-          [ngClass]="{
-            'animate-delay-0': i === 0,
-            'animate-delay-1': i === 1,
-            'animate-delay-2': i === 2
-          }"
-        >
-          <div
-            class="card border-0 shadow-sm p-4 text-center rounded-4 program-card"
-          >
-            <div
-              class="icon-circle mx-auto mb-3 d-flex align-items-center justify-content-center bounce"
-              [ngStyle]="{ 'background-color': item.bg }"
-            >
-              <i
-                [class]="'bi ' + item.icon"
-                [ngStyle]="{ color: item.color, fontSize: '2rem' }"
-              ></i>
-            </div>
-            <h5 class="fw-semibold mb-2">{{ item.title }}</h5>
-            <p class="text-muted mb-0">{{ item.desc }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- See More Button aligned to the right -->
-      <div class="d-flex align-items-center ms-3">
-        <button
-          class="btn btn-gradient btn-lg fw-semibold shadow-sm"
-          [routerLink]="['/landing-page/services']"
-          [queryParams]="{
-            type: 'All Services',
-            page: 1,
-            size: 10,
-            search: ''
-          }"
-        >
-          See More
-        </button>
+      <div
+        [ngClass]="{
+          'bg-primary text-white': msg.senderId === convo.me?.id,
+          'bg-white text-dark': msg.senderId !== convo.me?.id
+        }"
+        class="px-3 py-2 rounded"
+        style="max-width: 70%"
+      >
+        {{ msg.message }}
       </div>
     </div>
   </div>
-</section>
 
+  <div class="border-top d-flex align-items-center px-3 py-2 bg-white">
+    <input
+      [formControl]="messageText"
+      type="text"
+      class="form-control me-2"
+      placeholder="Type a message..."
+    />
+    <button class="btn btn-primary" (click)="sendMessage()">
+      <i class="bi bi-send"></i>
+    </button>
+  </div>
+</div>
+<app-story-list></app-story-list>
 <app-announcement-list></app-announcement-list>
 <app-news-and-events></app-news-and-events>
 <app-calendar></app-calendar>
