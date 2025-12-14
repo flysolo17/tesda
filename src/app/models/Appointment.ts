@@ -6,7 +6,6 @@ export interface Appointment {
   uid: string;
   personalInformation: PersonalInformation;
   serviceInformation: ServiceInformation;
-  sid: string;
   date: string;
   time: string;
   location: string;

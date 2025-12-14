@@ -1,7 +1,22 @@
 <div class="container-fluid d-flex justify-content-center p-4">
-  <h1 *ngIf="user$ | async as user">{{ user.name }}</h1>
   <div class="card" style="max-width: 1080px; width: 100%">
     <div class="card-header bg-light border-0">
+      <div
+        class="d-flex align-items-center justify-content-between p-3"
+        *ngIf="user$ | async as user"
+      >
+        <h4>Notifications</h4>
+        <button
+          class="btn btn-light"
+          [ngClass]="
+            hasUnSeenNotification(user.id) ? 'text-primary' : 'text-muted'
+          "
+          (click)="markAllRead(user.id)"
+          [disabled]="!hasUnSeenNotification(user.id)"
+        >
+          Mark all read
+        </button>
+      </div>
       <ul
         ngbNav
         #nav="ngbNav"
@@ -11,16 +26,23 @@
           <button ngbNavLink class="w-100">All</button>
           <ng-template ngbNavContent>
             <ul class="list-group list-group-flush">
-              @for (notification of getUserNotificationByType("All") | async;
-              track $index) {
+              @for (notification of notifications; track $index) {
               <li
                 class="list-group-item d-flex justify-content-between align-items-start"
+                [class.bg-light]="!isSeen(notification)"
+                [routerLink]="[notification.id]"
               >
-                <div class="ms-2 me-auto">
-                  <div class="fw-bold">{{ notification.title }}</div>
-                  {{ notification.body }}
+                <div class="ms-2 me-auto w-100">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div class="fw-bold">{{ notification.title }}</div>
+                    <span class="text-muted small">
+                      {{ notification.createdAt | date : "short" }}
+                    </span>
+                  </div>
+                  <p class="text-small text-muted text-ellipsis-2 mb-0">
+                    {{ notification.body }}
+                  </p>
                 </div>
-                <span class="badge text-bg-primary rounded-pill">14</span>
               </li>
               }
             </ul>
@@ -32,16 +54,24 @@
           <button ngbNavLink class="w-100">{{ item }}</button>
           <ng-template ngbNavContent>
             <ul class="list-group list-group-flush">
-              @for (notification of getUserNotificationByType(item) | async;
-              track $index) {
+              @for (notification of getUserNotificationByType(item); track
+              $index) {
               <li
                 class="list-group-item d-flex justify-content-between align-items-start"
+                [class.bg-light]="!isSeen(notification)"
+                [routerLink]="[notification.id]"
               >
-                <div class="ms-2 me-auto">
-                  <div class="fw-bold">{{ notification.title }}</div>
-                  {{ notification.body }}
+                <div class="ms-2 me-auto w-100">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div class="fw-bold">{{ notification.title }}</div>
+                    <span class="text-muted small">
+                      {{ notification.createdAt | date : "short" }}
+                    </span>
+                  </div>
+                  <p class="text-small text-muted text-ellipsis-2 mb-0">
+                    {{ notification.body }}
+                  </p>
                 </div>
-                <span class="badge text-bg-primary rounded-pill">14</span>
               </li>
               }
             </ul>

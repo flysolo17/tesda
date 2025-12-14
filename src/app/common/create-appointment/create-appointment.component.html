@@ -76,12 +76,7 @@
                   class="form-control"
                   formControlName="date"
                   [min]="minDate"
-                  (change)="
-                    onServiceAndDateChanged(
-                      appointmentForm.value.serviceId,
-                      appointmentForm.value.date
-                    )
-                  "
+                  (change)="onDateChange(appointmentForm.value.date)"
                 />
                 <label for="date">Date</label>
               </div>
@@ -94,12 +89,6 @@
                   id="serviceId"
                   class="form-select"
                   formControlName="serviceId"
-                  (change)="
-                    onServiceAndDateChanged(
-                      appointmentForm.value.serviceId,
-                      appointmentForm.value.date
-                    )
-                  "
                 >
                   <option value="" disabled>Select Purpose</option>
                   <option
@@ -119,37 +108,36 @@
         <!-- RIGHT SIDE -->
         <div class="appointment-right mt-3">
           <div class="d-flex align-items-center justify-content-between mb-2">
-            <h4 class="m-0">Available Slots</h4>
+            <h4 class="m-0">Select Time</h4>
 
             <div
               *ngIf="isGettingSchedules"
               class="spinner-border text-primary"
             ></div>
           </div>
-
-          <ul class="list-group">
-            @if (schedules.length === 0) {
-            <li class="list-group-item text-center text-muted">
-              No available slots
-            </li>
-            }
-
-            <li
-              class="list-group-item"
-              *ngFor="let item of schedules; trackBy: trackByIndex"
-              [class.active]="item === selectedSchedule"
-              (click)="onSelectSchedule(item)"
-              style="cursor: pointer"
-            >
-              <div class="fw-bold">{{ item.time }}</div>
-              {{ item.slots }} slots
-            </li>
-          </ul>
+        </div>
+        <div class="d-flex mb-3 flex-wrap gap-3">
+          <span
+            *ngFor="let item of timeSlots$"
+            class="badge rounded-pill me-2"
+            [ngClass]="{
+              'bg-primary': selectedTimeSlot === item && isAvailable(item),
+              'bg-secondary': selectedTimeSlot !== item && isAvailable(item),
+              'bg-light text-muted': !isAvailable(item)
+            }"
+            [class.disabled]="!isAvailable(item)"
+            (click)="onSelectTimeSlot(item)"
+          >
+            {{ item }}
+          </span>
         </div>
 
         <!-- Submit -->
         <div class="col-12 text-center mt-3">
-          <button class="btn btn-success w-100 w-md-auto">
+          <button
+            class="btn btn-success w-100 w-md-auto"
+            [disabled]="appointmentForm.invalid && selectedTimeSlot === null"
+          >
             Submit Appointment
           </button>
         </div>

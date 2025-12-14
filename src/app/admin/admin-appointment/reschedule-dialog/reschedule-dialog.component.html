@@ -17,7 +17,7 @@
     </div>
 
     <!-- Date -->
-    <div class="col-8 form-floating">
+    <div class="col-12 form-floating">
       <input
         type="date"
         class="form-control"
@@ -27,24 +27,22 @@
       />
       <label for="date">New Appointment Date</label>
     </div>
-
-    <!-- Schedule Select -->
-    <div class="col-4 form-floating">
-      <select
-        class="form-select"
-        id="selectedSchedule"
-        formControlName="selectedSchedule"
-      >
-        <option value="" disabled>Select a time slot</option>
-        <option *ngFor="let s of schedules$" [value]="s.id">
-          {{ s.time }} ({{ s.slots }} slot(s))
-        </option>
-      </select>
-      <label for="selectedSchedule">Available Time Slots</label>
-      <small class="text-muted">
-        {{ isGettingSchedules ? "Fetching schedules" : slots }}
-        slot(s) available
-      </small>
+    <div class="col-12">
+      <div class="d-flex mb-3 flex-wrap gap-2">
+        <span
+          *ngFor="let item of slots"
+          class="badge rounded-pill"
+          [ngClass]="{
+            'bg-primary': selectedSlot === item && isAvailable(item),
+            'bg-secondary': selectedSlot !== item && isAvailable(item),
+            'bg-light text-muted': !isAvailable(item)
+          }"
+          [class.disabled]="!isAvailable(item)"
+          (click)="onSelectTimeSlot(item)"
+        >
+          {{ item }}
+        </span>
+      </div>
     </div>
 
     <!-- Notes -->
@@ -60,11 +58,7 @@
 
     <!-- Submit Button -->
     <div class="col-12 text-end">
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="isLoading || isGettingSchedules"
-      >
+      <button type="submit" class="btn btn-primary" [disabled]="isLoading">
         {{ isLoading ? "Rescheduling..." : "Confirm Reschedule" }}
       </button>
     </div>

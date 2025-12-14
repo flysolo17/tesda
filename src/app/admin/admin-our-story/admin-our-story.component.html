@@ -1,0 +1,94 @@
+<nav class="navbar bg-primary navbar-dark">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">Stories</span>
+
+    <button class="btn btn-success btn-sm" (click)="create()">
+      <i class="bi bi-plus"></i>
+      New
+    </button>
+  </div>
+</nav>
+
+<div class="container py-4">
+  <!-- LOADING STATE -->
+  <div class="text-center py-5" *ngIf="(stories$ | async) === null">
+    <div class="spinner-border text-primary"></div>
+    <p class="mt-2 text-muted">Loading stories...</p>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div class="text-center py-5" *ngIf="(stories$ | async)?.length === 0">
+    <i class="bi bi-collection-play" style="font-size: 3rem; opacity: 0.5"></i>
+    <h5 class="mt-3">No stories found</h5>
+    <p class="text-muted">Click the “New” button to create your first story.</p>
+  </div>
+
+  <!-- STORIES TABLE -->
+  <div class="table-responsive">
+    <table class="table align-middle table-hover">
+      <thead class="table-light">
+        <tr>
+          <th style="width: 80px">Video</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th style="width: 150px">Created</th>
+          <th style="width: 150px">Updated</th>
+          <th style="width: 120px" class="text-center">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let story of stories$ | async">
+          <!-- VIDEO THUMBNAIL -->
+          <td>
+            <video
+              [src]="story.videoUrl"
+              width="70"
+              height="70"
+              class="rounded border"
+              muted
+            ></video>
+          </td>
+
+          <td>{{ story.title }}</td>
+
+          <td>
+            <small
+              class="text-muted d-block"
+              style="
+                max-width: 300px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+            >
+              {{ story.description }}
+            </small>
+          </td>
+
+          <td>
+            <small>{{ story.createdAt | date : "medium" }}</small>
+          </td>
+
+          <td>
+            <small>{{ story.updatedAt | date : "medium" }}</small>
+          </td>
+
+          <!-- ACTIONS -->
+          <td class="text-center">
+            <button
+              class="btn btn-primary btn-sm me-1"
+              (click)="create(story.id)"
+            >
+              <i class="bi bi-pencil"></i>
+            </button>
+
+            <button class="btn btn-danger btn-sm">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

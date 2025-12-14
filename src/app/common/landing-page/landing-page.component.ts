@@ -84,7 +84,7 @@ export class LandingPageComponent {
         }
       }
     } catch {
-      // Modal dismissed
+  
     }
   }
 

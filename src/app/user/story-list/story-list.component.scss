@@ -1,0 +1,141 @@
+.story-carousel-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  background: #fff;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    padding: 20px;
+    flex-direction: column;
+  }
+}
+
+.story-content {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  max-width: 1200px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+/* Media (Video/Image) Box */
+.story-media {
+  flex: 1;
+}
+
+.media-box,
+.media-placeholder {
+  width: 100%;
+  height: 450px;
+  background: #ddd;
+  border: 3px solid #0094ff;
+  border-radius: 6px;
+  object-fit: cover;
+
+  @media (max-width: 768px) {
+    height: 300px;
+  }
+}
+
+/* Text */
+.story-text {
+  flex: 1;
+}
+
+.story-text h2 {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.story-text .description {
+  margin-top: 10px;
+  color: #555;
+  max-width: 400px;
+}
+
+/* Navigation Buttons */
+.nav-btn {
+  position: absolute;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  border: none;
+  background: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.2s ease;
+
+  i {
+    font-size: 22px;
+  }
+
+  &:hover {
+    background: #d0d0d0;
+  }
+}
+
+.left {
+  left: 40px;
+
+  @media (max-width: 768px) {
+    left: 10px;
+    top: calc(50% - 30px);
+  }
+}
+
+.right {
+  right: 40px;
+
+  @media (max-width: 768px) {
+    right: 10px;
+    top: calc(50% - 30px);
+  }
+}
+/* Make text align to the top on large screens */
+@media (min-width: 992px) {
+  .story-content {
+    align-items: flex-start !important;
+  }
+}
+
+/* Animation keyframes */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Apply animations */
+.story-content.animate-right {
+  animation: slideInRight 0.5s ease forwards;
+}
+
+.story-content.animate-left {
+  animation: slideInLeft 0.5s ease forwards;
+}

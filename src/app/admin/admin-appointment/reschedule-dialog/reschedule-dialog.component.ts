@@ -9,8 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Schedule } from '../../../models/Schedule';
-import { ScheduleService } from '../../../services/schedule.service';
+
 import { AppointmentService } from '../../../services/appointment.service';
 import Swal from 'sweetalert2';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -26,39 +25,43 @@ export class RescheduleDialogComponent implements OnInit {
   @Input({ required: true }) appointment!: Appointment;
   isGettingSchedules = false;
 
-  schedules$: Schedule[] = [];
   today = new Date().toISOString().split('T')[0]; // e.g., "2025-11-18"
   rescheduleForm: FormGroup;
   isLoading = false;
+  selectedSlot: string | null = null;
+  slots = [
+    '08:00 AM – 09:00 AM',
+    '09:00 AM – 10:00 AM',
+    '10:00 AM – 11:00 AM',
+    '11:00 AM – 12:00 PM',
+    '12:00 PM – 01:00 PM',
+    '01:00 PM – 02:00 PM',
+    '02:00 PM – 03:00 PM',
+    '03:00 PM – 04:00 PM',
+    '04:00 PM – 05:00 PM',
+  ];
+  selectedSlots: string[] = [];
+  onSelectTimeSlot(e: string) {
+    if (!this.isAvailable(e)) return;
+    this.selectedSlot = e;
+  }
   constructor(
     private fb: FormBuilder,
-    private scheduleService: ScheduleService,
+
     private activeModal: NgbActiveModal,
     private appointmentService: AppointmentService
   ) {
     this.rescheduleForm = fb.nonNullable.group({
       date: [null, Validators.required],
-      selectedSchedule: [null, Validators.required],
+
       notes: [''],
     });
   }
   ngOnInit(): void {
+    this.selectedSlot = this.appointment.time;
     if (this.appointment) {
       this.rescheduleForm.patchValue({
         date: this.appointment.date,
-        time: this.appointment.time,
-      });
-      this.onServiceAndDateChanged(
-        this.appointment.serviceInformation.id,
-        this.appointment.date
-      );
-      this.rescheduleForm.get('date')?.valueChanges.subscribe((date) => {
-        const serviceId = this.appointment.serviceInformation.id;
-        console.log('Changed');
-        if (serviceId && date) {
-          console.log('Triggers');
-          this.onServiceAndDateChanged(serviceId, date);
-        }
       });
     }
   }
@@ -70,16 +73,6 @@ export class RescheduleDialogComponent implements OnInit {
     this.isGettingSchedules = true;
     console.log(date);
     console.log(serviceId);
-    this.scheduleService
-      .getScheduleByDate(serviceId, date)
-      .then((data) => {
-        this.isGettingSchedules = false;
-        console.log(data);
-        this.schedules$ = data;
-      })
-      .catch((e) => {
-        console.log(e);
-      });
   }
   submit() {
     if (this.rescheduleForm.invalid) {
@@ -88,27 +81,25 @@ export class RescheduleDialogComponent implements OnInit {
         title: 'Incomplete Form',
         text: 'Please fill out all required fields before submitting.',
       });
+      console.log(this.rescheduleForm);
       return;
     }
 
-    const { date, selectedSchedule, note } = this.rescheduleForm.value;
-
-    const selected = this.schedules$.find((s) => s.id === selectedSchedule);
-
-    if (!selected) {
+    if (this.selectedSlot === null) {
       Swal.fire({
-        icon: 'error',
-        title: 'Schedule Not Found',
-        text: 'The selected schedule could not be found. Please try again.',
+        icon: 'warning',
+        title: 'No Time Selected',
+        text: 'Please choose a time slot before submitting your appointment.',
+        confirmButtonColor: '#3085d6',
       });
       return;
     }
+    const { date, note } = this.rescheduleForm.value;
 
     const newAppointment: Appointment = {
       ...this.appointment,
-      date,
-      time: selected.time,
-      sid: selectedSchedule,
+      date: date,
+      time: this.selectedSlot,
       status: AppointmentStatus.CONFIRMED,
       notes: note ?? '',
     };
@@ -137,7 +128,20 @@ export class RescheduleDialogComponent implements OnInit {
         this.isLoading = false;
       });
   }
-  get slots(): number {
-    return this.schedules$.reduce((total, s) => total + s.slots, 0);
+  isAvailable(time: string): boolean {
+    // available if NOT already booked
+    return !this.selectedSlots.includes(time);
+  }
+  onDateChange(value: string) {
+    this.appointmentService.onDateChange(value).then((data) => {
+      this.selectedSlots = data;
+
+      if (
+        this.selectedSlot !== null &&
+        this.selectedSlots.includes(this.selectedSlot)
+      ) {
+        this.selectedSlot = null;
+      }
+    });
   }
 }

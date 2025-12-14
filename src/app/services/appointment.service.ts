@@ -133,22 +133,15 @@ export class AppointmentService {
   }
 
   create(appointment: Appointment) {
-    const batch = writeBatch(this.firestore);
-
     appointment.id = generateRandomNumberWithDate();
-    batch.set(
+
+    return setDoc(
       doc(
         collection(this.firestore, this.APPOINTMENT_COLLECTION),
         appointment.id
       ),
       appointment
     );
-    const scheduleRef = doc(this.firestore, 'schedules', appointment.sid);
-    batch.update(scheduleRef, {
-      slots: increment(-1),
-      updatedAt: new Date(),
-    });
-    return batch.commit();
   }
   async reschedule(appointment: Appointment): Promise<void> {
     const batch = writeBatch(this.firestore);
@@ -158,19 +151,27 @@ export class AppointmentService {
       this.APPOINTMENT_COLLECTION,
       appointment.id
     );
-    const scheduleRef = doc(this.firestore, 'schedules', appointment.sid);
 
     batch.update(appointmentRef, {
       ...appointment,
       updatedAt: serverTimestamp(),
     });
 
-    batch.update(scheduleRef, {
-      slots: increment(-1),
-      updatedAt: serverTimestamp(),
-    });
+    const notificationRef = doc(collection(this.firestore, 'notifications'));
+    const notification: Notification = {
+      id: notificationRef.id,
+      type: NotificationType.APPOINTMENT,
+      title: 'Appointment Rescheduled',
+      body: `Your appointment for ${appointment.serviceInformation.name} on ${appointment.date} at ${appointment.time} has been rescheduled.`,
+      recievers: [appointment.uid],
+      seen: [],
+      returnUrl: `/landing-page/appointments?id=${appointment.uid}`,
+      createdAt: new Date(),
+    };
 
-    // Combine both operations into a single Promise chain
+    batch.set(notificationRef, notification);
+
+    // 3. Commit batch + send email
     return Promise.all([
       batch.commit(),
       this.emailService.rescheduled(appointment),
@@ -179,6 +180,7 @@ export class AppointmentService {
       return;
     });
   }
+
   // DELETE
   delete(id: string) {
     const docRef = doc(this.firestore, `${this.APPOINTMENT_COLLECTION}/${id}`);
@@ -245,5 +247,56 @@ export class AppointmentService {
     return getDocs(q).then((snapshot) =>
       snapshot.docs.map((doc) => doc.data())
     );
+  }
+
+  async onDateChange(date: string): Promise<string[]> {
+    const q = query(
+      collection(this.firestore, this.APPOINTMENT_COLLECTION).withConverter(
+        AppointmentConverter
+      ),
+      where('date', '==', date),
+      where('status', 'in', [
+        AppointmentStatus.PENDING,
+        AppointmentStatus.CONFIRMED,
+      ]),
+      limit(10)
+    );
+
+    return getDocs(q).then((snapshot) =>
+      snapshot.docs.map((doc) => doc.data()).map((e) => e.time)
+    );
+  }
+
+  cancel(appointment: Appointment) {
+    const batch = writeBatch(this.firestore);
+
+    // 1. Update appointment status
+    const appointmentRef = doc(
+      this.firestore,
+      this.APPOINTMENT_COLLECTION,
+      appointment.id
+    );
+    batch.update(appointmentRef, {
+      status: AppointmentStatus.CANCELLED,
+      updatedAt: new Date(),
+    });
+
+    // 2. Create notification
+    const notification: Notification = {
+      id: '', // Firestore will generate if you use addDoc, but for batch we need a doc ref
+      type: NotificationType.APPOINTMENT,
+      title: 'Appointment Cancelled',
+      body: `Your appointment for ${appointment.serviceInformation.name} on ${appointment.date} at ${appointment.time} has been cancelled.`,
+      recievers: [appointment.uid],
+      seen: [],
+      returnUrl: `/landing-page/appointments?id=${appointment.uid}`,
+      createdAt: new Date(),
+    };
+
+    const notifRef = doc(collection(this.firestore, 'notifications'));
+    batch.set(notifRef, notification);
+
+    // 3. Commit batch
+    return batch.commit();
   }
 }

@@ -44,7 +44,7 @@ import { AdminSurveyComponent } from './admin/admin-survey/admin-survey.componen
 import { exitPageGuard } from './admin/admin-services/exit-page.guard';
 import { CreatePostingComponent } from './admin/admin-philgeps-posting/create-posting/create-posting.component';
 import { CreateActivityComponent } from './admin/about/admin-activities/create-activity/create-activity.component';
-import { SchedulesComponent } from './admin/admin-appointment/schedules/schedules.component';
+
 import { ProfileComponent } from './common/profile/profile.component';
 import { CreateAppointmentComponent } from './common/create-appointment/create-appointment.component';
 import { AppointmentListComponent } from './user/appointment-list/appointment-list.component';
@@ -56,6 +56,8 @@ import { TechnicalVocationalInstitutionsComponent } from './admin/contact/techni
 import { AddContactComponent } from './admin/contact/add-contact/add-contact.component';
 import { ContactListComponent } from './user/contact-list/contact-list.component';
 import { UserNotificationComponent } from './user/user-notification/user-notification.component';
+import { ViewNotificationComponent } from './user/user-notification/view-notification/view-notification.component';
+import { AdminOurStoryComponent } from './admin/admin-our-story/admin-our-story.component';
 
 export const routes: Routes = [
   {
@@ -84,6 +86,11 @@ export const routes: Routes = [
       {
         path: 'notifications',
         component: UserNotificationComponent,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'notifications/:id',
+        component: ViewNotificationComponent,
         canActivate: [authGuard],
       },
       {
@@ -201,13 +208,14 @@ export const routes: Routes = [
             component: AdminDashboardComponent,
           },
           {
+            path: 'stories',
+            component: AdminOurStoryComponent,
+          },
+          {
             path: 'appointments',
             component: AdminAppointmentComponent,
           },
-          {
-            path: 'schedules',
-            component: SchedulesComponent,
-          },
+
           {
             path: 'messages',
             component: MessagingComponent,

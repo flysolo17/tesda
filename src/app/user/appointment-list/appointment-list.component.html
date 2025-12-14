@@ -59,6 +59,14 @@
               <p class="mb-0"><strong>Notes:</strong></p>
               <p class="text-muted mb-0">{{ item.notes }}</p>
             </div>
+            <div
+              class="col-4"
+              *ngIf="item.status === 'PENDING' || item.status === 'CONFIRMED'"
+            >
+              <button class="btn btn-danger" (click)="cancelAppointment(item)">
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       </div>

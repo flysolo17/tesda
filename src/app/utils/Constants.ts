@@ -5,7 +5,6 @@ import {
   ServiceInformation,
 } from '../models/Appointment';
 import { Feedback, Sentiment } from '../models/Feedback';
-import { Schedule } from '../models/Schedule';
 
 export const SAMPLE_FEEDBACKS: Feedback[] = [
   {

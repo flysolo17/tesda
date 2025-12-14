@@ -1,17 +1,20 @@
 import { Injectable } from '@angular/core';
 import {
   and,
+  arrayRemove,
   arrayUnion,
   collection,
   collectionData,
   doc,
   Firestore,
+  getDoc,
   getDocs,
   limit,
   or,
   orderBy,
   query,
   setDoc,
+  updateDoc,
   where,
   writeBatch,
 } from '@angular/fire/firestore';
@@ -90,6 +93,45 @@ export class NotificationService {
     );
 
     return collectionData(q, { idField: 'id' }) as Observable<Notification[]>;
+  }
+  async getNotificationById(id: string): Promise<Notification> {
+    const uid = this.auth.currentUser?.uid;
+
+    if (!uid) {
+      console.warn('No authenticated user. Cannot mark notifications as seen.');
+    }
+    const ref = doc(this.collectionRef, id).withConverter(
+      NotificationConverter
+    );
+    const snapshot = await getDoc(ref);
+
+    if (!snapshot.exists()) {
+      throw new Error(`Notification with id ${id} not found`);
+    }
+
+    await updateDoc(doc(this.collectionRef, id), {
+      seen: arrayUnion(uid),
+    });
+
+    return snapshot.data() as Notification;
+  }
+
+  async deleteNotification(id: string): Promise<void> {
+    const uid = this.auth.currentUser?.uid;
+
+    if (!uid) {
+      console.warn('No authenticated user. Cannot mark notifications as seen.');
+      return;
+    }
+
+    if (!id) {
+      throw new Error('Notification id is required');
+    }
+
+    const ref = doc(this.collectionRef, id); // collectionRef must be set to 'notifications'
+    await updateDoc(ref, {
+      recievers: arrayRemove(uid),
+    });
   }
 
   getTenNewNotifications(id: string, admin: boolean = false) {
