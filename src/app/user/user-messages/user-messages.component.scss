@@ -1,0 +1,130 @@
+/* Import Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+/* Position bottom-right */
+.chat-popup {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+/* Chat popup card */
+.chat-card {
+  width: 360px;
+  height: 520px;
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+
+  font-family: 'Poppins', sans-serif;
+  color: #000 !important;
+}
+
+/* Header */
+.chat-header {
+  background: #0d6efd;
+  color: white !important;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+}
+
+/* FIXED background image (opacity only on image, not text) */
+.bg-image {
+  position: relative;
+}
+
+.bg-image::before {
+  content: "";
+  background-image: url('../../../assets/images/tesda-online.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.15;              /* low opacity background */
+  
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  z-index: 0;                 /* behind messages */
+}
+
+/* keep messages visible above background */
+.bg-image > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Messages container */
+.messages-container {
+  flex: 1;
+  padding: 12px;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: auto;
+}
+
+/* Message rows */
+.message-row {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.message-row.me {
+  justify-content: flex-end;
+}
+
+.message-row.them {
+  justify-content: flex-start;
+}
+
+/* Chat bubbles */
+.bubble {
+  max-width: 70%;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  line-height: 1.35;
+  color: #000 !important;  /* ensure black text */
+}
+
+/* Sent message (me) */
+.message-row.me .bubble {
+  background: #d1e7ff;
+  color: #000 !important;
+}
+
+/* Received message (them) */
+.message-row.them .bubble {
+  background: #e9ecef;
+  color: #000 !important;
+  border-bottom-left-radius: 6px;
+}
+
+/* Input section */
+.input-area {
+  background: white;
+  border-top: 1px solid #ddd;
+  height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.message-input {
+  border-radius: 25px;
+  padding-left: 15px;
+  font-family: 'Poppins', sans-serif;
+  color: #000 !important;
+}
+
+.send-btn {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}

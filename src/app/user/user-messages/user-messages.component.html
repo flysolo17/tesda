@@ -1,55 +1,50 @@
-<ng-container *ngIf="convo$ | async as convo">
-  <!-- Header -->
-  <div class="bg-primary text-white d-flex align-items-center px-3 py-2">
-    <button class="btn btn-lg text-white" (click)="back()">
-      <i class="bi bi-arrow-left"></i>
-    </button>
-    <img
-      [src]="convo.user?.profile || 'https://github.com/mdo.png'"
-      alt="User"
-      width="40"
-      height="40"
-      class="rounded-circle me-2"
-    />
-    <h6 class="mb-0">{{ convo.user?.name || "Admin" }}</h6>
-  </div>
+<div class="chat-popup">
 
-  <!-- Chat Messages -->
-  <div
-    class="chat-messages flex-grow-1 p-3 overflow-auto d-flex flex-column-reverse"
-    style="height: calc(100vh - 140px)"
-  >
-    <div
-      *ngFor="let msg of convo.messages"
-      class="d-flex mb-2"
-      [ngClass]="{
-        'justify-content-end': msg.senderId === convo.me?.id,
-        'justify-content-start': msg.senderId !== convo.me?.id
-      }"
-    >
-      <div
-        [ngClass]="{
-          'bg-primary text-white': msg.senderId === convo.me?.id,
-          'bg-white text-dark': msg.senderId !== convo.me?.id
-        }"
-        class="px-3 py-2 rounded"
-        style="max-width: 70%"
-      >
-        {{ msg.message }}
+  <div class="chat-card">
+    <ng-container *ngIf="convo$ | async as convo">
+
+      <!-- Header -->
+      <div class="chat-header d-flex align-items-center px-2 py-2">
+        <button class="btn btn-link text-white p-0 me-2" (click)="back()">
+          <i class="bi bi-arrow-left fs-4"></i>
+        </button>
+
+        <img
+          [src]="convo.user?.profile || 'https://github.com/mdo.png'"
+          class="rounded-circle me-2"
+          width="36"
+          height="36"
+        />
+
+        <div class="fw-semibold">{{ convo.user?.name || "Admin" }}</div>
       </div>
-    </div>
+
+      <!-- Messages -->
+      <div class="messages-container bg-image">
+        <div
+          *ngFor="let msg of convo.messages"
+          [ngClass]="{
+            'message-row me': msg.senderId === convo.me?.id,
+            'message-row them': msg.senderId !== convo.me?.id
+          }"
+        >
+          <div class="bubble">{{ msg.message }}</div>
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="input-area d-flex align-items-center px-2 py-2">
+        <input
+          [formControl]="messageText"
+          class="form-control message-input"
+          placeholder="Type a message..."
+        />
+        <button class="btn btn-primary ms-2 send-btn" (click)="sendMessage()">
+          <i class="bi bi-send"></i>
+        </button>
+      </div>
+
+    </ng-container>
   </div>
 
-  <!-- Input Area -->
-  <div class="border-top d-flex align-items-center px-3 py-2 bg-white">
-    <input
-      [formControl]="messageText"
-      type="text"
-      class="form-control me-2"
-      placeholder="Type a message..."
-    />
-    <button class="btn btn-primary" (click)="sendMessage()">
-      <i class="bi bi-send"></i>
-    </button>
-  </div>
-</ng-container>
+</div>

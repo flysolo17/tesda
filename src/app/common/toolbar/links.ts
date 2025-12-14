@@ -24,9 +24,6 @@ export const dropdowns: Dropdowns = {
       url: '/landing-page/mission-vision',
       label: 'MISSION, VISION, VALUE & QUALITY STATEMENT',
     },
-    { url: '/landing-page/core-business', label: 'CORE BUSINESS' },
-    { url: 'https://www.tesda.gov.ph/AboutL/TESDA/1280', label: 'ROAD MAP' },
-    { url: '/landing-page/calendar-events', label: 'ACTIVITIES & EVENTS' },
     {
       url: '/landing-page/structure',
       label: 'ORGANIZATIONAL STRUCTURE (PROVINCIAL OFFICE STAFFS)',
@@ -56,7 +53,7 @@ export const dropdowns: Dropdowns = {
       label: 'TESDA CIRCULARS (MEMO, RESOLUTIONS, ADVISORIES, ORDERS)',
     },
     {
-      url: '/landing-page/downloadable-files',
+      url: 'https://www.tesda.gov.ph/About/TESDA/29',
       label:
         'DOWNLOADABLE FILES (FORMS AND OTHER FILES AVAILABLE FOR DOWNLOADING)',
     },
